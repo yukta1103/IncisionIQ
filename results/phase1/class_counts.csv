@@ -1,0 +1,39 @@
+attribute,class,train,val,test,total,rare,absent_from_test
+location,Abdomen,78,15,19,112,False,False
+location,Patella,31,1,3,35,False,False
+location,Ankle,44,9,19,72,False,False
+location,Facial region,41,10,15,66,False,False
+location,Manus,24,1,10,35,False,False
+location,Cervical region,17,5,4,26,False,False
+location,Other,133,10,35,178,False,False
+location,<missing>,112,18,32,162,False,False
+location,Uncertain,0,0,0,0,True,True
+healing,Healed,282,42,82,406,False,False
+healing,Not Healed,198,27,55,280,False,False
+closure,Invisible,81,15,19,115,False,False
+closure,Sutures,247,35,68,350,False,False
+closure,Staples,7,0,1,8,True,False
+closure,Adhesives,14,1,4,19,True,False
+closure,<missing>,131,18,45,194,False,False
+closure,Uncertain,0,0,0,0,True,True
+exudate,Non-existent,367,55,109,531,False,False
+exudate,Serous,26,2,8,36,False,False
+exudate,Sanguineous,24,1,4,29,False,False
+exudate,Purulent,12,4,3,19,True,False
+exudate,Seropurulent,8,2,1,11,True,False
+exudate,<missing>,43,5,12,60,False,False
+exudate,Uncertain,0,0,0,0,True,True
+erythema,Non-existent,334,44,91,469,False,False
+erythema,Existent,129,22,40,191,False,False
+erythema,<missing>,17,3,6,26,False,False
+erythema,Uncertain,0,0,0,0,True,True
+edema,Non-existent,328,51,94,473,False,False
+edema,Existent,50,10,21,81,False,False
+edema,<missing>,102,8,22,132,False,False
+edema,Uncertain,0,0,0,0,True,True
+infection_risk,Low,402,54,117,573,False,False
+infection_risk,Medium,61,14,15,90,False,False
+infection_risk,High,17,1,5,23,False,False
+urgency,Home Care,423,56,121,600,False,False
+urgency,Clinic Visit,44,12,12,68,False,False
+urgency,Emergency Care,13,1,4,18,True,False

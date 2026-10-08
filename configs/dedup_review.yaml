@@ -1,0 +1,58 @@
+# Manual visual review of near-duplicate / same-patient candidates (Phase 1).
+# Reviewed from the contact sheets in results/phase1/dedup/. Thumbnails are small,
+# so "uncertain" pairs are listed separately and are NOT treated as verified.
+# Each entry is a group of image_names believed to show the same patient/wound.
+
+exact_or_near_identical:
+  - [119.jpg, 124.jpg]          # same photo, both test
+
+same_patient_verified:
+  - [87.jpg, 88.jpg, 89.jpg, 90.jpg]   # same knee, train+test
+  - [961.jpg, 962.jpg]
+  - [29.jpg, 30.jpg]                   # train+test
+  - [987.jpg, 3.jpg]                   # train+test, different crop
+  - [976.jpg, 984.jpg]                 # val+test, orange redaction boxes
+  - [939.jpg, 953.jpg, 989.jpg]        # abdomen, orange redaction boxes, different time points
+  - [587.jpg, 606.jpg]                 # green background
+  - [874.jpg, 876.jpg, 879.jpg, 880.jpg, 881.jpg, 882.jpg, 884.jpg]  # ankle series, train+test
+  - [80.jpg, 83.jpg]
+  - [240.jpg, 241.jpg]                 # train+test
+  - [50.jpg, 51.jpg]                   # val+train
+  - [887.jpg, 888.jpg]
+  - [157.jpg, 158.jpg, 159.jpg]        # val+train
+  - [104.jpg, 105.jpg]                 # train+test
+  - [575.jpg, 576.jpg]
+  - [42.jpg, 44.jpg]                   # train+test, striped background
+  - [918.jpg, 920.jpg]
+  - [16.jpg, 18.jpg]                   # train+test
+  - [547.jpg, 548.jpg]                 # drawn circles
+  - [846.jpg, 848.jpg]
+  - [33.jpg, 34.jpg]
+  - [21.jpg, 22.jpg]                   # train+test
+  - [100.jpg, 101.jpg]                 # train+test
+
+same_patient_uncertain:
+  - [646.jpg, 178.jpg]   # nose sutures, train+test
+  - [311.jpg, 457.jpg]
+  - [609.jpg, 615.jpg]
+  - [308.jpg, 312.jpg]
+  - [966.jpg, 968.jpg]
+  - [998.jpg, 999.jpg]
+  - [36.jpg, 37.jpg]
+  - [62.jpg, 63.jpg]
+  - [784.jpg, 785.jpg]
+  - [285.jpg, 286.jpg]
+  - [492.jpg, 493.jpg]
+  - [711.jpg, 712.jpg]
+  - [226.jpg, 227.jpg]
+
+# pHash candidates reviewed and rejected (different wounds that hash similarly)
+phash_false_positives:
+  - [123.jpg, 984.jpg]
+  - [10.jpg, 197.jpg]
+  - [10.jpg, 53.jpg]
+  - [221.jpg, 950.jpg]
+  - [279.jpg, 713.jpg]
+  - [398.jpg, 460.jpg]
+  - [434.jpg, 660.jpg]
+  - [712.jpg, 841.jpg]
