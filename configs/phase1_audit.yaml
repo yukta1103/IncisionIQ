@@ -1,0 +1,28 @@
+seed: 42
+raw_dir: data/raw
+processed_dir: data/processed
+results_dir: results/phase1
+
+rare_class_threshold: 20
+
+dedup:
+  # pHash Hamming thresholds (out of 64 bits) reported in the sweep
+  phash_sweep: [0, 2, 4, 6, 8, 10, 12]
+  # pairs at or below this distance are drawn on contact sheets for review
+  phash_review_max: 12
+  embed_model: vit_small_patch14_dinov2.lvd142m
+  # cosine similarity above which DINOv2 nominates a pair for review
+  embed_review_min: 0.85
+
+ocr:
+  lang_passes: [[ch_sim, en], [ru, en]]
+  min_conf: 0.5
+  min_chars: 2
+
+groups:
+  review_file: configs/dedup_review.yaml
+  # automatic rule: image IDs within this gap AND DINOv2 cosine above adjacent_min_cos,
+  # or any pair above global_min_cos
+  adjacent_id_gap: 3
+  adjacent_min_cos: 0.70
+  global_min_cos: 0.90

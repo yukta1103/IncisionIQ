@@ -1,0 +1,2718 @@
+{
+  "split_check": {
+    "n_images": 686,
+    "images_per_split": {
+      "train": 480,
+      "val": 69,
+      "test": 137
+    },
+    "image_name_overlap_between_splits": {
+      "train&val": 0,
+      "train&test": 0,
+      "val&test": 0
+    },
+    "image_names_with_rows_in_multiple_splits": 0,
+    "byte_identical_groups": [],
+    "byte_identical_groups_crossing_splits": [],
+    "split_is_image_level_by_name": true
+  },
+  "rare_classes": [
+    {
+      "attribute": "location",
+      "class": "Uncertain",
+      "total": 0,
+      "test": 0
+    },
+    {
+      "attribute": "closure",
+      "class": "Staples",
+      "total": 8,
+      "test": 1
+    },
+    {
+      "attribute": "closure",
+      "class": "Adhesives",
+      "total": 19,
+      "test": 4
+    },
+    {
+      "attribute": "closure",
+      "class": "Uncertain",
+      "total": 0,
+      "test": 0
+    },
+    {
+      "attribute": "exudate",
+      "class": "Purulent",
+      "total": 19,
+      "test": 3
+    },
+    {
+      "attribute": "exudate",
+      "class": "Seropurulent",
+      "total": 11,
+      "test": 1
+    },
+    {
+      "attribute": "exudate",
+      "class": "Uncertain",
+      "total": 0,
+      "test": 0
+    },
+    {
+      "attribute": "erythema",
+      "class": "Uncertain",
+      "total": 0,
+      "test": 0
+    },
+    {
+      "attribute": "edema",
+      "class": "Uncertain",
+      "total": 0,
+      "test": 0
+    },
+    {
+      "attribute": "urgency",
+      "class": "Emergency Care",
+      "total": 18,
+      "test": 4
+    }
+  ],
+  "missing_per_attribute": {
+    "location": 162,
+    "healing": 0,
+    "closure": 194,
+    "exudate": 60,
+    "erythema": 26,
+    "edema": 132,
+    "infection_risk": 0,
+    "urgency": 0
+  },
+  "uncertain_per_attribute": {
+    "location": 0,
+    "healing": 0,
+    "closure": 0,
+    "exudate": 0,
+    "erythema": 0,
+    "edema": 0,
+    "infection_risk": 0,
+    "urgency": 0
+  },
+  "missingness": {
+    "location": {
+      "n_missing": 162,
+      "frac_reports_mentioning_attribute_keyword": 0.0,
+      "examples": [
+        {
+          "image_name": "1000.jpg",
+          "report": "The wound assessment reveals a non-healed wound with existing erythema but no edema, located in an uncertain area and closed with sutures. The wound shows no exudate and has a low risk of infection. Given the green urgency level, the wound can be managed with routine care at home. It is advisable to monitor closely for any signs of infection and continue with proper wound care practices, including keeping the area clean and dry. If the wound location becomes more apparent or problematic, reassessment may be necessary to ensure appropriate care and healing progress."
+        },
+        {
+          "image_name": "1007.jpg",
+          "report": "The wound assessment indicates a healed wound with non-existent exudate, erythema, and edema, suggesting a low infection risk. The wound location is uncertain, and closure method is also uncertain. Given the overall stable condition, this wound is classified as a Home Care (Green) urgency level, recommended for management with routine care. Specific care recommendations should include continued monitoring for signs of infection, ensuring proper hygiene practices, and protecting the healed wound site from potential trauma or irritation. It is essential to maintain regular follow-up appointments to assess the wound's progress and ensure optimal healing outcomes."
+        },
+        {
+          "image_name": "166.jpg",
+          "report": "The wound assessment indicates a non-healed wound with existing erythema, managed with sutures as the closure method, and a low infection risk assessed. The wound is currently at a home care (Green) urgency level, suggesting routine care management. Notably, the exudate characteristics are non-existent, and edema is not present. Given the uncertain wound location, it is recommended to continue monitoring for any signs of infection, applying appropriate wound care measures, and ensuring proper hygiene practices. Regular follow-up appointments are advised to assess healing progress and adjust management as needed."
+        },
+        {
+          "image_name": "167.jpg",
+          "report": "The wound assessment indicates a healed wound with sutures in place, located in an uncertain area. The wound shows normal image status with no exudate, erythema, or edema present. The infection risk assessment is low, and the urgency level is classified as home care (Green) with routine care management recommended. Given the healed status and low infection risk, continued monitoring and care for the sutured wound in an uncertain location are advised to ensure proper healing and prevent any potential complications."
+        }
+      ]
+    },
+    "closure": {
+      "n_missing": 194,
+      "frac_reports_mentioning_attribute_keyword": 0.9278350515463918,
+      "examples": [
+        {
+          "image_name": "1007.jpg",
+          "report": "The wound assessment indicates a healed wound with non-existent exudate, erythema, and edema, suggesting a low infection risk. The wound location is uncertain, and closure method is also uncertain. Given the overall stable condition, this wound is classified as a Home Care (Green) urgency level, recommended for management with routine care. Specific care recommendations should include continued monitoring for signs of infection, ensuring proper hygiene practices, and protecting the healed wound site from potential trauma or irritation. It is essential to maintain regular follow-up appointments to assess the wound's progress and ensure optimal healing outcomes."
+        },
+        {
+          "image_name": "1008.jpg",
+          "report": "The wound assessment indicates a healed wound located in an unspecified area with an uncertain closure method. The image status is normal, with no evidence of exudate, erythema, or edema, suggesting a low risk of infection. The urgency level is classified as home care (Green), indicating that routine care is sufficient for management. However, due to the uncertain closure method, closer monitoring may be necessary to ensure continued healing progress. It is recommended to maintain a clean and dry environment for the wound and to follow up with a healthcare provider for further evaluation and guidance on appropriate closure methods."
+        },
+        {
+          "image_name": "1009.jpg",
+          "report": "The wound assessment of the healed abdominal wound reveals a normal image status with no signs of erythema, edema, exudate, or infection. The closure method remains uncertain, but the infection risk assessment is low. With a Green urgency level for home care, routine wound care management is recommended, including monitoring for any changes in the wound status and ensuring proper hygiene practices. It is essential to continue assessing the wound for any signs of infection and to seek medical attention if any concerning symptoms develop."
+        },
+        {
+          "image_name": "126.jpg",
+          "report": "The wound assessment of the healed abdomen wound indicates a normal image status with no evidence of erythema, edema, exudate, or infection, suggesting a low infection risk. The closure method remains uncertain. The urgency level is classified as Home Care (Green) with a recommendation of routine care management. Specifically, continue to monitor for any signs of infection or delayed healing, and ensure proper wound hygiene practices are maintained."
+        }
+      ]
+    },
+    "exudate": {
+      "n_missing": 60,
+      "frac_reports_mentioning_attribute_keyword": 1.0,
+      "examples": [
+        {
+          "image_name": "199.jpg",
+          "report": "The wound assessment indicates a non-healed wound with existing erythema, located in an uncertain area, requiring uncertain closure method and exhibiting uncertain exudate characteristics and edema. However, infection risk is low, and the urgency level is suitable for home care with routine management. To promote healing and prevent infection, it is recommended to continue with appropriate wound care measures, including regular cleaning, dressing changes, and monitoring for any signs of deterioration. Close attention should be paid to the wound location to ensure proper care is provided."
+        },
+        {
+          "image_name": "202.jpg",
+          "report": "The wound assessment of a non-healed ankle wound with sutures indicates a normal image status and low infection risk. Exudate characteristics, erythema, and edema remain uncertain. Given the home care (green) urgency level, routine wound care management is advised. Specifically, monitoring for signs of infection such as increased pain, redness, or discharge is recommended, along with keeping the wound clean and dry. It is essential to elevate the affected limb to reduce edema and promote healing. Follow-up evaluation is suggested to reassess wound progress and adjust care as needed."
+        },
+        {
+          "image_name": "223.jpg",
+          "report": "The wound assessment indicates a favorable healing progression with the wound being fully healed and no signs of infection present. The lack of erythema, edema, exudate, and the low infection risk assessment support a positive prognosis. As the closure method is uncertain, ongoing monitoring is advised to ensure proper healing. Given the wound's location, which is unspecified, general routine care is recommended for at-home management. Close observation for any changes and prompt medical attention if needed will help maintain the wound's healing trajectory."
+        },
+        {
+          "image_name": "277.jpg",
+          "report": "The wound located on the abdomen has healed with an uncertain closure method and exudate characteristics. Erythema and edema are uncertain as well. The image status is normal, indicating no current issues. With a low infection risk assessment and a green urgency level for home care, routine wound care management is recommended. Specific attention should be paid to maintaining cleanliness and moisture balance at the wound site to prevent infection and promote optimal healing."
+        }
+      ]
+    },
+    "erythema": {
+      "n_missing": 26,
+      "frac_reports_mentioning_attribute_keyword": 1.0,
+      "examples": [
+        {
+          "image_name": "169.jpg",
+          "report": "The wound assessment indicates a non-healed wound with uncertain location and closure method, displaying serous exudate characteristics. Erythema and edema status remain uncertain, with an overall low infection risk level. The urgency level is classified as Home Care (Green), suggesting routine care management. As the wound location is uncertain, it is recommended to conduct a thorough examination to determine the exact location and tailor care accordingly. Regular monitoring for signs of infection and continued routine care are advised to promote optimal healing and prevent potential complications."
+        },
+        {
+          "image_name": "202.jpg",
+          "report": "The wound assessment of a non-healed ankle wound with sutures indicates a normal image status and low infection risk. Exudate characteristics, erythema, and edema remain uncertain. Given the home care (green) urgency level, routine wound care management is advised. Specifically, monitoring for signs of infection such as increased pain, redness, or discharge is recommended, along with keeping the wound clean and dry. It is essential to elevate the affected limb to reduce edema and promote healing. Follow-up evaluation is suggested to reassess wound progress and adjust care as needed."
+        },
+        {
+          "image_name": "217.jpg",
+          "report": "The wound assessment reveals a non-healed wound with sutures in place, located in an uncertain area. The wound shows no signs of infection, with non-existent exudate, no erythema, and uncertain edema. The overall urgency level is classified as Home Care (Green) with a low risk of infection. Therefore, it is recommended to manage the wound with routine care, ensuring proper wound hygiene and monitoring for any signs of delayed healing or infection. Close attention should be paid to the wound location to prevent potential complications and promote optimal healing outcomes."
+        },
+        {
+          "image_name": "277.jpg",
+          "report": "The wound located on the abdomen has healed with an uncertain closure method and exudate characteristics. Erythema and edema are uncertain as well. The image status is normal, indicating no current issues. With a low infection risk assessment and a green urgency level for home care, routine wound care management is recommended. Specific attention should be paid to maintaining cleanliness and moisture balance at the wound site to prevent infection and promote optimal healing."
+        }
+      ]
+    },
+    "edema": {
+      "n_missing": 132,
+      "frac_reports_mentioning_attribute_keyword": 0.9545454545454546,
+      "examples": [
+        {
+          "image_name": "169.jpg",
+          "report": "The wound assessment indicates a non-healed wound with uncertain location and closure method, displaying serous exudate characteristics. Erythema and edema status remain uncertain, with an overall low infection risk level. The urgency level is classified as Home Care (Green), suggesting routine care management. As the wound location is uncertain, it is recommended to conduct a thorough examination to determine the exact location and tailor care accordingly. Regular monitoring for signs of infection and continued routine care are advised to promote optimal healing and prevent potential complications."
+        },
+        {
+          "image_name": "171.jpg",
+          "report": "The wound assessment reveals a non-healed wound with serous exudate, erythema present, and an uncertain location. The closure method was not applied, and the urgency level is classified as Home Care (Green) with a medium infection risk assessment. It is recommended to manage the wound with routine care at home, ensuring proper wound hygiene and monitoring for signs of infection. Given the uncertain location, it is advised to seek further evaluation for precise wound management and potentially consider consulting a healthcare provider for guidance on appropriate care measures."
+        },
+        {
+          "image_name": "172.jpg",
+          "report": "The wound located on the abdomen is currently not healed and closed with sutures. The wound shows signs of erythema, although exudate is non-existent, and edema presence is uncertain. The overall urgency level is designated as Green for home care management with routine care. The infection risk assessment is low. It is recommended to monitor for any changes in erythema and edema, ensure proper wound hygiene, and follow up with healthcare provider if any signs of infection develop."
+        },
+        {
+          "image_name": "175.jpg",
+          "report": "The wound assessment of the healed facial wound, closed with sutures, reveals normal imaging status with no signs of erythema or exudate. While edema presence is uncertain, the infection risk is low, indicating a low urgency level for home care management with routine care. Instruct the patient to maintain good facial hygiene, avoid excessive sun exposure, and follow-up with a healthcare provider if any signs of infection or delayed healing occur."
+        }
+      ]
+    }
+  },
+  "crosstabs": {
+    "infection_risk_x_urgency": {
+      "Clinic Visit": {
+        "High": 4,
+        "Low": 0,
+        "Medium": 64
+      },
+      "Emergency Care": {
+        "High": 18,
+        "Low": 0,
+        "Medium": 0
+      },
+      "Home Care": {
+        "High": 1,
+        "Low": 573,
+        "Medium": 26
+      }
+    },
+    "healing_x_infection_risk": {
+      "High": {
+        "Healed": 0,
+        "Not Healed": 23
+      },
+      "Low": {
+        "Healed": 402,
+        "Not Healed": 171
+      },
+      "Medium": {
+        "Healed": 4,
+        "Not Healed": 86
+      }
+    },
+    "exudate_x_infection_risk": {
+      "High": {
+        "<missing>": 4,
+        "Non-existent": 6,
+        "Purulent": 5,
+        "Sanguineous": 3,
+        "Seropurulent": 4,
+        "Serous": 1
+      },
+      "Low": {
+        "<missing>": 47,
+        "Non-existent": 493,
+        "Purulent": 1,
+        "Sanguineous": 7,
+        "Seropurulent": 1,
+        "Serous": 24
+      },
+      "Medium": {
+        "<missing>": 9,
+        "Non-existent": 32,
+        "Purulent": 13,
+        "Sanguineous": 19,
+        "Seropurulent": 6,
+        "Serous": 11
+      }
+    },
+    "erythema_x_infection_risk": {
+      "High": {
+        "<missing>": 1,
+        "Existent": 18,
+        "Non-existent": 4
+      },
+      "Low": {
+        "<missing>": 25,
+        "Existent": 122,
+        "Non-existent": 426
+      },
+      "Medium": {
+        "<missing>": 0,
+        "Existent": 51,
+        "Non-existent": 39
+      }
+    }
+  },
+  "sizes": {
+    "width_quantiles": {
+      "0.0": 272.0,
+      "0.05": 640.0,
+      "0.25": 640.0,
+      "0.5": 640.0,
+      "0.75": 640.0,
+      "0.95": 1413.75,
+      "1.0": 2048.0
+    },
+    "height_quantiles": {
+      "0.0": 110.0,
+      "0.05": 396.25,
+      "0.25": 640.0,
+      "0.5": 853.0,
+      "0.75": 1080.0,
+      "0.95": 1440.0,
+      "1.0": 2048.0
+    },
+    "short_side_lt_224": 5,
+    "short_side_lt_384": 36,
+    "megapixels_median": 0.54592,
+    "aspect_ratio_quantiles": {
+      "0.05": 0.4845027763755679,
+      "0.5": 0.7502930832356389,
+      "0.95": 1.7775462962962962
+    },
+    "formats": {
+      "JPEG": 686
+    },
+    "modes": {
+      "RGB": 686
+    },
+    "size_by_split_median_short_side": {
+      "test": 640.0,
+      "train": 640.0,
+      "val": 640.0
+    }
+  },
+  "dedup": {
+    "phash_sweep": {
+      "0": {
+        "pairs": 0,
+        "pairs_crossing_splits": 0,
+        "clusters": 0,
+        "images_in_clusters": 0,
+        "clusters_crossing_splits": 0
+      },
+      "2": {
+        "pairs": 1,
+        "pairs_crossing_splits": 0,
+        "clusters": 1,
+        "images_in_clusters": 2,
+        "clusters_crossing_splits": 0
+      },
+      "4": {
+        "pairs": 1,
+        "pairs_crossing_splits": 0,
+        "clusters": 1,
+        "images_in_clusters": 2,
+        "clusters_crossing_splits": 0
+      },
+      "6": {
+        "pairs": 1,
+        "pairs_crossing_splits": 0,
+        "clusters": 1,
+        "images_in_clusters": 2,
+        "clusters_crossing_splits": 0
+      },
+      "8": {
+        "pairs": 3,
+        "pairs_crossing_splits": 1,
+        "clusters": 3,
+        "images_in_clusters": 6,
+        "clusters_crossing_splits": 1
+      },
+      "10": {
+        "pairs": 3,
+        "pairs_crossing_splits": 1,
+        "clusters": 3,
+        "images_in_clusters": 6,
+        "clusters_crossing_splits": 1
+      },
+      "12": {
+        "pairs": 10,
+        "pairs_crossing_splits": 1,
+        "clusters": 9,
+        "images_in_clusters": 19,
+        "clusters_crossing_splits": 1
+      }
+    },
+    "phash_nn_distance_quantiles": {
+      "0.01": 12.0,
+      "0.05": 14.0,
+      "0.25": 16.0,
+      "0.5": 18.0
+    },
+    "phash_review_pairs": [
+      {
+        "a": "119.jpg",
+        "b": "124.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "hamming": 2
+      },
+      {
+        "a": "123.jpg",
+        "b": "984.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "hamming": 8
+      },
+      {
+        "a": "939.jpg",
+        "b": "989.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 8
+      },
+      {
+        "a": "10.jpg",
+        "b": "197.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      },
+      {
+        "a": "10.jpg",
+        "b": "53.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      },
+      {
+        "a": "221.jpg",
+        "b": "950.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      },
+      {
+        "a": "279.jpg",
+        "b": "713.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      },
+      {
+        "a": "398.jpg",
+        "b": "460.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      },
+      {
+        "a": "434.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      },
+      {
+        "a": "712.jpg",
+        "b": "841.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "hamming": 12
+      }
+    ],
+    "phash_contact_sheets": [
+      "results\\phase1\\dedup\\phash_pairs_01.png"
+    ],
+    "embed_review_pairs": [
+      {
+        "a": "88.jpg",
+        "b": "87.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.9261438846588135,
+        "hamming": 24
+      },
+      {
+        "a": "961.jpg",
+        "b": "962.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9245649576187134,
+        "hamming": 30
+      },
+      {
+        "a": "60.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.9237057566642761,
+        "hamming": 28
+      },
+      {
+        "a": "987.jpg",
+        "b": "3.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.9214903712272644,
+        "hamming": 20
+      },
+      {
+        "a": "29.jpg",
+        "b": "30.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.9184180498123169,
+        "hamming": 24
+      },
+      {
+        "a": "308.jpg",
+        "b": "312.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9157785177230835,
+        "hamming": 28
+      },
+      {
+        "a": "313.jpg",
+        "b": "611.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9151211380958557,
+        "hamming": 26
+      },
+      {
+        "a": "150.jpg",
+        "b": "493.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9120677709579468,
+        "hamming": 22
+      },
+      {
+        "a": "449.jpg",
+        "b": "731.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.9085608124732971,
+        "hamming": 26
+      },
+      {
+        "a": "660.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.9083606004714966,
+        "hamming": 26
+      },
+      {
+        "a": "609.jpg",
+        "b": "615.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9073947072029114,
+        "hamming": 32
+      },
+      {
+        "a": "434.jpg",
+        "b": "60.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9035559892654419,
+        "hamming": 24
+      },
+      {
+        "a": "60.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.9011608958244324,
+        "hamming": 22
+      },
+      {
+        "a": "292.jpg",
+        "b": "434.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8965991139411926,
+        "hamming": 28
+      },
+      {
+        "a": "434.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8957401514053345,
+        "hamming": 20
+      },
+      {
+        "a": "60.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8955659866333008,
+        "hamming": 26
+      },
+      {
+        "a": "587.jpg",
+        "b": "606.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8947862386703491,
+        "hamming": 26
+      },
+      {
+        "a": "660.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.894743800163269,
+        "hamming": 14
+      },
+      {
+        "a": "976.jpg",
+        "b": "984.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8921261429786682,
+        "hamming": 26
+      },
+      {
+        "a": "434.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.891366183757782,
+        "hamming": 24
+      },
+      {
+        "a": "258.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8894962668418884,
+        "hamming": 18
+      },
+      {
+        "a": "292.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8891672492027283,
+        "hamming": 28
+      },
+      {
+        "a": "953.jpg",
+        "b": "989.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8877246379852295,
+        "hamming": 20
+      },
+      {
+        "a": "292.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.887613832950592,
+        "hamming": 20
+      },
+      {
+        "a": "66.jpg",
+        "b": "777.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8863486647605896,
+        "hamming": 26
+      },
+      {
+        "a": "493.jpg",
+        "b": "744.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8860701322555542,
+        "hamming": 30
+      },
+      {
+        "a": "160.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8858215808868408,
+        "hamming": 18
+      },
+      {
+        "a": "221.jpg",
+        "b": "37.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8856847882270813,
+        "hamming": 24
+      },
+      {
+        "a": "576.jpg",
+        "b": "811.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.885263979434967,
+        "hamming": 26
+      },
+      {
+        "a": "389.jpg",
+        "b": "476.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8836199641227722,
+        "hamming": 26
+      },
+      {
+        "a": "292.jpg",
+        "b": "493.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.882498562335968,
+        "hamming": 30
+      },
+      {
+        "a": "258.jpg",
+        "b": "292.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8809552192687988,
+        "hamming": 16
+      },
+      {
+        "a": "542.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8803096413612366,
+        "hamming": 26
+      },
+      {
+        "a": "424.jpg",
+        "b": "811.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8797631859779358,
+        "hamming": 28
+      },
+      {
+        "a": "193.jpg",
+        "b": "576.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8790080547332764,
+        "hamming": 32
+      },
+      {
+        "a": "615.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8786815404891968,
+        "hamming": 22
+      },
+      {
+        "a": "80.jpg",
+        "b": "83.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.878406822681427,
+        "hamming": 30
+      },
+      {
+        "a": "415.jpg",
+        "b": "852.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8778647780418396,
+        "hamming": 28
+      },
+      {
+        "a": "876.jpg",
+        "b": "881.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8778483867645264,
+        "hamming": 24
+      },
+      {
+        "a": "215.jpg",
+        "b": "434.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8778318762779236,
+        "hamming": 32
+      },
+      {
+        "a": "608.jpg",
+        "b": "80.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8776120543479919,
+        "hamming": 30
+      },
+      {
+        "a": "274.jpg",
+        "b": "594.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8775319457054138,
+        "hamming": 30
+      },
+      {
+        "a": "258.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.877509355545044,
+        "hamming": 22
+      },
+      {
+        "a": "398.jpg",
+        "b": "434.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8772554993629456,
+        "hamming": 24
+      },
+      {
+        "a": "829.jpg",
+        "b": "98.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8771094679832458,
+        "hamming": 32
+      },
+      {
+        "a": "160.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8763817548751831,
+        "hamming": 32
+      },
+      {
+        "a": "660.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8757925033569336,
+        "hamming": 28
+      },
+      {
+        "a": "215.jpg",
+        "b": "529.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8753703832626343,
+        "hamming": 34
+      },
+      {
+        "a": "146.jpg",
+        "b": "424.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8751958012580872,
+        "hamming": 26
+      },
+      {
+        "a": "292.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8751118779182434,
+        "hamming": 26
+      },
+      {
+        "a": "322.jpg",
+        "b": "398.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8747212886810303,
+        "hamming": 26
+      },
+      {
+        "a": "476.jpg",
+        "b": "501.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8746668696403503,
+        "hamming": 34
+      },
+      {
+        "a": "311.jpg",
+        "b": "457.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8744452595710754,
+        "hamming": 32
+      },
+      {
+        "a": "406.jpg",
+        "b": "542.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8741117119789124,
+        "hamming": 30
+      },
+      {
+        "a": "415.jpg",
+        "b": "798.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8739704489707947,
+        "hamming": 32
+      },
+      {
+        "a": "492.jpg",
+        "b": "939.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8736286163330078,
+        "hamming": 26
+      },
+      {
+        "a": "646.jpg",
+        "b": "178.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8735233545303345,
+        "hamming": 24
+      },
+      {
+        "a": "215.jpg",
+        "b": "493.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8731060028076172,
+        "hamming": 38
+      },
+      {
+        "a": "529.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8729748129844666,
+        "hamming": 28
+      },
+      {
+        "a": "60.jpg",
+        "b": "615.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8726392984390259,
+        "hamming": 30
+      },
+      {
+        "a": "419.jpg",
+        "b": "445.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8723230957984924,
+        "hamming": 20
+      },
+      {
+        "a": "607.jpg",
+        "b": "66.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8722013235092163,
+        "hamming": 28
+      },
+      {
+        "a": "609.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8720229268074036,
+        "hamming": 30
+      },
+      {
+        "a": "10.jpg",
+        "b": "448.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8718627095222473,
+        "hamming": 28
+      },
+      {
+        "a": "292.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8718301057815552,
+        "hamming": 30
+      },
+      {
+        "a": "829.jpg",
+        "b": "597.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8715851902961731,
+        "hamming": 30
+      },
+      {
+        "a": "292.jpg",
+        "b": "60.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.871328592300415,
+        "hamming": 28
+      },
+      {
+        "a": "322.jpg",
+        "b": "492.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8710455298423767,
+        "hamming": 26
+      },
+      {
+        "a": "10.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8703335523605347,
+        "hamming": 34
+      },
+      {
+        "a": "660.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8700748085975647,
+        "hamming": 16
+      },
+      {
+        "a": "215.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8700386881828308,
+        "hamming": 26
+      },
+      {
+        "a": "215.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8700219988822937,
+        "hamming": 30
+      },
+      {
+        "a": "375.jpg",
+        "b": "56.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.869702160358429,
+        "hamming": 24
+      },
+      {
+        "a": "215.jpg",
+        "b": "744.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8695024847984314,
+        "hamming": 20
+      },
+      {
+        "a": "660.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8694587349891663,
+        "hamming": 20
+      },
+      {
+        "a": "415.jpg",
+        "b": "608.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8689929246902466,
+        "hamming": 26
+      },
+      {
+        "a": "398.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8687659502029419,
+        "hamming": 22
+      },
+      {
+        "a": "597.jpg",
+        "b": "44.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8685275316238403,
+        "hamming": 28
+      },
+      {
+        "a": "547.jpg",
+        "b": "92.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8684927225112915,
+        "hamming": 30
+      },
+      {
+        "a": "11.jpg",
+        "b": "208.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8684166669845581,
+        "hamming": 26
+      },
+      {
+        "a": "308.jpg",
+        "b": "253.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8681546449661255,
+        "hamming": 28
+      },
+      {
+        "a": "89.jpg",
+        "b": "90.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.86812424659729,
+        "hamming": 30
+      },
+      {
+        "a": "712.jpg",
+        "b": "457.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8678711652755737,
+        "hamming": 28
+      },
+      {
+        "a": "292.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8678345680236816,
+        "hamming": 30
+      },
+      {
+        "a": "21.jpg",
+        "b": "502.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8674657344818115,
+        "hamming": 28
+      },
+      {
+        "a": "60.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8671399354934692,
+        "hamming": 26
+      },
+      {
+        "a": "10.jpg",
+        "b": "215.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8671166896820068,
+        "hamming": 28
+      },
+      {
+        "a": "322.jpg",
+        "b": "513.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8670831322669983,
+        "hamming": 30
+      },
+      {
+        "a": "10.jpg",
+        "b": "473.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8663003444671631,
+        "hamming": 22
+      },
+      {
+        "a": "10.jpg",
+        "b": "575.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8661860823631287,
+        "hamming": 22
+      },
+      {
+        "a": "174.jpg",
+        "b": "712.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8658930063247681,
+        "hamming": 28
+      },
+      {
+        "a": "265.jpg",
+        "b": "424.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8658124208450317,
+        "hamming": 26
+      },
+      {
+        "a": "519.jpg",
+        "b": "696.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8656193614006042,
+        "hamming": 28
+      },
+      {
+        "a": "241.jpg",
+        "b": "240.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.865545928478241,
+        "hamming": 28
+      },
+      {
+        "a": "51.jpg",
+        "b": "50.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8654574155807495,
+        "hamming": 24
+      },
+      {
+        "a": "542.jpg",
+        "b": "597.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8648591637611389,
+        "hamming": 34
+      },
+      {
+        "a": "434.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8647684454917908,
+        "hamming": 30
+      },
+      {
+        "a": "314.jpg",
+        "b": "424.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8647681474685669,
+        "hamming": 30
+      },
+      {
+        "a": "628.jpg",
+        "b": "631.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8645961880683899,
+        "hamming": 26
+      },
+      {
+        "a": "312.jpg",
+        "b": "66.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8645493984222412,
+        "hamming": 26
+      },
+      {
+        "a": "29.jpg",
+        "b": "544.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8645398616790771,
+        "hamming": 34
+      },
+      {
+        "a": "876.jpg",
+        "b": "884.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.864506721496582,
+        "hamming": 26
+      },
+      {
+        "a": "29.jpg",
+        "b": "615.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8644837737083435,
+        "hamming": 34
+      },
+      {
+        "a": "681.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8643990755081177,
+        "hamming": 28
+      },
+      {
+        "a": "527.jpg",
+        "b": "471.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8642407059669495,
+        "hamming": 28
+      },
+      {
+        "a": "660.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8640488386154175,
+        "hamming": 26
+      },
+      {
+        "a": "712.jpg",
+        "b": "311.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8639750480651855,
+        "hamming": 28
+      },
+      {
+        "a": "473.jpg",
+        "b": "91.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8639455437660217,
+        "hamming": 28
+      },
+      {
+        "a": "548.jpg",
+        "b": "685.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8638361096382141,
+        "hamming": 34
+      },
+      {
+        "a": "215.jpg",
+        "b": "607.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8637239336967468,
+        "hamming": 30
+      },
+      {
+        "a": "434.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8637117743492126,
+        "hamming": 18
+      },
+      {
+        "a": "145.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8636035323143005,
+        "hamming": 22
+      },
+      {
+        "a": "876.jpg",
+        "b": "480.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8627686500549316,
+        "hamming": 30
+      },
+      {
+        "a": "398.jpg",
+        "b": "628.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.862708568572998,
+        "hamming": 24
+      },
+      {
+        "a": "449.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8622009754180908,
+        "hamming": 26
+      },
+      {
+        "a": "193.jpg",
+        "b": "424.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8620765209197998,
+        "hamming": 26
+      },
+      {
+        "a": "193.jpg",
+        "b": "811.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8620259165763855,
+        "hamming": 26
+      },
+      {
+        "a": "226.jpg",
+        "b": "415.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8619694709777832,
+        "hamming": 28
+      },
+      {
+        "a": "60.jpg",
+        "b": "314.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.861908495426178,
+        "hamming": 24
+      },
+      {
+        "a": "665.jpg",
+        "b": "91.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8619075417518616,
+        "hamming": 24
+      },
+      {
+        "a": "434.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8618476986885071,
+        "hamming": 26
+      },
+      {
+        "a": "556.jpg",
+        "b": "99.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8616385459899902,
+        "hamming": 26
+      },
+      {
+        "a": "192.jpg",
+        "b": "398.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8616315722465515,
+        "hamming": 28
+      },
+      {
+        "a": "60.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8616122007369995,
+        "hamming": 24
+      },
+      {
+        "a": "918.jpg",
+        "b": "943.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8614469170570374,
+        "hamming": 20
+      },
+      {
+        "a": "150.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8612774610519409,
+        "hamming": 30
+      },
+      {
+        "a": "415.jpg",
+        "b": "776.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8610952496528625,
+        "hamming": 28
+      },
+      {
+        "a": "375.jpg",
+        "b": "38.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8609707355499268,
+        "hamming": 24
+      },
+      {
+        "a": "172.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8609219193458557,
+        "hamming": 28
+      },
+      {
+        "a": "274.jpg",
+        "b": "406.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8608561158180237,
+        "hamming": 32
+      },
+      {
+        "a": "292.jpg",
+        "b": "398.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8608112335205078,
+        "hamming": 28
+      },
+      {
+        "a": "829.jpg",
+        "b": "750.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8607696294784546,
+        "hamming": 22
+      },
+      {
+        "a": "38.jpg",
+        "b": "56.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8607475757598877,
+        "hamming": 26
+      },
+      {
+        "a": "10.jpg",
+        "b": "13.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8607461452484131,
+        "hamming": 28
+      },
+      {
+        "a": "164.jpg",
+        "b": "637.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8607190251350403,
+        "hamming": 24
+      },
+      {
+        "a": "487.jpg",
+        "b": "829.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8606370687484741,
+        "hamming": 34
+      },
+      {
+        "a": "542.jpg",
+        "b": "60.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8606339693069458,
+        "hamming": 28
+      },
+      {
+        "a": "288.jpg",
+        "b": "379.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8605896234512329,
+        "hamming": 32
+      },
+      {
+        "a": "265.jpg",
+        "b": "385.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.8603383302688599,
+        "hamming": 20
+      },
+      {
+        "a": "215.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8603144288063049,
+        "hamming": 24
+      },
+      {
+        "a": "480.jpg",
+        "b": "442.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8602439761161804,
+        "hamming": 30
+      },
+      {
+        "a": "594.jpg",
+        "b": "731.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8601859211921692,
+        "hamming": 26
+      },
+      {
+        "a": "628.jpg",
+        "b": "798.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8601500391960144,
+        "hamming": 28
+      },
+      {
+        "a": "446.jpg",
+        "b": "63.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.859915018081665,
+        "hamming": 30
+      },
+      {
+        "a": "513.jpg",
+        "b": "744.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8598958253860474,
+        "hamming": 22
+      },
+      {
+        "a": "771.jpg",
+        "b": "404.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8598957061767578,
+        "hamming": 34
+      },
+      {
+        "a": "215.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8598693609237671,
+        "hamming": 32
+      },
+      {
+        "a": "215.jpg",
+        "b": "398.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8595888614654541,
+        "hamming": 30
+      },
+      {
+        "a": "548.jpg",
+        "b": "60.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8594735264778137,
+        "hamming": 26
+      },
+      {
+        "a": "215.jpg",
+        "b": "292.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8594131469726562,
+        "hamming": 30
+      },
+      {
+        "a": "227.jpg",
+        "b": "733.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8593775033950806,
+        "hamming": 32
+      },
+      {
+        "a": "215.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8592119812965393,
+        "hamming": 28
+      },
+      {
+        "a": "849.jpg",
+        "b": "94.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8589479327201843,
+        "hamming": 30
+      },
+      {
+        "a": "918.jpg",
+        "b": "937.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8588853478431702,
+        "hamming": 26
+      },
+      {
+        "a": "434.jpg",
+        "b": "529.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8586922287940979,
+        "hamming": 26
+      },
+      {
+        "a": "292.jpg",
+        "b": "449.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8586077690124512,
+        "hamming": 32
+      },
+      {
+        "a": "10.jpg",
+        "b": "627.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8584463596343994,
+        "hamming": 26
+      },
+      {
+        "a": "493.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8583129048347473,
+        "hamming": 30
+      },
+      {
+        "a": "227.jpg",
+        "b": "852.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8583070039749146,
+        "hamming": 32
+      },
+      {
+        "a": "415.jpg",
+        "b": "714.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8582983016967773,
+        "hamming": 28
+      },
+      {
+        "a": "215.jpg",
+        "b": "449.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8581435084342957,
+        "hamming": 18
+      },
+      {
+        "a": "192.jpg",
+        "b": "434.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8581032752990723,
+        "hamming": 22
+      },
+      {
+        "a": "312.jpg",
+        "b": "253.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8580911755561829,
+        "hamming": 26
+      },
+      {
+        "a": "10.jpg",
+        "b": "744.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.858055591583252,
+        "hamming": 28
+      },
+      {
+        "a": "53.jpg",
+        "b": "13.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8580515384674072,
+        "hamming": 32
+      },
+      {
+        "a": "60.jpg",
+        "b": "146.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8578938841819763,
+        "hamming": 20
+      },
+      {
+        "a": "660.jpg",
+        "b": "711.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8578774929046631,
+        "hamming": 26
+      },
+      {
+        "a": "166.jpg",
+        "b": "38.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8577201962471008,
+        "hamming": 20
+      },
+      {
+        "a": "628.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8576391935348511,
+        "hamming": 28
+      },
+      {
+        "a": "774.jpg",
+        "b": "44.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8576163649559021,
+        "hamming": 24
+      },
+      {
+        "a": "670.jpg",
+        "b": "653.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8572549223899841,
+        "hamming": 24
+      },
+      {
+        "a": "398.jpg",
+        "b": "492.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8571614623069763,
+        "hamming": 30
+      },
+      {
+        "a": "887.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8571213483810425,
+        "hamming": 22
+      },
+      {
+        "a": "434.jpg",
+        "b": "493.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8570551872253418,
+        "hamming": 22
+      },
+      {
+        "a": "165.jpg",
+        "b": "471.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8570353388786316,
+        "hamming": 26
+      },
+      {
+        "a": "449.jpg",
+        "b": "631.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8570303320884705,
+        "hamming": 30
+      },
+      {
+        "a": "308.jpg",
+        "b": "66.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8570203185081482,
+        "hamming": 30
+      },
+      {
+        "a": "921.jpg",
+        "b": "31.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8570056557655334,
+        "hamming": 34
+      },
+      {
+        "a": "33.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8569165468215942,
+        "hamming": 26
+      },
+      {
+        "a": "258.jpg",
+        "b": "434.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8568282723426819,
+        "hamming": 24
+      },
+      {
+        "a": "292.jpg",
+        "b": "193.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8566874861717224,
+        "hamming": 30
+      },
+      {
+        "a": "10.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8566587567329407,
+        "hamming": 22
+      },
+      {
+        "a": "424.jpg",
+        "b": "576.jpg",
+        "split_a": "test",
+        "split_b": "test",
+        "cosine": 0.856621503829956,
+        "hamming": 30
+      },
+      {
+        "a": "295.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8565919995307922,
+        "hamming": 26
+      },
+      {
+        "a": "361.jpg",
+        "b": "829.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.856496274471283,
+        "hamming": 30
+      },
+      {
+        "a": "226.jpg",
+        "b": "714.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8563879132270813,
+        "hamming": 30
+      },
+      {
+        "a": "50.jpg",
+        "b": "25.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8563151359558105,
+        "hamming": 24
+      },
+      {
+        "a": "398.jpg",
+        "b": "91.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8562253713607788,
+        "hamming": 22
+      },
+      {
+        "a": "542.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8561598658561707,
+        "hamming": 20
+      },
+      {
+        "a": "274.jpg",
+        "b": "313.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8560829162597656,
+        "hamming": 24
+      },
+      {
+        "a": "434.jpg",
+        "b": "631.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8559465408325195,
+        "hamming": 28
+      },
+      {
+        "a": "215.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8556507229804993,
+        "hamming": 32
+      },
+      {
+        "a": "274.jpg",
+        "b": "731.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8555750250816345,
+        "hamming": 26
+      },
+      {
+        "a": "10.jpg",
+        "b": "91.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8554688096046448,
+        "hamming": 24
+      },
+      {
+        "a": "160.jpg",
+        "b": "449.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8554236888885498,
+        "hamming": 28
+      },
+      {
+        "a": "594.jpg",
+        "b": "544.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.855302095413208,
+        "hamming": 26
+      },
+      {
+        "a": "42.jpg",
+        "b": "608.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8551688194274902,
+        "hamming": 36
+      },
+      {
+        "a": "192.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8551368117332458,
+        "hamming": 28
+      },
+      {
+        "a": "274.jpg",
+        "b": "609.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8550392389297485,
+        "hamming": 30
+      },
+      {
+        "a": "498.jpg",
+        "b": "582.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8548874855041504,
+        "hamming": 30
+      },
+      {
+        "a": "316.jpg",
+        "b": "624.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8548202514648438,
+        "hamming": 30
+      },
+      {
+        "a": "434.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8546695113182068,
+        "hamming": 18
+      },
+      {
+        "a": "449.jpg",
+        "b": "576.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8546236753463745,
+        "hamming": 30
+      },
+      {
+        "a": "939.jpg",
+        "b": "958.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8545807003974915,
+        "hamming": 28
+      },
+      {
+        "a": "10.jpg",
+        "b": "160.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8545778393745422,
+        "hamming": 30
+      },
+      {
+        "a": "797.jpg",
+        "b": "193.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8545403480529785,
+        "hamming": 32
+      },
+      {
+        "a": "274.jpg",
+        "b": "265.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8545085191726685,
+        "hamming": 24
+      },
+      {
+        "a": "33.jpg",
+        "b": "714.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8542894721031189,
+        "hamming": 28
+      },
+      {
+        "a": "398.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8542894124984741,
+        "hamming": 26
+      },
+      {
+        "a": "412.jpg",
+        "b": "60.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8541793823242188,
+        "hamming": 26
+      },
+      {
+        "a": "449.jpg",
+        "b": "594.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8541443943977356,
+        "hamming": 28
+      },
+      {
+        "a": "322.jpg",
+        "b": "744.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8541396260261536,
+        "hamming": 28
+      },
+      {
+        "a": "292.jpg",
+        "b": "681.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8541332483291626,
+        "hamming": 30
+      },
+      {
+        "a": "274.jpg",
+        "b": "449.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.854103147983551,
+        "hamming": 30
+      },
+      {
+        "a": "542.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8536425828933716,
+        "hamming": 22
+      },
+      {
+        "a": "295.jpg",
+        "b": "811.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8534380793571472,
+        "hamming": 34
+      },
+      {
+        "a": "174.jpg",
+        "b": "546.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8532544374465942,
+        "hamming": 26
+      },
+      {
+        "a": "227.jpg",
+        "b": "415.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8529887795448303,
+        "hamming": 28
+      },
+      {
+        "a": "529.jpg",
+        "b": "60.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8528194427490234,
+        "hamming": 24
+      },
+      {
+        "a": "493.jpg",
+        "b": "607.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8527555465698242,
+        "hamming": 28
+      },
+      {
+        "a": "406.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8527067303657532,
+        "hamming": 20
+      },
+      {
+        "a": "398.jpg",
+        "b": "607.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8523440361022949,
+        "hamming": 26
+      },
+      {
+        "a": "848.jpg",
+        "b": "100.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8523133397102356,
+        "hamming": 24
+      },
+      {
+        "a": "292.jpg",
+        "b": "615.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8523030281066895,
+        "hamming": 28
+      },
+      {
+        "a": "502.jpg",
+        "b": "519.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.852285623550415,
+        "hamming": 30
+      },
+      {
+        "a": "132.jpg",
+        "b": "312.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8522616624832153,
+        "hamming": 32
+      },
+      {
+        "a": "190.jpg",
+        "b": "66.jpg",
+        "split_a": "val",
+        "split_b": "test",
+        "cosine": 0.8522443175315857,
+        "hamming": 30
+      },
+      {
+        "a": "628.jpg",
+        "b": "471.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8522365689277649,
+        "hamming": 22
+      },
+      {
+        "a": "322.jpg",
+        "b": "628.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8521247506141663,
+        "hamming": 24
+      },
+      {
+        "a": "102.jpg",
+        "b": "299.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8521127700805664,
+        "hamming": 30
+      },
+      {
+        "a": "615.jpg",
+        "b": "660.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8521004319190979,
+        "hamming": 30
+      },
+      {
+        "a": "631.jpg",
+        "b": "711.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.852046549320221,
+        "hamming": 28
+      },
+      {
+        "a": "685.jpg",
+        "b": "771.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8519992828369141,
+        "hamming": 28
+      },
+      {
+        "a": "848.jpg",
+        "b": "480.jpg",
+        "split_a": "train",
+        "split_b": "val",
+        "cosine": 0.8519790172576904,
+        "hamming": 32
+      },
+      {
+        "a": "199.jpg",
+        "b": "958.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8518575429916382,
+        "hamming": 28
+      },
+      {
+        "a": "536.jpg",
+        "b": "110.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8517542481422424,
+        "hamming": 34
+      },
+      {
+        "a": "38.jpg",
+        "b": "652.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8517073392868042,
+        "hamming": 24
+      },
+      {
+        "a": "498.jpg",
+        "b": "749.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8517000675201416,
+        "hamming": 34
+      },
+      {
+        "a": "449.jpg",
+        "b": "887.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8516785502433777,
+        "hamming": 30
+      },
+      {
+        "a": "308.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.851546585559845,
+        "hamming": 32
+      },
+      {
+        "a": "542.jpg",
+        "b": "44.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8515060544013977,
+        "hamming": 26
+      },
+      {
+        "a": "597.jpg",
+        "b": "750.jpg",
+        "split_a": "val",
+        "split_b": "val",
+        "cosine": 0.8513423800468445,
+        "hamming": 34
+      },
+      {
+        "a": "887.jpg",
+        "b": "424.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8513132333755493,
+        "hamming": 24
+      },
+      {
+        "a": "280.jpg",
+        "b": "449.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8512612581253052,
+        "hamming": 26
+      },
+      {
+        "a": "10.jpg",
+        "b": "665.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8510517477989197,
+        "hamming": 28
+      },
+      {
+        "a": "60.jpg",
+        "b": "253.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8507719039916992,
+        "hamming": 28
+      },
+      {
+        "a": "931.jpg",
+        "b": "943.jpg",
+        "split_a": "train",
+        "split_b": "test",
+        "cosine": 0.8505262732505798,
+        "hamming": 24
+      },
+      {
+        "a": "415.jpg",
+        "b": "583.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8503692150115967,
+        "hamming": 26
+      },
+      {
+        "a": "150.jpg",
+        "b": "215.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8503410816192627,
+        "hamming": 30
+      },
+      {
+        "a": "258.jpg",
+        "b": "493.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8502018451690674,
+        "hamming": 28
+      },
+      {
+        "a": "215.jpg",
+        "b": "779.jpg",
+        "split_a": "train",
+        "split_b": "train",
+        "cosine": 0.8501655459403992,
+        "hamming": 28
+      }
+    ],
+    "embed_cosine_sweep": {
+      "0.8": {
+        "pairs": 1944,
+        "pairs_crossing_splits": 811
+      },
+      "0.85": {
+        "pairs": 254,
+        "pairs_crossing_splits": 110
+      },
+      "0.9": {
+        "pairs": 15,
+        "pairs_crossing_splits": 6
+      },
+      "0.95": {
+        "pairs": 1,
+        "pairs_crossing_splits": 0
+      }
+    },
+    "embed_contact_sheets": [
+      "results\\phase1\\dedup\\embed_pairs_01.png",
+      "results\\phase1\\dedup\\embed_pairs_02.png",
+      "results\\phase1\\dedup\\embed_pairs_03.png",
+      "results\\phase1\\dedup\\embed_pairs_04.png",
+      "results\\phase1\\dedup\\embed_pairs_05.png",
+      "results\\phase1\\dedup\\embed_pairs_06.png",
+      "results\\phase1\\dedup\\embed_pairs_07.png",
+      "results\\phase1\\dedup\\embed_pairs_08.png",
+      "results\\phase1\\dedup\\embed_pairs_09.png",
+      "results\\phase1\\dedup\\embed_pairs_10.png",
+      "results\\phase1\\dedup\\embed_pairs_11.png",
+      "results\\phase1\\dedup\\embed_pairs_12.png",
+      "results\\phase1\\dedup\\embed_pairs_13.png",
+      "results\\phase1\\dedup\\embed_pairs_14.png",
+      "results\\phase1\\dedup\\embed_pairs_15.png",
+      "results\\phase1\\dedup\\embed_pairs_16.png",
+      "results\\phase1\\dedup\\embed_pairs_17.png",
+      "results\\phase1\\dedup\\embed_pairs_18.png",
+      "results\\phase1\\dedup\\embed_pairs_19.png",
+      "results\\phase1\\dedup\\embed_pairs_20.png",
+      "results\\phase1\\dedup\\embed_pairs_21.png"
+    ]
+  },
+  "groups": {
+    "verified": {
+      "n_edges": 33,
+      "groups": 24,
+      "images_in_groups": 57,
+      "largest_group": 7,
+      "groups_crossing_splits": 12,
+      "test_images_with_partner_in_train_or_val": 12,
+      "val_images_with_partner_in_train": 2,
+      "test_leak_images": [
+        "3.jpg",
+        "22.jpg",
+        "30.jpg",
+        "44.jpg",
+        "87.jpg",
+        "90.jpg",
+        "100.jpg",
+        "104.jpg",
+        "240.jpg",
+        "880.jpg",
+        "884.jpg",
+        "984.jpg"
+      ]
+    },
+    "verified+uncertain": {
+      "n_edges": 46,
+      "groups": 37,
+      "images_in_groups": 83,
+      "largest_group": 7,
+      "groups_crossing_splits": 14,
+      "test_images_with_partner_in_train_or_val": 14,
+      "val_images_with_partner_in_train": 2,
+      "test_leak_images": [
+        "3.jpg",
+        "22.jpg",
+        "30.jpg",
+        "44.jpg",
+        "63.jpg",
+        "87.jpg",
+        "90.jpg",
+        "100.jpg",
+        "104.jpg",
+        "178.jpg",
+        "240.jpg",
+        "880.jpg",
+        "884.jpg",
+        "984.jpg"
+      ]
+    },
+    "conservative_auto": {
+      "n_edges": 235,
+      "groups": 79,
+      "images_in_groups": 251,
+      "largest_group": 16,
+      "groups_crossing_splits": 53,
+      "test_images_with_partner_in_train_or_val": 56,
+      "val_images_with_partner_in_train": 17,
+      "test_leak_images": [
+        "3.jpg",
+        "13.jpg",
+        "22.jpg",
+        "30.jpg",
+        "44.jpg",
+        "63.jpg",
+        "79.jpg",
+        "87.jpg",
+        "90.jpg",
+        "93.jpg",
+        "100.jpg",
+        "104.jpg",
+        "119.jpg",
+        "124.jpg",
+        "134.jpg",
+        "146.jpg",
+        "178.jpg",
+        "180.jpg",
+        "193.jpg",
+        "194.jpg",
+        "209.jpg",
+        "240.jpg",
+        "265.jpg",
+        "282.jpg",
+        "291.jpg",
+        "311.jpg",
+        "377.jpg",
+        "385.jpg",
+        "392.jpg",
+        "419.jpg",
+        "424.jpg",
+        "457.jpg",
+        "465.jpg",
+        "471.jpg",
+        "476.jpg",
+        "481.jpg",
+        "495.jpg",
+        "501.jpg",
+        "544.jpg",
+        "575.jpg",
+        "576.jpg",
+        "582.jpg",
+        "588.jpg",
+        "590.jpg",
+        "625.jpg",
+        "686.jpg",
+        "714.jpg",
+        "717.jpg",
+        "777.jpg",
+        "787.jpg",
+        "805.jpg",
+        "880.jpg",
+        "884.jpg",
+        "899.jpg",
+        "937.jpg",
+        "984.jpg"
+      ]
+    }
+  },
+  "ocr": {
+    "images_with_orange_redaction_box": 37,
+    "images_with_any_detected_overlay": 72,
+    "frac_any_overlay_by_split": {
+      "test": 0.139,
+      "train": 0.096,
+      "val": 0.101
+    },
+    "images_with_text": 47,
+    "frac_images_with_text": 0.06851311953352769,
+    "frac_with_text_by_split": {
+      "test": 0.109,
+      "train": 0.056,
+      "val": 0.072
+    },
+    "text_area_quantiles_among_flagged": {
+      "0.25": 0.0042,
+      "0.5": 0.0338,
+      "0.75": 0.0599,
+      "0.95": 0.1263
+    },
+    "frac_any_overlay_by_label": {
+      "infection_risk": {
+        "High": {
+          "mean": 0.435,
+          "size": 23
+        },
+        "Low": {
+          "mean": 0.084,
+          "size": 573
+        },
+        "Medium": {
+          "mean": 0.156,
+          "size": 90
+        }
+      },
+      "urgency": {
+        "Clinic Visit": {
+          "mean": 0.235,
+          "size": 68
+        },
+        "Emergency Care": {
+          "mean": 0.333,
+          "size": 18
+        },
+        "Home Care": {
+          "mean": 0.083,
+          "size": 600
+        }
+      },
+      "healing": {
+        "Healed": {
+          "mean": 0.084,
+          "size": 406
+        },
+        "Not Healed": {
+          "mean": 0.136,
+          "size": 280
+        }
+      }
+    },
+    "flagged_sample": [
+      "47.jpg",
+      "906.jpg",
+      "139.jpg",
+      "379.jpg",
+      "929.jpg",
+      "606.jpg",
+      "453.jpg",
+      "890.jpg",
+      "963.jpg",
+      "796.jpg",
+      "120.jpg",
+      "679.jpg",
+      "11.jpg",
+      "990.jpg",
+      "956.jpg",
+      "896.jpg",
+      "587.jpg",
+      "788.jpg",
+      "76.jpg",
+      "13.jpg",
+      "250.jpg",
+      "26.jpg",
+      "20.jpg",
+      "143.jpg"
+    ]
+  }
+}
