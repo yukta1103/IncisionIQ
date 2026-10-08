@@ -1,0 +1,51 @@
+name: convnext_tiny_384
+seed: 42
+processed_dir: data/processed
+results_dir: results/phase2
+checkpoint_dir: checkpoints/phase2
+review_file: configs/dedup_review.yaml
+group_column: group_conservative_auto
+
+backbone: convnext_tiny.fb_in22k_ft_in1k
+cache_size: 448     # letterboxed cache resolution
+input_size: 384
+eval_batch_size: 32
+
+cv:
+  n_splits: 5
+  n_inner: 6        # inner-val is 1/6 of each outer training portion
+
+augment:
+  crop_scale: [0.6, 1.0]
+  rotation: 15
+  brightness: 0.1
+  contrast: 0.1
+  saturation: 0.05
+
+train:
+  epochs: 15
+  warmup_epochs: 2
+  batch_size: 16
+  lr_backbone: 5.0e-5
+  lr_head: 5.0e-4
+  weight_decay: 0.05
+  grad_clip: 1.0
+  head_dropout: 0.2
+  drop_path: 0.1
+  class_weight_power: 0.5   # sqrt inverse frequency
+  focal_gamma: 0.0          # 0 = weighted cross-entropy
+  # Nested selection: every outer fold trains each candidate on its inner-train
+  # split and keeps the candidate and epoch with the lowest inner-val loss.
+  # The grid was fixed after one look at fold-0 inner-val learning curves
+  # (lr 1e-4 for 30 epochs overfit by epoch 3); outer folds were never used.
+  candidates:
+    - {lr_backbone: 2.0e-5}
+    - {lr_backbone: 5.0e-5}
+    - {lr_backbone: 1.0e-4}
+
+baseline:
+  # logistic regression on frozen pretrained backbone features
+  C_grid: [0.001, 0.01, 0.1, 1.0]
+
+eval:
+  n_boot: 2000
