@@ -2628,12 +2628,12 @@
     }
   },
   "ocr": {
-    "images_with_orange_redaction_box": 37,
-    "images_with_any_detected_overlay": 72,
+    "images_with_orange_redaction_box": 32,
+    "images_with_any_detected_overlay": 67,
     "frac_any_overlay_by_split": {
-      "test": 0.139,
-      "train": 0.096,
-      "val": 0.101
+      "test": 0.131,
+      "train": 0.09,
+      "val": 0.087
     },
     "images_with_text": 47,
     "frac_images_with_text": 0.06851311953352769,
@@ -2655,17 +2655,17 @@
           "size": 23
         },
         "Low": {
-          "mean": 0.084,
+          "mean": 0.077,
           "size": 573
         },
         "Medium": {
-          "mean": 0.156,
+          "mean": 0.144,
           "size": 90
         }
       },
       "urgency": {
         "Clinic Visit": {
-          "mean": 0.235,
+          "mean": 0.221,
           "size": 68
         },
         "Emergency Care": {
@@ -2673,17 +2673,17 @@
           "size": 18
         },
         "Home Care": {
-          "mean": 0.083,
+          "mean": 0.077,
           "size": 600
         }
       },
       "healing": {
         "Healed": {
-          "mean": 0.084,
+          "mean": 0.074,
           "size": 406
         },
         "Not Healed": {
-          "mean": 0.136,
+          "mean": 0.132,
           "size": 280
         }
       }

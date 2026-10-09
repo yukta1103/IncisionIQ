@@ -1,0 +1,97 @@
+{
+  "best_epochs": {
+    "cv0": {
+      "candidate": 1,
+      "epoch": 5,
+      "inner_val_loss": 2.5290169715881348
+    },
+    "cv1": {
+      "candidate": 2,
+      "epoch": 5,
+      "inner_val_loss": 2.3718440532684326
+    },
+    "cv2": {
+      "candidate": 1,
+      "epoch": 6,
+      "inner_val_loss": 2.3028383255004883
+    },
+    "cv3": {
+      "candidate": 1,
+      "epoch": 8,
+      "inner_val_loss": 1.6877458095550537
+    },
+    "cv4": {
+      "candidate": 1,
+      "epoch": 7,
+      "inner_val_loss": 2.3617019653320312
+    },
+    "secondary": {
+      "candidate": 2,
+      "epoch": 3,
+      "inner_val_loss": 2.8989248275756836
+    }
+  },
+  "config": {
+    "name": "convnext_tiny_384_inpainted",
+    "seed": 42,
+    "processed_dir": "data/processed",
+    "results_dir": "results/phase3",
+    "checkpoint_dir": "checkpoints/phase3",
+    "review_file": "configs/dedup_review.yaml",
+    "group_column": "group_conservative_auto",
+    "backbone": "convnext_tiny.fb_in22k_ft_in1k",
+    "cache_size": 448,
+    "input_size": 384,
+    "eval_batch_size": 32,
+    "cv": {
+      "n_splits": 5,
+      "n_inner": 6
+    },
+    "augment": {
+      "crop_scale": [
+        0.6,
+        1.0
+      ],
+      "rotation": 15,
+      "brightness": 0.1,
+      "contrast": 0.1,
+      "saturation": 0.05
+    },
+    "train": {
+      "epochs": 15,
+      "warmup_epochs": 2,
+      "batch_size": 16,
+      "lr_backbone": 5e-05,
+      "lr_head": 0.0005,
+      "weight_decay": 0.05,
+      "grad_clip": 1.0,
+      "head_dropout": 0.2,
+      "drop_path": 0.1,
+      "class_weight_power": 0.5,
+      "focal_gamma": 0.0,
+      "candidates": [
+        {
+          "lr_backbone": 2e-05
+        },
+        {
+          "lr_backbone": 5e-05
+        },
+        {
+          "lr_backbone": 0.0001
+        }
+      ]
+    },
+    "baseline": {
+      "C_grid": [
+        0.001,
+        0.01,
+        0.1,
+        1.0
+      ]
+    },
+    "eval": {
+      "n_boot": 2000
+    },
+    "image_variant": "inpainted"
+  }
+}

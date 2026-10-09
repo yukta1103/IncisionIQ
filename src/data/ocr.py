@@ -54,10 +54,16 @@ def merge_passes(passes: list[list[list[dict]]]) -> list[list[dict]]:
     return [sum(per_image, []) for per_image in zip(*passes)]
 
 
-def orange_redaction_boxes(path: Path, min_area_frac: float = 0.002) -> list[list[float]]:
+def orange_redaction_boxes(path: Path, min_area_frac: float = 0.015, max_area_frac: float = 0.06,
+                           min_aspect: float = 2.5, max_aspect: float = 4.5) -> list[list[float]]:
     """Detect the solid orange rectangles (with pixelated text inside) that appear
     on many images. Returns bboxes of orange connected components that are
-    roughly rectangular (fill ratio of the bounding box above 0.6)."""
+    roughly rectangular (fill ratio of the bounding box above 0.6).
+
+    The size and aspect limits match the overlay's fixed shape (about 3.3% of the
+    image, aspect about 2.9). They were added in Phase 3 after a review of every
+    detection: without them the detector also fired on a wooden floor, an orange
+    blanket, a cloth edge, a floor patch and a region of skin (5 of 37 images)."""
     from scipy import ndimage
 
     with Image.open(path) as im:
@@ -71,7 +77,8 @@ def orange_redaction_boxes(path: Path, min_area_frac: float = 0.002) -> list[lis
     for sl in ndimage.find_objects(lab):
         hh, ww = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
         area = hh * ww
-        if area < min_area_frac * mask.size or ww < 1.5 * hh:
+        if not (min_area_frac * mask.size <= area <= max_area_frac * mask.size) or not (
+                min_aspect * hh <= ww <= max_aspect * hh):
             continue
         fill = mask[sl].mean()
         if fill > 0.6:

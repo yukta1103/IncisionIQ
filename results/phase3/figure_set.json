@@ -14,12 +14,12 @@
     "90.jpg",
     "899.jpg",
     "282.jpg",
-    "907.jpg",
+    "937.jpg",
     "451.jpg",
     "788.jpg",
     "714.jpg",
     "686.jpg",
-    "67.jpg"
+    "674.jpg"
   ],
   "category": {
     "111.jpg": "High risk",
@@ -28,11 +28,11 @@
     "90.jpg": "Medium risk",
     "899.jpg": "purulent exudate",
     "282.jpg": "purulent exudate",
-    "907.jpg": "overlay, ID 900+",
+    "937.jpg": "overlay, ID 900+",
     "451.jpg": "overlay, other source",
     "788.jpg": "overlay, other source",
     "714.jpg": "Low risk, no overlay",
     "686.jpg": "Low risk, no overlay",
-    "67.jpg": "Low risk, no overlay"
+    "674.jpg": "Low risk, no overlay"
   }
 }

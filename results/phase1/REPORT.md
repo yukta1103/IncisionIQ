@@ -56,17 +56,19 @@ Overlays (automatic detection: easyocr Chinese+English pass, Russian+English pas
 
 | overlay type | count | how measured |
 |---|---|---|
-| any detected text or orange box | 72 / 686 (10.5%) | automatic |
+| any detected text or orange box | 67 / 686 (9.8%) | automatic |
 | text (captions, dates, phone-camera watermarks) | 47 | OCR, 24/24 sampled flags were real text |
-| orange pixelated redaction boxes | 37 | color detector, 7/7 known positives, 0/5 negatives |
+| orange pixelated redaction boxes | 32 | color detector with a size/aspect filter; every detection reviewed (see correction below) |
 | small corner platform logo | about 39% (14/36 sample, 95% CI 25 to 55%) | manual count on random unflagged sample, not detected automatically |
 | captions/stickers OCR missed | about 8% of unflagged (3/36, CI 3 to 22%) | manual |
 
 **Shortcut risk, confirmed at the data level:**
-- Overlay rate vs infection risk: High 43% (10/23), Medium 16%, Low 8%. Orange boxes alone: High 30% (CI 16 to 51%) vs Low 3% (CI 2 to 5%).
-- IDs 900 to 1005 (11% of images) contain 48% of all High-risk labels and 29 of 37 orange boxes. They carry Russian captions from what looks like one surgeon's educational account with severe cases ("severe necrotizing infection", "amputation at mid-thigh", "multiple fistulas"). A model can learn "orange box or Cyrillic caption means High risk".
+- Overlay rate vs infection risk: High 43% (10/23), Medium 14%, Low 8% (44/573). Orange boxes alone: High 30% (7/23, CI 16 to 51%) vs Low 3% (15/573, CI 2 to 4%).
+- IDs 900 to 1005 (11% of images) contain 48% of all High-risk labels and 28 of 32 orange-box images. They carry Russian captions from what looks like one surgeon's educational account with severe cases ("severe necrotizing infection", "amputation at mid-thigh", "multiple fistulas"). A model can learn "orange box or Cyrillic caption means High risk".
 - Some captions state the label outright, e.g. 76.jpg says "red, swollen and itchy" in Chinese.
 - Faces are partially visible in some facial-region images (some are pixelated by the source, some are not).
+
+**Correction (made in Phase 3).** The first version of this report counted 37 orange-box images and 72 images with any overlay. Reviewing every detection in Phase 3 showed 5 false positives (a wooden floor, an orange blanket, a cloth edge, a floor patch, and a region of skin next to a wound). The detector now requires the overlay's fixed shape (1.5 to 6% of the image, aspect 2.5 to 4.5); the numbers above are corrected. The conclusion is unchanged.
 
 ## 6. Decisions needed (options, not decisions)
 
