@@ -25,8 +25,19 @@ def set_seed(seed: int) -> None:
 
 
 def load_config(path: str | Path) -> dict:
+    """Load YAML. A `base:` key (path relative to the repo root) is loaded first
+    and deep-merged under this file, so experiment configs list only differences."""
     with open(path) as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    base = cfg.pop("base", None)
+    return _merge(load_config(ROOT / base), cfg) if base else cfg
+
+
+def _merge(a: dict, b: dict) -> dict:
+    out = dict(a)
+    for k, v in b.items():
+        out[k] = _merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
 
 
 def save_json(obj, path: str | Path) -> None:
