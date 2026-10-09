@@ -29,12 +29,22 @@ Full tables: `results/phase2/REPORT.md`.
 
 ## Shortcut audit (Phase 3)
 
-Text and redaction overlays measurably pushed the infection head toward "elevated": inpainting them at test time lowered P(elevated) by 0.043 [0.028, 0.061]. Retraining on inpainted images removes that dependence (-0.006 [-0.014, +0.002]) with unchanged ranking (AUROC 0.77 excluding IDs 900+). It does not remove the source signal: image features still identify the ID 900+ source with AUROC 0.93, so the excluded estimate stays primary. Details: `results/phase3/REPORT.md`.
+Inpainting removed a measurable text-overlay shortcut (overlay effect on P(elevated) went from 0.043 to 0.006) with no change in ranking (AUROC 0.77). The image source remains identifiable from the photos themselves (frozen-feature probe AUROC 0.93 before and after masking), so ID 900+ excluded results remain primary.
+
+At the Phase 2 tuned decision rule, infection macro F1 is lower with the mitigated model (paired difference -0.046 [-0.083, -0.010], excluding ID 900+). Ranking is unchanged (AUROC difference -0.004 [-0.029, +0.021]); the drop is a threshold shift (more images called elevated), so Phase 4 sets the operating point by a recall target. The mitigated model is used from Phase 4 on. Details: `results/phase3/REPORT.md`, `results/phase3/comparison.md`.
 
 ## Design choices backed by the numbers
 
-- **Drainage comes from the patient, not the image.** The image model's purulent predictions are treated as unreliable: across grouped CV it catches 1 of 30 purulent wounds (recall 0.03 [0.00, 0.11]; the frozen baseline catches 9 of 30). The triage verdict therefore takes drainage from the patient's own answer, and the image model's exudate output is shown for information only.
+- **Drainage comes from the patient, not the image.** The image model's purulent predictions are treated as unreliable: across grouped CV the Phase 2 model catches 1 of 30 purulent wounds (recall 0.03 [0.00, 0.11]) and the mitigated model used from Phase 4 on catches 3 of 30 (0.10 [0.00, 0.21]); the frozen baseline catches 9 of 30. The triage verdict therefore takes drainage from the patient's own answer, and the image model's exudate output is shown for information only.
 - **Macro F1 is not the triage objective.** The infection operating point is chosen by a recall target on Elevated risk, with the false-alarm cost shown at each target (Phase 4).
+
+## Limitations (so far)
+
+- **Small dataset:** 686 images; the rarest classes have 30 or fewer examples (purulent exudate 30, High infection risk 23), so their estimates have wide intervals.
+- **Social-media photos,** not photos taken in a home-monitoring app; selection bias toward cases people chose to post.
+- **One image source dominates the severe cases** (IDs 900+) and is identifiable from the photos themselves.
+- **Overlays the mitigation does not remove:** small corner platform logos (an estimated 39% of images), phone screenshot UI (status bars, buttons, thumbnail strips), and the colored banners behind captions (the caption text is inpainted, the banner can remain as a faint band).
+- **Not clinically validated and not a medical device.**
 
 ## Reproduce
 

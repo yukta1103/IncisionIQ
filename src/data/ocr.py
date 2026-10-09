@@ -11,6 +11,21 @@ from PIL import Image, ImageOps
 MAX_SIDE = 1280  # downscale very large images for speed, boxes are rescaled back
 
 
+def ocr_image(reader, im: Image.Image) -> list[dict]:
+    """Detections for one RGB image (already EXIF-transposed), boxes in its pixels.
+    Shared by the offline audit and the inference pipeline."""
+    scale = min(1.0, MAX_SIDE / max(im.size))
+    if scale < 1.0:
+        im = im.resize((round(im.width * scale), round(im.height * scale)), Image.BILINEAR)
+    dets = []
+    for box, text, conf in reader.readtext(np.asarray(im)):
+        box = np.asarray(box, dtype=float) / scale
+        x0, y0 = box.min(axis=0)
+        x1, y1 = box.max(axis=0)
+        dets.append({"text": text, "conf": float(conf), "bbox": [float(x0), float(y0), float(x1), float(y1)]})
+    return dets
+
+
 def run_ocr(paths: list[Path], langs=("ch_sim", "en"), gpu: bool = True) -> list[list[dict]]:
     import easyocr
 
@@ -18,21 +33,7 @@ def run_ocr(paths: list[Path], langs=("ch_sim", "en"), gpu: bool = True) -> list
     out = []
     for p in paths:
         with Image.open(p) as im:
-            im = ImageOps.exif_transpose(im).convert("RGB")
-        scale = min(1.0, MAX_SIDE / max(im.size))
-        if scale < 1.0:
-            im = im.resize((round(im.width * scale), round(im.height * scale)), Image.BILINEAR)
-        dets = []
-        for box, text, conf in reader.readtext(np.asarray(im)):
-            box = np.asarray(box, dtype=float) / scale
-            x0, y0 = box.min(axis=0)
-            x1, y1 = box.max(axis=0)
-            dets.append({
-                "text": text,
-                "conf": float(conf),
-                "bbox": [float(x0), float(y0), float(x1), float(y1)],
-            })
-        out.append(dets)
+            out.append(ocr_image(reader, ImageOps.exif_transpose(im).convert("RGB")))
     return out
 
 
@@ -64,10 +65,17 @@ def orange_redaction_boxes(path: Path, min_area_frac: float = 0.015, max_area_fr
     image, aspect about 2.9). They were added in Phase 3 after a review of every
     detection: without them the detector also fired on a wooden floor, an orange
     blanket, a cloth edge, a floor patch and a region of skin (5 of 37 images)."""
+    with Image.open(path) as im:
+        return orange_boxes_in_image(ImageOps.exif_transpose(im).convert("RGB"), min_area_frac, max_area_frac,
+                                     min_aspect, max_aspect)
+
+
+def orange_boxes_in_image(im: Image.Image, min_area_frac: float = 0.015, max_area_frac: float = 0.06,
+                          min_aspect: float = 2.5, max_aspect: float = 4.5) -> list[list[float]]:
+    """Same detector as `orange_redaction_boxes`, for an in-memory RGB image."""
     from scipy import ndimage
 
-    with Image.open(path) as im:
-        hsv = np.asarray(ImageOps.exif_transpose(im).convert("HSV")).astype(int)
+    hsv = np.asarray(im.convert("HSV")).astype(int)
     h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
     # PIL hue is 0..255; the overlay orange sits around 20..30 with high saturation
     mask = (h >= 15) & (h <= 32) & (s >= 150) & (v >= 180)

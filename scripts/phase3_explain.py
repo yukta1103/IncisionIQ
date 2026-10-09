@@ -6,7 +6,10 @@ Outputs (results/phase3/<model name>/):
   cam_overlay.parquet   per overlay image and head: CAM mass on overlay boxes, box area
   occlusion.parquet     per overlay image and head: P(critical) on original vs inpainted input
   shortcut_summary.json group-bootstrap CIs for the above
-  gradcam_*.png         fixed figure set (same images for every model)
+  results/phase3/figures/<model name>_gradcam_*.png
+                        fixed figure set (same images for every model). Detected text and
+                        overlay regions are pixelated in the displayed image only (they can
+                        carry account IDs); CAMs are computed on the real model input.
 
 Usage: python scripts/phase3_explain.py --config configs/phase2_convnext_tiny.yaml
 """
@@ -35,6 +38,27 @@ from src.models.multitask import MultiTaskNet  # noqa: E402
 from src.utils import ROOT, load_config, save_json, set_seed  # noqa: E402
 
 FIGURE_SET_FILE = ROOT / "results" / "phase3" / "figure_set.json"
+FIGURE_DIR = ROOT / "results" / "phase3" / "figures"
+CAPTION = ("Grad-CAM, {name}: maps highlight the wound region the model relies on for the critical class of each head. "
+           "At 12x12 resolution they do not identify specific features.\n"
+           "Each image is explained by the fold model that "
+           "did not train on it. Text and overlay regions are pixelated for display.")
+
+
+def pixelate_regions(rgb: np.ndarray, boxes, block: int = 12) -> np.ndarray:
+    """Display-only anonymization: coarse pixelation inside each box."""
+    out = rgb.copy()
+    h, w = out.shape[:2]
+    for x0, y0, x1, y1 in boxes:
+        x0, y0 = max(0, int(x0) - 2), max(0, int(y0) - 2)
+        x1, y1 = min(w, int(np.ceil(x1)) + 2), min(h, int(np.ceil(y1)) + 2)
+        if x1 <= x0 or y1 <= y0:
+            continue
+        for by in range(y0, y1, block):
+            for bx in range(x0, x1, block):
+                cell = out[by:min(by + block, y1), bx:min(bx + block, x1)]
+                cell[...] = cell.reshape(-1, 3).mean(0).astype(out.dtype)
+    return out
 
 
 def choose_figure_set(df, lab, has_overlay, seed) -> list[str]:
@@ -210,7 +234,8 @@ def main():
         axes = np.atleast_2d(axes)
         for r, n in enumerate(chunk):
             i = int(np.where(names == n)[0][0])
-            rgb = fig_cams[n]["disp"]
+            lb = to_letterbox(boxes[n], int(df.width[i]), int(df.height[i]), size)
+            rgb = pixelate_regions(fig_cams[n]["disp"], lb)
             axes[r, 0].imshow(rgb)
             for x0, y0, x1, y1 in to_letterbox(boxes[n], int(df.width[i]), int(df.height[i]), size):
                 axes[r, 0].add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False, ec="lime", lw=1.2))
@@ -222,9 +247,10 @@ def main():
                 axes[r, c].set_title(f"{h}: P({HEADS[h]['classes'][CRITICAL_CLASS[h]]}) = {fig_cams[n]['p'][h]:.2f}", fontsize=8)
             for a in axes[r]:
                 a.axis("off")
-        fig.suptitle(f"Grad-CAM for the critical class of each head, {cfg['name']} (fold model that did not train on the image)", fontsize=9)
-        fig.tight_layout()
-        fig.savefig(out_dir / f"gradcam_{page // 6 + 1}.png", dpi=90)
+        fig.suptitle(CAPTION.format(name=cfg["name"]), fontsize=9)
+        fig.tight_layout(rect=(0, 0, 1, 0.965))
+        FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+        fig.savefig(FIGURE_DIR / f"{cfg['name']}_gradcam_{page // 6 + 1}.png", dpi=90)
         plt.close(fig)
     print(json.dumps(summary, indent=1)[:4000])
 
