@@ -21,6 +21,25 @@ High-risk recall (all, n High = 23): before 0.70 [0.48, 0.88], after 0.83 [0.67,
 
 Frozen-feature baseline, infection critical AUROC (all / excl. 900+): before (original images): 0.77 [0.72, 0.82] / 0.74 [0.67, 0.80]; after (overlays inpainted): 0.76 [0.71, 0.81] / 0.73 [0.67, 0.79]
 
+### Paired test, mitigated minus original (same group resamples, `scripts/phase3_paired_test.py`)
+
+| head | subset | n | macro F1 diff | critical AUROC diff | critical recall diff |
+|---|---|---|---|---|---|
+| erythema | all | 660 | +0.008 [-0.020, +0.033] | -0.012 [-0.030, +0.006] | +0.016 [-0.032, +0.062] |
+| erythema | excl_900plus | 591 | +0.007 [-0.022, +0.039] | -0.016 [-0.037, +0.005] | +0.025 [-0.030, +0.083] |
+| edema | all | 554 | -0.002 [-0.035, +0.027] | -0.018 [-0.040, +0.001] | -0.012 [-0.093, +0.060] |
+| edema | excl_900plus | 497 | +0.002 [-0.033, +0.035] | -0.016 [-0.038, +0.003] | +0.000 [-0.078, +0.074] |
+| exudate | all | 626 | +0.037 [-0.007, +0.088] | -0.013 [-0.056, +0.034] | +0.067 [+0.000, +0.174] |
+| exudate | excl_900plus | 565 | +0.046 [-0.000, +0.099] | -0.010 [-0.057, +0.036] | +0.069 [+0.000, +0.179] |
+| infection | excl_900plus | 613 | -0.046 [-0.083, -0.010] | -0.004 [-0.029, +0.021] | +0.071 [-0.011, +0.152] |
+| infection | all | 686 | -0.048 [-0.077, -0.019] | -0.007 [-0.025, +0.014] | +0.062 [+0.000, +0.122] |
+
+High-risk recall diff (excl_900plus, n High = 12): +0.250 [+0.000, +0.545]
+
+High-risk recall diff (all, n High = 23): +0.130 [+0.000, +0.286]
+
+**Reading:** the infection macro F1 drop is significant, but ranking is unchanged (AUROC diff near 0). The tuned decision rule of the mitigated model calls more images elevated (excl. 900+: 141 vs 88; false alarms 99 vs 52), mostly because one fold's inner-val chose a stronger prior correction. This is a threshold shift, not a change in what the model ranks; the High-risk recall change has the same cause and is not attributed to the mitigation. Phase 4 sets the infection operating point by a recall target instead.
+
 ## Source probe: AUROC for predicting ID 900+ from image features
 
 | features | before | after |

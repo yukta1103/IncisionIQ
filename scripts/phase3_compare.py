@@ -10,6 +10,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.data.labels import CRITICAL_CLASS, HEAD_NAMES, HEADS  # noqa: E402
 from src.utils import ROOT  # noqa: E402
@@ -48,6 +50,31 @@ def main():
     L.append("\nFrozen-feature baseline, infection critical AUROC (all / excl. 900+): " + "; ".join(
         f"{k}: {ci(data[k][0]['results']['cv']['tuned']['baseline']['all']['infection']['critical_auroc'])} / "
         f"{ci(data[k][0]['results']['cv']['tuned']['baseline']['excl_900plus']['infection']['critical_auroc'])}" for k in RUNS))
+
+    paired = ROOT / "results" / "phase3" / "paired_test.json"
+    if paired.exists():
+        pt = json.loads(paired.read_text(encoding="utf-8"))
+        L.append("\n### Paired test, mitigated minus original (same group resamples, `scripts/phase3_paired_test.py`)\n")
+        L.append("| head | subset | n | macro F1 diff | critical AUROC diff | critical recall diff |")
+        L.append("|---|---|---|---|---|---|")
+        for h in HEAD_NAMES:
+            for s in (("excl_900plus", "all") if h == "infection" else ("all", "excl_900plus")):
+                r = pt[h][s]
+                cells = [f"{r[mt]['diff']:+.3f} [{r[mt]['ci95'][0]:+.3f}, {r[mt]['ci95'][1]:+.3f}]"
+                         for mt in ("macro_f1", "critical_auroc", "critical_recall")]
+                L.append(f"| {h} | {s} | {r['n']} | " + " | ".join(cells) + " |")
+        for s in ("excl_900plus", "all"):
+            x = pt["infection"][s]["critical_recall_subset"]
+            L.append(f"\nHigh-risk recall diff ({s}, n High = {pt['infection'][s]['n_high']}): "
+                     f"{x['diff']:+.3f} [{x['ci95'][0]:+.3f}, {x['ci95'][1]:+.3f}]")
+        cms = [np.array(data[k][0]["results"]["cv"]["tuned"]["finetuned"]["excl_900plus"]["infection"]["confusion_matrix"])
+               for k in RUNS]
+        L.append("\n**Reading:** the infection macro F1 drop is significant, but ranking is unchanged (AUROC diff near 0). "
+                 "The tuned decision rule of the mitigated model calls more images elevated "
+                 f"(excl. 900+: {cms[1][:, 1].sum()} vs {cms[0][:, 1].sum()}; false alarms {cms[1][0, 1]} vs {cms[0][0, 1]}), "
+                 "mostly because one fold's inner-val chose a stronger prior correction. This is a threshold shift, "
+                 "not a change in what the model ranks; the High-risk recall change has the same cause and is not "
+                 "attributed to the mitigation. Phase 4 sets the infection operating point by a recall target instead.")
 
     L.append("\n## Source probe: AUROC for predicting ID 900+ from image features\n")
     L.append("| features | before | after |")

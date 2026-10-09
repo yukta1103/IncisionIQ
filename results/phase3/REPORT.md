@@ -14,7 +14,8 @@ All before/after tables: `comparison.md`. Per-image data: `<model>/cam_overlay.p
 
 - **The overlay shortcut was real but modest, and inpainting removes it.** Before mitigation, Grad-CAM for infection put 1.6x more mass on overlays than their area warrants, and removing overlays at test time lowered P(elevated) by 0.043 [0.028, 0.061] (0.079 on ID 900+ images). After retraining on inpainted images, that causal effect is gone (-0.006 [-0.014, +0.002], 0 decision flips).
 - **Removing overlays does not remove the source.** The ID 900+ probe stays at AUROC 0.93 [0.88, 0.96] on frozen features and 0.89 [0.83, 0.94] on fine-tuned features (before: 0.93 and 0.92). The source is identifiable from the photographs themselves (patients, wound severity, framing, backgrounds), not from text. **The ID 900+ excluded results remain the primary honest estimate.**
-- **Ranking performance is unchanged** (infection AUROC 0.77 [0.71, 0.82] excluding 900+, before and after). Infection macro F1 is lower after mitigation (0.62 vs 0.66 excluding 900+, intervals overlap; not tested as a paired difference), while High-risk recall is higher (0.67 vs 0.42, n High = 12). This is a shift in the learned decision threshold, not in ranking.
+- **Ranking performance is unchanged** (infection AUROC 0.77 [0.71, 0.82] excluding 900+, before and after; paired difference -0.004 [-0.029, +0.021]).
+- **At the Phase 2 tuned decision rule, infection macro F1 is significantly lower** with the mitigated model: paired difference -0.046 [-0.083, -0.010] excluding 900+ (-0.048 [-0.077, -0.019] on all images). The mitigated model's rule calls more images elevated (141 vs 88 excluding 900+; false alarms 99 vs 52), mostly because one fold's inner-val chose a stronger prior correction. This is a threshold shift, not a change in ranking. The accompanying rise in High-risk recall has the same cause and is **not** attributed to the mitigation. Phase 4 replaces this rule with a recall-target operating point.
 
 ## Method
 
@@ -49,7 +50,7 @@ Overlays consistently push predictions toward the worse class. The effect is con
 | source probe AUROC, fine-tuned features | 0.92 [0.88, 0.95] | 0.89 [0.83, 0.94] |
 | infection AUROC, excl. 900+ (n = 613) | 0.77 [0.71, 0.82] | 0.77 [0.71, 0.82] |
 | infection AUROC, all (n = 686) | 0.80 [0.75, 0.84] | 0.79 [0.74, 0.84] |
-| infection macro F1, excl. 900+ | 0.66 [0.61, 0.71] | 0.62 [0.57, 0.66] |
+| infection macro F1, excl. 900+ (paired diff -0.046 [-0.083, -0.010]) | 0.66 [0.61, 0.71] | 0.62 [0.57, 0.66] |
 | High-risk recall, excl. 900+ (n High = 12) | 0.42 [0.13, 0.70] | 0.67 [0.36, 0.92] |
 | High-risk recall, all (n High = 23) | 0.70 [0.48, 0.88] | 0.83 [0.67, 0.96] |
 | exudate macro F1, all | 0.43 [0.38, 0.48] | 0.47 [0.41, 0.52] |
@@ -60,10 +61,11 @@ Other heads: erythema and edema AUROC change by at most 0.02, within the interva
 
 ### Grad-CAM figures
 
-`convnext_tiny_384/gradcam_{1,2}.png` (before) and `convnext_tiny_384_inpainted/gradcam_{1,2}.png` (after) show the same 12 official-test images, picked by a fixed rule: 2 High risk, 2 Medium, 2 purulent, 1 overlay image from ID 900+, 2 from other sources, 3 Low risk without overlays.
+`figures/convnext_tiny_384_gradcam_{1,2}.png` (before) and `figures/convnext_tiny_384_inpainted_gradcam_{1,2}.png` (after) show the same 12 official-test images, picked by a fixed rule: 2 High risk, 2 Medium, 2 purulent, 1 overlay image from ID 900+, 2 from other sources, 3 Low risk without overlays.
 - On most images the infection and erythema maps sit on the wound.
 - Before mitigation, the exudate and edema maps on 943.jpg spread over the Russian caption banner and the redaction box. After mitigation the infection map moves onto the wound, but P(elevated) on the two ID 900+ images rises to 0.97 and 0.98, consistent with the probe: the source is still recognizable.
-- Maps are coarse (12x12 cells of 32 px), so they localize "the wound area", not specific features like a suture line or a rim of redness.
+- Maps are coarse (12x12 cells of 32 px): they highlight the wound region, not specific features like a suture line or a rim of redness.
+- **Identifiability:** all 12 images were reviewed at full resolution. No faces, names, tattoos or jewelry. 451.jpg carried a platform account number in its watermark; all detected text and overlay regions are pixelated in the displayed figures (CAMs are still computed on the real model input). Attribution and license: `figures/ATTRIBUTION.md` (the figures are CC BY-SA 4.0 adaptations of SurgWound images).
 
 ## What the mitigation does not cover
 
@@ -76,10 +78,10 @@ Other heads: erythema and edema AUROC change by at most 0.02, within the interva
 - **Orange-box detector false positives.** Reviewing every detection found 5 false positives among 37 images (a wooden floor, an orange blanket, a cloth edge, a floor patch and a region of skin next to a wound). The first mitigation run would have inpainted those areas, so it was stopped before finishing. The detector now requires the overlay's fixed shape (1.5 to 6% of the image, aspect 2.5 to 4.5). Phase 1 numbers were corrected (32 orange-box images, 67 with any detected overlay) and the conclusion is unchanged.
 - **Inpainting mask uses a second OCR tier** (confidence >= 0.25 with >= 3 letters) to cover Russian captions read at confidence 0.29 to 0.44. All 11 images it adds were reviewed and are genuine overlay text.
 
-## Decision for you
+## Decision recorded
 
-Which model goes forward to Phase 4 to 6?
-- **A. Mitigated model (inpainted inputs).** No measurable dependence on overlays, the same ranking, and higher High-risk recall. Deployment would need the same OCR + inpainting step on incoming photos (easyocr runs locally). I recommend this.
-- **B. Original Phase 2 model.** Simpler pipeline, but it is measurably influenced by text on the image, which a regulated product should not be.
+**Model A (mitigated, inpainted inputs) is used for Phases 4 to 6.** It shows no measurable dependence on overlays and the same ranking as the original model. ID 900+ excluded numbers stay primary.
 
-In both cases, ID 900+ excluded numbers stay primary.
+## Inference pipeline
+
+`src/inference/pipeline.py` runs the same OCR + orange-box detection + inpainting on every incoming photo before the model sees it (it is not optional) and logs, per photo, whether any region was inpainted, how many regions, their area share and the OCR time. Only box coordinates are kept; OCR text is not stored, since it can contain personal data. On four test photos the online output was pixel-identical to the training-time inpainting. OCR adds about 0.2 to 1.7 s per photo on the RTX 4060.
