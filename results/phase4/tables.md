@@ -37,13 +37,13 @@ False alarms = Low-risk images flagged Elevated. Per 100 = per 100 images of tha
 | 0.9 | excl_900plus | 613 | 0.87 [0.79, 0.94] | 0.83 [0.58, 1.00] (n=12) | 0.49 [0.44, 0.54] | 0.21 [0.17, 0.26] | 55.8 [51.1, 60.2] | 43.9 [39.4, 48.2] | 3.7 [2.9, 4.8] |
 | 0.9 | all | 686 | 0.90 [0.84, 0.95] | 0.91 [0.77, 1.00] (n=23) | 0.47 [0.43, 0.52] | 0.25 [0.21, 0.30] | 58.9 [54.8, 62.8] | 44.0 [40.1, 48.0] | 3.0 [2.3, 3.8] |
 
-Per-fold thresholds on calibrated P(elevated) (inner-val positives per fold in brackets):
+Per-fold thresholds on P(elevated), unscaled (inner-val positives per fold in brackets):
 
 | target | fold 0 | fold 1 | fold 2 | fold 3 | fold 4 |
 |---|---|---|---|---|---|
-| 0.7 | 0.359 (18) | 0.187 (14) | 0.349 (15) | 0.143 (8) | 0.645 (18) |
-| 0.8 | 0.244 (18) | 0.157 (14) | 0.268 (15) | 0.122 (8) | 0.483 (18) |
-| 0.9 | 0.070 (18) | 0.130 (14) | 0.103 (15) | 0.017 (8) | 0.320 (18) |
+| 0.7 | 0.374 (18) | 0.101 (14) | 0.360 (15) | 0.174 (8) | 0.679 (18) |
+| 0.8 | 0.268 (18) | 0.076 (14) | 0.283 (15) | 0.153 (8) | 0.479 (18) |
+| 0.9 | 0.092 (18) | 0.056 (14) | 0.119 (15) | 0.028 (8) | 0.279 (18) |
 
 ## Abstention (send for review when confidence < tau)
 
@@ -60,11 +60,11 @@ Only Low calls can be referred (a flag already goes to a clinician). Missed = El
 | 0.9 | excl_900plus | 0.86 [0.83, 0.89] | 3.3 [1.9, 4.8] | 0.76 [0.66, 0.85] | 0.75 [0.46, 1.00] (n=12) | 44.0 [39.4, 48.5] | 0.71 [0.67, 0.76] |
 | 0.9 | all | 0.87 [0.84, 0.90] | 2.9 [1.7, 4.3] | 0.82 [0.75, 0.89] | 0.87 [0.71, 1.00] (n=23) | 48.4 [44.1, 52.5] | 0.70 [0.66, 0.73] |
 | 0.8 | excl_900plus | 0.76 [0.72, 0.79] | 2.0 [0.9, 3.1] | 0.86 [0.78, 0.93] | 0.83 [0.58, 1.00] (n=12) | 54.8 [50.3, 58.9] | 0.69 [0.64, 0.74] |
-| 0.8 | all | 0.77 [0.74, 0.80] | 1.7 [0.9, 2.7] | 0.89 [0.83, 0.95] | 0.91 [0.77, 1.00] (n=23) | 58.3 [54.5, 62.3] | 0.67 [0.63, 0.71] |
+| 0.8 | all | 0.77 [0.74, 0.80] | 1.7 [0.9, 2.7] | 0.89 [0.83, 0.95] | 0.91 [0.77, 1.00] (n=23) | 58.2 [54.3, 62.2] | 0.67 [0.63, 0.71] |
 | 0.7 | excl_900plus | 0.66 [0.62, 0.70] | 1.3 [0.5, 2.3] | 0.90 [0.84, 0.96] | 0.83 [0.58, 1.00] (n=12) | 64.3 [60.2, 68.1] | 0.65 [0.60, 0.71] |
 | 0.7 | all | 0.68 [0.64, 0.72] | 1.2 [0.4, 2.0] | 0.93 [0.88, 0.97] | 0.91 [0.77, 1.00] (n=23) | 66.9 [63.4, 70.7] | 0.64 [0.59, 0.68] |
 
-### Other heads (calibrated argmax)
+### Other heads (argmax)
 
 | head | target coverage | subset | coverage | accuracy on answered | critical recall on answered | critical cases referred |
 |---|---|---|---|---|---|---|
@@ -77,6 +77,23 @@ Only Low calls can be referred (a flag already goes to a clinician). Missed = El
 | edema | 0.8 | all | 0.82 [0.78, 0.85] | 0.84 [0.80, 0.87] | 0.41 [0.26, 0.56] | 0.28 [0.18, 0.39] |
 | edema | 0.7 | all | 0.70 [0.66, 0.74] | 0.86 [0.83, 0.90] | 0.42 [0.25, 0.58] | 0.47 [0.36, 0.58] |
 | exudate | 1.0 | all | 1.00 [1.00, 1.00] | 0.82 [0.79, 0.85] | 0.07 [0.00, 0.16] | 0.00 [0.00, 0.00] |
-| exudate | 0.9 | all | 0.90 [0.88, 0.93] | 0.86 [0.83, 0.88] | 0.00 [0.00, 0.00] | 0.30 [0.14, 0.46] |
+| exudate | 0.9 | all | 0.90 [0.88, 0.93] | 0.86 [0.83, 0.89] | 0.00 [0.00, 0.00] | 0.30 [0.14, 0.46] |
 | exudate | 0.8 | all | 0.78 [0.74, 0.81] | 0.92 [0.90, 0.95] | 0.00 [0.00, 0.00] | 0.70 [0.53, 0.86] |
 | exudate | 0.7 | all | 0.69 [0.65, 0.73] | 0.94 [0.91, 0.96] | 0.00 [0.00, 0.00] | 0.83 [0.69, 0.96] |
+
+## Chosen operating point: three confidence bands for infection risk
+
+Flag = '0.8' recall setting; review = Low calls below the 80%-coverage confidence cut-off. Observed Elevated rate per band is out-of-fold with a group-bootstrap 95% CI. These rates, not raw probabilities, are what the app and README display.
+
+| subset | band | P(elevated) range | n | share of images | Elevated in band | observed Elevated rate | High-risk in band |
+|---|---|---|---|---|---|---|---|
+| excl_900plus | low concern | below t_review | 277 | 0.45 | 12 | 0.04 [0.02, 0.07] | 2 |
+| excl_900plus | uncertain | t_review to t_flag | 150 | 0.24 | 18 | 0.12 [0.07, 0.17] | 2 |
+| excl_900plus | high concern | t_flag and above | 186 | 0.30 | 54 | 0.29 [0.22, 0.36] | 8 |
+| all | low concern | below t_review | 287 | 0.42 | 12 | 0.04 [0.02, 0.06] | 2 |
+| all | uncertain | t_review to t_flag | 157 | 0.23 | 20 | 0.13 [0.08, 0.18] | 2 |
+| all | high concern | t_flag and above | 242 | 0.35 | 81 | 0.33 [0.27, 0.40] | 19 |
+
+Per-fold cut-offs on P(elevated) (t_review / t_flag): fold 0: 0.122 / 0.268, fold 1: 0.030 / 0.076, fold 2: 0.119 / 0.283, fold 3: 0.058 / 0.153, fold 4: 0.184 / 0.479
+
+Deployment (5-model ensemble) uses the fold means, t_review = 0.103 and t_flag = 0.252. This ensemble setting is not itself evaluated by the cross-validation above.

@@ -78,13 +78,16 @@ Abstention raises accuracy on answered cases but does not improve recall of the 
 - **Small positive counts:** 84 Elevated and 12 High-risk images excluding 900+. High-risk intervals span 0.3 to 0.4.
 - **Deployment uses a 5-model ensemble**, which these per-fold numbers do not evaluate directly. Phase 6 will use per-fold thresholds averaged across folds and must state that this setting is unvalidated.
 
-## Decisions for you
+## Decisions recorded
 
-1. **Calibration:** (a) no temperature scaling (T = 1), show bands not percentages. I recommend this, because scaling did not help and its temperatures are noise. (b) Keep per-fold scaling anyway.
-2. **Infection operating point** (excluding 900+ numbers):
-   - "0.9" setting: recall 0.87, 44 false alarms per 100, High-risk 0.83 (n=12).
-   - "0.8" setting: recall 0.64, 22 false alarms per 100.
-   - "0.8" setting plus referral at 80% coverage: 0.86 caught or referred, 55 workload per 100, and a three-level output.
+1. **No temperature scaling.** Decisions, thresholds and bands use the unscaled probabilities. For a binary head per-fold scaling is monotone, so the operating-point and abstention results are unchanged (one workload figure moves from 58.3 to 58.2 per 100 through quantile interpolation). The calibration table above stays as the evidence for this decision.
+2. **Operating point: the "0.8" setting plus referral at 80% coverage**, giving three levels for Phase 6. Achieved out-of-fold, excluding ID 900+: **0.86 [0.78, 0.93] of Elevated images flagged or referred**, missed 2.0 [0.9, 3.1] per 100, **clinician workload 54.8 [50.3, 58.9] per 100**, against an Elevated prevalence of 84 of 613 (14%). The inner-val recall target was not met out-of-fold: inner-val slices hold only 8 to 18 Elevated images, and the same slice was already used for model selection, which makes it optimistic.
+3. **Displayed output is a band with its observed rate, not a probability:**
 
-   I recommend the last one. It reaches the same safety as the "0.9" setting and gives Phase 6 a natural "Review recommended / Watch / On track" split.
-3. **How to describe recall in the README:** state the achieved out-of-fold recall (for example 0.86), not the inner-val target, and say that inner-val targets under-delivered.
+| band (infection risk) | rule on P(elevated) | excl. 900+: n (share) | observed Elevated rate, excl. 900+ | High-risk in band | all images: n | observed rate, all |
+|---|---|---|---|---|---|---|
+| low concern | below t_review | 277 (45%) | **4% [2, 7]** (12 of 277) | 2 | 287 | 4% [2, 6] |
+| uncertain (refer for review) | t_review to t_flag | 150 (24%) | **12% [7, 17]** (18 of 150) | 2 | 157 | 13% [8, 18] |
+| high concern (flag) | t_flag and above | 186 (30%) | **29% [22, 36]** (54 of 186) | 8 | 242 | 33% [27, 40] |
+
+Cut-offs are per fold from inner-val (t_review 0.03 to 0.18, t_flag 0.08 to 0.48). For the deployed 5-model ensemble, `operating_point.json` stores the fold means (t_review 0.103, t_flag 0.252). That ensemble setting is **not evaluated** by this cross-validation, and the wide spread of per-fold cut-offs means it should be treated as provisional. Two High-risk images (both excluding 900+) fall in the low-concern band; these are the system's misses.
