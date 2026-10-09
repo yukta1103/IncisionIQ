@@ -30,6 +30,11 @@ from src.eval.metrics import softmax  # noqa: E402
 from src.utils import ROOT, load_config, save_json, set_seed  # noqa: E402
 
 RECALL_TARGETS = (0.7, 0.8, 0.9)
+# Decided after the Phase 4 review: temperature scaling did not improve calibration and its per-fold
+# temperatures were noise, so decisions, thresholds and bands use the unscaled probabilities. The
+# before/after calibration table is still produced as the evidence for that decision.
+TEMPERATURE_SCALING = False
+PKEY = "p_cal" if TEMPERATURE_SCALING else "p_raw"
 COVERAGE_TARGETS = (1.0, 0.9, 0.8, 0.7)
 SUBSETS = ("excl_900plus", "all")
 OUT = ROOT / "results" / "phase4"
@@ -87,7 +92,7 @@ def main():
             temps[h][k] = {"T": T, "inner_val_n": int(m.sum()),
                            "inner_val_nll_before": nll(lv[m], Y[va, k_h][m]), "inner_val_nll_after": nll(lv[m], Y[va, k_h][m], T)}
             L[ev], Lc[ev] = le, le / T
-            val[h][k] = {"idx": va, "p_cal": softmax(lv / T)}
+            val[h][k] = {"idx": va, "p_cal": softmax(lv / T), "p_raw": softmax(lv)}
         raw[h], cal[h] = softmax(L), softmax(Lc)
     save_json(temps, OUT / "temperatures.json")
 
@@ -159,11 +164,12 @@ def main():
 
     # ---- infection operating points by recall target (thresholds from inner-val)
     h, k_h = "infection", HEAD_NAMES.index("infection")
-    p_el = cal[h][:, 1]
+    dec_p = cal if TEMPERATURE_SCALING else raw
+    p_el = dec_p[h][:, 1]
     thresholds = {t: {} for t in RECALL_TARGETS}
     for t in RECALL_TARGETS:
         for k in range(K):
-            va, pv = val[h][k]["idx"], val[h][k]["p_cal"][:, 1]
+            va, pv = val[h][k]["idx"], val[h][k][PKEY][:, 1]
             pos = Y[va, k_h] == 1
             thresholds[t][k] = {"threshold": threshold_for_recall(pv[pos], t), "inner_val_positives": int(pos.sum())}
     md.append("\n## Infection operating points (threshold per fold chosen on inner-val to reach the recall target)\n")
@@ -193,7 +199,7 @@ def main():
             md.append(f"| {t:.1f} | {s} | {counts['n']} | {fmt(b['recall'])} | {fmt(b['high_recall'])} (n={counts['n_high']}) | "
                       f"{fmt(b['specificity'])} | {fmt(b['ppv'])} | {fmt(b['flagged_per_100'], 1)} | "
                       f"{fmt(b['false_alarms_per_100'], 1)} | {fmt(b['fa_per_tp'], 1)} |")
-    md.append("\nPer-fold thresholds on calibrated P(elevated) (inner-val positives per fold in brackets):\n")
+    md.append("\nPer-fold thresholds on P(elevated), unscaled (inner-val positives per fold in brackets):\n")
     md.append("| target | " + " | ".join(f"fold {k}" for k in range(K)) + " |")
     md.append("|---|" + "---|" * K)
     for t in RECALL_TARGETS:
@@ -226,18 +232,18 @@ def main():
     # ---- abstention
     # Infection: decision at the 0.8 recall operating point. A "flag Elevated" decision already goes to a
     # clinician, so only "Low" calls can be referred; their confidence is 1 - P(elevated). A referred
-    # Elevated case is not a miss. Other heads: calibrated argmax and top-label confidence.
+    # Elevated case is not a miss. Other heads: argmax and top-label confidence.
     md.append("\n## Abstention (send for review when confidence < tau)\n")
     md.append("tau per fold is the inner-val confidence quantile that gives the target coverage; results are out-of-fold.\n")
     thr08 = np.array([thresholds[0.8][f]["threshold"] for f in fold])
     dec08 = (p_el >= thr08).astype(int)
     conf = {}
     for hh in HEAD_NAMES:
-        conf[hh] = cal[hh].max(1)
+        conf[hh] = dec_p[hh].max(1)
     conf["infection"] = np.where(dec08 == 1, 1.0, 1 - p_el)
 
     def val_conf(hh, k):
-        pv = val[hh][k]["p_cal"]
+        pv = val[hh][k][PKEY]
         if hh != "infection":
             return pv.max(1)
         d = (pv[:, 1] >= thresholds[0.8][k]["threshold"]).astype(int)
@@ -271,12 +277,12 @@ def main():
             md.append(f"| {cov:.1f} | {s} | {fmt(b['coverage'])} | {fmt(b['missed_per_100'], 1)} | {fmt(b['effective_recall'])} | "
                       f"{fmt(b['high_effective_recall'])} (n={int(hi.sum())}) | {fmt(b['workload_per_100'], 1)} | {fmt(b['accuracy_answered'])} |")
 
-    md.append("\n### Other heads (calibrated argmax)\n")
+    md.append("\n### Other heads (argmax)\n")
     md.append("| head | target coverage | subset | coverage | accuracy on answered | critical recall on answered | critical cases referred |")
     md.append("|---|---|---|---|---|---|---|")
     for hh in ("erythema", "edema", "exudate"):
         k_hh, c = HEAD_NAMES.index(hh), CRITICAL_CLASS[hh]
-        pred = cal[hh].argmax(1)
+        pred = dec_p[hh].argmax(1)
         for cov in COVERAGE_TARGETS:
             taus = {k: (float(np.quantile(val_conf(hh, k), 1 - cov)) if cov < 1 else 0.0) for k in range(K)}
             tau = np.array([taus[f] for f in fold])
@@ -337,7 +343,7 @@ def main():
     for ax, hh in zip(axes, ("erythema", "edema", "exudate")):
         k_hh, c = HEAD_NAMES.index(hh), CRITICAL_CLASS[hh]
         m = Y[:, k_hh] >= 0
-        y, pr, cf = Y[m, k_hh], cal[hh][m].argmax(1), conf[hh][m]
+        y, pr, cf = Y[m, k_hh], dec_p[hh][m].argmax(1), conf[hh][m]
         cov_, acc_, rec_ = [], [], []
         for tau in np.linspace(cf.min(), 1.0, 60):
             ans = cf >= tau
@@ -354,10 +360,57 @@ def main():
         ax.invert_xaxis()
         ax.set_ylim(0, 1)
         ax.legend(fontsize=7)
-    fig.suptitle("Abstention curves for the other heads (calibrated argmax; descriptive, pooled OOF)", fontsize=10)
+    fig.suptitle("Abstention curves for the other heads (argmax; descriptive, pooled OOF)", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
     fig.savefig(OUT / "abstention_other_heads.png", dpi=110)
     plt.close(fig)
+
+    # ---- chosen operating point and its three confidence bands (approved after the Phase 4 review)
+    # Flag threshold: the "0.8" recall setting. Referral: Low calls below the 80%-coverage confidence
+    # cut-off. Bands on P(elevated): high concern >= t_flag > uncertain >= t_review > low concern,
+    # with t_review = 1 - tau. Both cut-offs are per fold from inner-val; band rates are out-of-fold.
+    cov_sel = 0.8
+    t_flag = {k: thresholds[0.8][k]["threshold"] for k in range(K)}
+    t_review = {k: 1.0 - out["abstention"]["infection"][str(cov_sel)]["tau_per_fold"][k] for k in range(K)}
+    for k in range(K):
+        assert t_review[k] <= t_flag[k], (k, t_review[k], t_flag[k])
+    band_names = ("low concern", "uncertain", "high concern")
+    tf, tr_ = np.array([t_flag[f] for f in fold]), np.array([t_review[f] for f in fold])
+    band = np.where(p_el >= tf, 2, np.where(p_el >= tr_, 1, 0))
+    out["bands"] = {"t_flag_per_fold": t_flag, "t_review_per_fold": t_review,
+                    "deployment_t_flag_mean": float(np.mean(list(t_flag.values()))),
+                    "deployment_t_review_mean": float(np.mean(list(t_review.values())))}
+    md.append("\n## Chosen operating point: three confidence bands for infection risk\n")
+    md.append("Flag = '0.8' recall setting; review = Low calls below the 80%-coverage confidence cut-off. "
+              "Observed Elevated rate per band is out-of-fold with a group-bootstrap 95% CI. These rates, not raw "
+              "probabilities, are what the app and README display.\n")
+    md.append("| subset | band | P(elevated) range | n | share of images | Elevated in band | observed Elevated rate | High-risk in band |")
+    md.append("|---|---|---|---|---|---|---|---|")
+    for s in SUBSETS:
+        m = subset_mask[s]
+        out["bands"][s] = {}
+        for b_i, b_name in enumerate(band_names):
+            inb = m & (band == b_i)
+            y, g = Y[inb, k_h], G[inb]
+            rate = group_bootstrap(lambda i, y=y: {"rate": float((y[i] == 1).mean()) if len(i) else np.nan},
+                                   int(inb.sum()), g, n_boot, seed)["rate"]
+            rng_txt = {0: "below t_review", 1: "t_review to t_flag", 2: "t_flag and above"}[b_i]
+            rec = {"n": int(inb.sum()), "share": float(inb.sum() / m.sum()), "n_elevated": int((y == 1).sum()),
+                   "n_high": int(high[inb].sum()), "observed_rate": rate}
+            out["bands"][s][b_name] = rec
+            md.append(f"| {s} | {b_name} | {rng_txt} | {rec['n']} | {rec['share']:.2f} | {rec['n_elevated']} | "
+                      f"{fmt(rate)} | {rec['n_high']} |")
+    md.append("\nPer-fold cut-offs on P(elevated) (t_review / t_flag): " + ", ".join(
+        f"fold {k}: {t_review[k]:.3f} / {t_flag[k]:.3f}" for k in range(K)))
+    md.append(f"\nDeployment (5-model ensemble) uses the fold means, t_review = {out['bands']['deployment_t_review_mean']:.3f} "
+              f"and t_flag = {out['bands']['deployment_t_flag_mean']:.3f}. This ensemble setting is not itself "
+              "evaluated by the cross-validation above.")
+    save_json({"head": "infection", "probabilities": "unscaled softmax (no temperature scaling)",
+               "t_review": out["bands"]["deployment_t_review_mean"], "t_flag": out["bands"]["deployment_t_flag_mean"],
+               "per_fold": {"t_review": t_review, "t_flag": t_flag},
+               "bands": {b: {s: {"observed_rate": out["bands"][s][b]["observed_rate"], "n": out["bands"][s][b]["n"]}
+                             for s in SUBSETS} for b in band_names},
+               "source": "scripts/phase4_calibrate.py"}, OUT / "operating_point.json")
 
     save_json(out, OUT / "metrics.json")
     (OUT / "tables.md").write_text("\n".join(md) + "\n", encoding="utf-8")

@@ -2,7 +2,7 @@
 
 Portfolio project: a multi-task image classifier for post-operative surgical wounds, built with the habits a regulated clinical product needs (patient-level splits, confidence intervals on every number, shortcut audits). **Not a medical device and not clinically validated.**
 
-Status: Phase 1 (data audit), Phase 2 (classifier) and Phase 3 (explainability and shortcut audit) done. Calibration, explainability, report generation, the triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
+Status: Phases 1 to 4 done (data audit, classifier, explainability and shortcut audit, calibration and operating point). Report generation, the triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
 
 ## Data
 
@@ -32,6 +32,20 @@ Full tables: `results/phase2/REPORT.md`.
 Inpainting removed a measurable text-overlay shortcut (overlay effect on P(elevated) went from 0.043 to 0.006) with no change in ranking (AUROC 0.77). The image source remains identifiable from the photos themselves (frozen-feature probe AUROC 0.93 before and after masking), so ID 900+ excluded results remain primary.
 
 At the Phase 2 tuned decision rule, infection macro F1 is lower with the mitigated model (paired difference -0.046 [-0.083, -0.010], excluding ID 900+). Ranking is unchanged (AUROC difference -0.004 [-0.029, +0.021]); the drop is a threshold shift (more images called elevated), so Phase 4 sets the operating point by a recall target. The mitigated model is used from Phase 4 on. Details: `results/phase3/REPORT.md`, `results/phase3/comparison.md`.
+
+## Operating point and confidence bands (Phase 4)
+
+Infection risk is reported as one of three bands, each shown with its observed rate of Elevated risk, not as a raw probability (temperature scaling did not improve calibration, and high probabilities over-predict). Grouped CV, out-of-fold, excluding IDs 900+ (n = 613):
+
+| band | share of images | observed Elevated rate |
+|---|---|---|
+| low concern | 45% | 4% [2, 7] |
+| uncertain, refer for review | 24% | 12% [7, 17] |
+| high concern, flag | 30% | 29% [22, 36] |
+
+With "uncertain" and "high concern" both going to a clinician, **0.86 [0.78, 0.93] of Elevated images are flagged or referred, at a clinician workload of about 55 per 100 images (54.8 [50.3, 58.9])**, against an Elevated prevalence of 84 of 613 (14%). 2 of the 12 High-risk images fall in the low-concern band.
+
+The recall target used to set the flag threshold on each fold's inner-validation slice (0.8) was not met out-of-fold (0.64 [0.54, 0.75] for the flag alone). Each slice holds only 8 to 18 Elevated images, and the same slice was already used for model selection, so it gives optimistic estimates; the referral band is what brings the system to 0.86. Details: `results/phase4/REPORT.md`.
 
 ## Design choices backed by the numbers
 
