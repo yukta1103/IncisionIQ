@@ -2,7 +2,7 @@
 
 Portfolio project: a multi-task image classifier for post-operative surgical wounds, built with the habits a regulated clinical product needs (patient-level splits, confidence intervals on every number, shortcut audits). **Not a medical device and not clinically validated.**
 
-Status: Phase 1 (data audit) and Phase 2 (classifier) done. Calibration, explainability, report generation, the triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
+Status: Phase 1 (data audit), Phase 2 (classifier) and Phase 3 (explainability and shortcut audit) done. Calibration, explainability, report generation, the triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
 
 ## Data
 
@@ -26,6 +26,10 @@ Infection risk (Low vs Elevated), grouped CV, tuned decision rule. The estimate 
 | all images | 686 | 23 | 0.69 [0.64, 0.73] | 0.80 [0.75, 0.84] | 0.70 [0.48, 0.88] |
 
 Full tables: `results/phase2/REPORT.md`.
+
+## Shortcut audit (Phase 3)
+
+Text and redaction overlays measurably pushed the infection head toward "elevated": inpainting them at test time lowered P(elevated) by 0.043 [0.028, 0.061]. Retraining on inpainted images removes that dependence (-0.006 [-0.014, +0.002]) with unchanged ranking (AUROC 0.77 excluding IDs 900+). It does not remove the source signal: image features still identify the ID 900+ source with AUROC 0.93, so the excluded estimate stays primary. Details: `results/phase3/REPORT.md`.
 
 ## Design choices backed by the numbers
 
