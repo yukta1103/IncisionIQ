@@ -77,7 +77,13 @@ Fine-tuning does not remove source identity from the representation.
 - Fine-tuned model carried forward (needed for Grad-CAM), with the tuned decision rule.
 - Not done: retraining with new class weights (B) and multi-seed averaging (C).
 
-## Notes for Phase 3
+## Notes for later phases
+
+**Phase 4:** besides calibration and abstention, choose the infection operating point by a recall target on Elevated. Report results at target recall 0.7, 0.8 and 0.9, with the false-alarm cost at each. Macro F1 is not the triage objective.
+
+**Phase 6:** treat the image model's purulent predictions as unreliable. Drainage in the verdict comes from the patient's answer (stated in the README as a design choice).
+
+**Phase 3:**
 
 - After masking or inpainting text and overlays, rerun the ID 900+ source probe (frozen and fine-tuned features) and report whether the AUROC drops.
 - The secondary-protocol model is undertrained (epoch 3). Grad-CAM figures should use the CV fold models on their own evaluation folds.

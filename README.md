@@ -16,7 +16,7 @@ SurgWound (Xu et al., *SurgWound-Bench: a benchmark for surgical wound diagnosis
 
 ## Results so far (Phase 2)
 
-**Fine-tuning a ConvNeXt-Tiny clearly helps only erythema, and only in ranking (critical-class AUROC 0.71 vs 0.64, difference +0.07 [+0.03, +0.12]). On every other head, and on macro F1 for all heads, it ties a logistic-regression baseline on frozen features.**
+**Fine-tuning improves erythema ranking (AUROC +0.07 [+0.03, +0.12]). Macro F1 differences are not significant on any head, and the baseline has higher recall on High-risk and purulent cases.**
 
 Infection risk (Low vs Elevated), grouped CV, tuned decision rule. The estimate excluding image IDs 900+ (a single source rich in severe cases) is the primary honest estimate:
 
@@ -26,6 +26,11 @@ Infection risk (Low vs Elevated), grouped CV, tuned decision rule. The estimate 
 | all images | 686 | 23 | 0.69 [0.64, 0.73] | 0.80 [0.75, 0.84] | 0.70 [0.48, 0.88] |
 
 Full tables: `results/phase2/REPORT.md`.
+
+## Design choices backed by the numbers
+
+- **Drainage comes from the patient, not the image.** The image model's purulent predictions are treated as unreliable: across grouped CV it catches 1 of 30 purulent wounds (recall 0.03 [0.00, 0.11]; the frozen baseline catches 9 of 30). The triage verdict therefore takes drainage from the patient's own answer, and the image model's exudate output is shown for information only.
+- **Macro F1 is not the triage objective.** The infection operating point is chosen by a recall target on Elevated risk, with the false-alarm cost shown at each target (Phase 4).
 
 ## Reproduce
 
