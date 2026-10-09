@@ -1,0 +1,8 @@
+# Phase 3 mitigation: identical to configs/phase2_convnext_tiny.yaml except that
+# detected text and orange redaction boxes are inpainted, at train and test time.
+# Same folds, inner splits, seeds, candidates and evaluation.
+base: configs/phase2_convnext_tiny.yaml
+name: convnext_tiny_384_inpainted
+image_variant: inpainted
+results_dir: results/phase3
+checkpoint_dir: checkpoints/phase3

@@ -1,0 +1,38 @@
+{
+  "rule": [
+    "High risk",
+    "Medium risk",
+    "purulent exudate",
+    "overlay, ID 900+",
+    "overlay, other source",
+    "Low risk, no overlay"
+  ],
+  "images": [
+    "111.jpg",
+    "943.jpg",
+    "3.jpg",
+    "90.jpg",
+    "899.jpg",
+    "282.jpg",
+    "907.jpg",
+    "451.jpg",
+    "788.jpg",
+    "714.jpg",
+    "686.jpg",
+    "67.jpg"
+  ],
+  "category": {
+    "111.jpg": "High risk",
+    "943.jpg": "High risk",
+    "3.jpg": "Medium risk",
+    "90.jpg": "Medium risk",
+    "899.jpg": "purulent exudate",
+    "282.jpg": "purulent exudate",
+    "907.jpg": "overlay, ID 900+",
+    "451.jpg": "overlay, other source",
+    "788.jpg": "overlay, other source",
+    "714.jpg": "Low risk, no overlay",
+    "686.jpg": "Low risk, no overlay",
+    "67.jpg": "Low risk, no overlay"
+  }
+}

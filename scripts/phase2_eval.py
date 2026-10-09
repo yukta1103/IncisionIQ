@@ -23,7 +23,7 @@ import pandas as pd
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.data.dataset import load_cache  # noqa: E402
+from src.data.dataset import load_images  # noqa: E402
 from src.data.labels import CRITICAL_CLASS, HEAD_NAMES, HEADS, encode_labels, label_matrix  # noqa: E402
 from src.eval.baseline import fit_lr_select_C, frozen_features, oof_logreg  # noqa: E402
 from src.eval.metrics import cluster_bootstrap, paired_diff_ci, per_class_table, softmax  # noqa: E402
@@ -176,10 +176,12 @@ def main():
     G = splits.group.to_numpy()
     fold = splits.cv_fold.to_numpy()
     names = df.image_name.to_numpy()
-    images = load_cache(proc / "images", names, cfg["cache_size"], proc / f"cache_{cfg['cache_size']}.pt")
+    images = load_images(cfg, ROOT, names)
     lg = pd.read_parquet(out_dir / "logits.parquet")
 
-    fcache = proc / f"frozen_{cfg['backbone']}_{cfg['input_size']}.npy"
+    variant = cfg.get("image_variant", "original")
+    fcache = proc / (f"frozen_{cfg['backbone']}_{cfg['input_size']}.npy" if variant == "original"
+                     else f"frozen_{cfg['backbone']}_{cfg['input_size']}_{variant}.npy")
     if fcache.exists():
         X = np.load(fcache)
     else:

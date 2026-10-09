@@ -40,6 +40,35 @@ def load_cache(img_dir: Path, names, size: int, cache_file: Path) -> torch.Tenso
     return images
 
 
+def load_images(cfg: dict, root: Path, names) -> torch.Tensor:
+    """Letterboxed uint8 cache for the configured image variant.
+    "original": images as published. "inpainted": detected overlays removed
+    (src/data/inpaint.py), used by the Phase 3 mitigation."""
+    proc = root / cfg["processed_dir"]
+    variant = cfg.get("image_variant", "original")
+    size = cfg["cache_size"]
+    if variant == "original":
+        return load_cache(proc / "images", names, size, proc / f"cache_{size}.pt")
+    if variant != "inpainted":
+        raise ValueError(variant)
+    cache_file = proc / f"cache_{size}_inpainted.pt"
+    if cache_file.exists():
+        data = torch.load(cache_file)
+        if data["names"] == list(names) and data["size"] == size:
+            return data["images"]
+    from src.data.inpaint import inpaint_image, overlay_boxes
+
+    boxes = overlay_boxes(proc / "ocr.json", proc / "orange_boxes.json")
+    imgs = []
+    for n in names:
+        with Image.open(proc / "images" / n) as im:
+            clean = inpaint_image(im, boxes[n])
+        imgs.append(torch.from_numpy(np.array(letterbox(clean, size))).permute(2, 0, 1).contiguous())
+    images = torch.stack(imgs)
+    torch.save({"names": list(names), "size": size, "images": images}, cache_file)
+    return images
+
+
 def build_transforms(cfg: dict, train: bool):
     size = cfg["input_size"]
     norm = [v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]

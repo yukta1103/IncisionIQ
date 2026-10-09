@@ -19,7 +19,7 @@ import torch
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.data.dataset import load_cache  # noqa: E402
+from src.data.dataset import load_images  # noqa: E402
 from src.data.labels import HEAD_NAMES, encode_labels, label_matrix  # noqa: E402
 from src.data.splits import inner_split, outer_folds, secondary_split  # noqa: E402
 from src.train.loop import predict, train_model  # noqa: E402
@@ -104,7 +104,7 @@ def main():
     lab = encode_labels(df)
     Y = label_matrix(lab)
     names = df.image_name.to_numpy()
-    images = load_cache(proc / "images", names, cfg["cache_size"], proc / f"cache_{cfg['cache_size']}.pt")
+    images = load_images(cfg, ROOT, names)
 
     fold = outer_folds(lab, G, cfg["cv"]["n_splits"], seed)
     sec = secondary_split(df, G, ROOT / cfg["review_file"])
