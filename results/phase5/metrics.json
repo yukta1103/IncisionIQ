@@ -1,0 +1,313 @@
+{
+  "template": {
+    "all": {
+      "n": 686,
+      "vs_source": {
+        "n_claims": 2148,
+        "supported": 2148,
+        "contradicted": 0,
+        "unsupported_attribute": 0,
+        "unverifiable": 0,
+        "faithfulness": 1.0,
+        "contradiction_rate": 0.0,
+        "boot": {
+          "faithfulness": {
+            "value": 1.0,
+            "ci95": [
+              1.0,
+              1.0
+            ]
+          },
+          "contradiction_rate": {
+            "value": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "claims_per_report": {
+            "value": 3.131195335276968,
+            "ci95": [
+              3.0564338426955047,
+              3.202586674734268
+            ]
+          }
+        }
+      },
+      "vs_expert": {
+        "n_claims": 2435,
+        "supported": 1833,
+        "contradicted": 429,
+        "unsupported_attribute": 0,
+        "unverifiable": 173,
+        "faithfulness": 0.8103448275862069,
+        "contradiction_rate": 0.1896551724137931,
+        "boot": {
+          "faithfulness": {
+            "value": 0.8103448275862069,
+            "ci95": [
+              0.7886852001074403,
+              0.8310554109313857
+            ]
+          },
+          "contradiction_rate": {
+            "value": 0.1896551724137931,
+            "ci95": [
+              0.16894458906861423,
+              0.21131479989255975
+            ]
+          },
+          "claims_per_report": {
+            "value": 3.5495626822157433,
+            "ci95": [
+              3.4411743576741043,
+              3.647236847373479
+            ]
+          }
+        }
+      }
+    },
+    "excl_900plus": {
+      "n": 613,
+      "vs_source": {
+        "n_claims": 1936,
+        "supported": 1936,
+        "contradicted": 0,
+        "unsupported_attribute": 0,
+        "unverifiable": 0,
+        "faithfulness": 1.0,
+        "contradiction_rate": 0.0,
+        "boot": {
+          "faithfulness": {
+            "value": 1.0,
+            "ci95": [
+              1.0,
+              1.0
+            ]
+          },
+          "contradiction_rate": {
+            "value": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "claims_per_report": {
+            "value": 3.1582381729200653,
+            "ci95": [
+              3.0767932731665435,
+              3.23434769947583
+            ]
+          }
+        }
+      },
+      "vs_expert": {
+        "n_claims": 2213,
+        "supported": 1699,
+        "contradicted": 365,
+        "unsupported_attribute": 0,
+        "unverifiable": 149,
+        "faithfulness": 0.8231589147286822,
+        "contradiction_rate": 0.17684108527131784,
+        "boot": {
+          "faithfulness": {
+            "value": 0.8231589147286822,
+            "ci95": [
+              0.8008191749161171,
+              0.8451713712172505
+            ]
+          },
+          "contradiction_rate": {
+            "value": 0.17684108527131784,
+            "ci95": [
+              0.15482862878274942,
+              0.19918082508388296
+            ]
+          },
+          "claims_per_report": {
+            "value": 3.6101141924959217,
+            "ci95": [
+              3.497447959930586,
+              3.7222245179063362
+            ]
+          }
+        }
+      }
+    },
+    "official_test": {
+      "n": 137,
+      "vs_source": {
+        "n_claims": 431,
+        "supported": 431,
+        "contradicted": 0,
+        "unsupported_attribute": 0,
+        "unverifiable": 0,
+        "faithfulness": 1.0,
+        "contradiction_rate": 0.0,
+        "boot": {
+          "faithfulness": {
+            "value": 1.0,
+            "ci95": [
+              1.0,
+              1.0
+            ]
+          },
+          "contradiction_rate": {
+            "value": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "claims_per_report": {
+            "value": 3.145985401459854,
+            "ci95": [
+              3.0,
+              3.2867132867132867
+            ]
+          }
+        }
+      },
+      "vs_expert": {
+        "n_claims": 489,
+        "supported": 368,
+        "contradicted": 84,
+        "unsupported_attribute": 0,
+        "unverifiable": 37,
+        "faithfulness": 0.8141592920353983,
+        "contradiction_rate": 0.18584070796460178,
+        "boot": {
+          "faithfulness": {
+            "value": 0.8141592920353983,
+            "ci95": [
+              0.7637898245928048,
+              0.859184412895593
+            ]
+          },
+          "contradiction_rate": {
+            "value": 0.18584070796460178,
+            "ci95": [
+              0.14081558710440698,
+              0.23621017540719524
+            ]
+          },
+          "claims_per_report": {
+            "value": 3.5693430656934306,
+            "ci95": [
+              3.3560359025032938,
+              3.776160862354892
+            ]
+          }
+        }
+      }
+    }
+  },
+  "expert_reports": {
+    "all": {
+      "n_claims": 3834,
+      "supported": 3718,
+      "contradicted": 35,
+      "unsupported_attribute": 0,
+      "unverifiable": 81,
+      "faithfulness": 0.9906741273647749,
+      "contradiction_rate": 0.009325872635225153,
+      "boot": {
+        "faithfulness": {
+          "value": 0.9906741273647749,
+          "ci95": [
+            0.9868737682995379,
+            0.9938922931232811
+          ]
+        },
+        "contradiction_rate": {
+          "value": 0.009325872635225153,
+          "ci95": [
+            0.006107706876718929,
+            0.013126231700462126
+          ]
+        },
+        "claims_per_report": {
+          "value": 5.588921282798834,
+          "ci95": [
+            5.526069927289252,
+            5.644700082943749
+          ]
+        }
+      }
+    },
+    "excl_900plus": {
+      "n_claims": 3431,
+      "supported": 3325,
+      "contradicted": 33,
+      "unsupported_attribute": 0,
+      "unverifiable": 73,
+      "faithfulness": 0.990172721858249,
+      "contradiction_rate": 0.009827278141751042,
+      "boot": {
+        "faithfulness": {
+          "value": 0.990172721858249,
+          "ci95": [
+            0.9861229606410029,
+            0.9939636748062096
+          ]
+        },
+        "contradiction_rate": {
+          "value": 0.009827278141751042,
+          "ci95": [
+            0.006036325193790425,
+            0.01387703935899708
+          ]
+        },
+        "claims_per_report": {
+          "value": 5.597063621533442,
+          "ci95": [
+            5.536385956281247,
+            5.652262413883197
+          ]
+        }
+      }
+    },
+    "official_test": {
+      "n_claims": 771,
+      "supported": 740,
+      "contradicted": 12,
+      "unsupported_attribute": 0,
+      "unverifiable": 19,
+      "faithfulness": 0.9840425531914894,
+      "contradiction_rate": 0.015957446808510637,
+      "boot": {
+        "faithfulness": {
+          "value": 0.9840425531914894,
+          "ci95": [
+            0.9730431301581126,
+            0.9935577322887654
+          ]
+        },
+        "contradiction_rate": {
+          "value": 0.015957446808510637,
+          "ci95": [
+            0.006442267711234605,
+            0.026956869841887336
+          ]
+        },
+        "claims_per_report": {
+          "value": 5.627737226277373,
+          "ci95": [
+            5.488888888888889,
+            5.753523678301694
+          ]
+        }
+      }
+    }
+  },
+  "uncertain_share": {
+    "erythema": 0.23615160349854228,
+    "edema": 0.18075801749271136,
+    "exudate": 0.2230320699708455
+  },
+  "bands": {
+    "low concern": 287,
+    "high concern": 242,
+    "uncertain": 157
+  }
+}
