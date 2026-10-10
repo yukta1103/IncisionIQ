@@ -11,6 +11,7 @@ Attribute JSON (one image):
   "edema":     {"value": "present" | "absent", "uncertain": bool},
   "exudate":   {"value": "none" | "non_purulent" | "purulent", "uncertain": bool},
   "infection": {"band": "low concern" | "uncertain" | "high concern", "observed_rate": float}
+               or, for attributes from another source such as a VLM, {"value": "low" | "elevated"}
 }
 """
 
@@ -37,6 +38,13 @@ def render(attrs: dict) -> str:
         lines.append(f"On the photo, {EXUDATE_TEXT[ex['value']]}.")
     lines.append("Photo-based drainage assessment is unreliable, so drainage is taken from the patient's answer.")
     inf = attrs["infection"]
+    if "band" not in inf:  # attributes from another source (e.g. a VLM): a plain low / elevated call
+        if inf["value"] == "low":
+            lines.append("Infection risk appears low.")
+        else:
+            lines.append("Infection risk appears elevated.")
+            lines.append("Clinician review is recommended.")
+        return " ".join(lines)
     rate = round(100 * inf["observed_rate"])
     if inf["band"] == "low concern":
         lines.append(f"Infection risk appears low (low-concern band; in validation {rate}% of photos in this band had a "
@@ -57,5 +65,6 @@ def source_reference(attrs: dict) -> dict:
     ref = {}
     for key in ("erythema", "edema", "exudate"):
         ref[key] = None if attrs[key]["uncertain"] else attrs[key]["value"]
-    ref["infection"] = {"low concern": "low", "high concern": "elevated"}.get(attrs["infection"]["band"])
+    inf = attrs["infection"]
+    ref["infection"] = inf["value"] if "band" not in inf else {"low concern": "low", "high concern": "elevated"}.get(inf["band"])
     return ref
