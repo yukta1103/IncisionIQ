@@ -50,6 +50,7 @@ The recall target used to set the flag threshold on each fold's inner-validation
 ## Design choices backed by the numbers
 
 - **Drainage comes from the patient, not the image.** The image model's purulent predictions are treated as unreliable: across grouped CV the Phase 2 model catches 1 of 30 purulent wounds (recall 0.03 [0.00, 0.11]) and the mitigated model used from Phase 4 on catches 3 of 30 (0.10 [0.00, 0.21]); the frozen baseline catches 9 of 30. The triage verdict therefore takes drainage from the patient's own answer, and the image model's exudate output is shown for information only.
+- **Patient-reported symptoms can override the image (planned for Phase 6).** Fever or worsening pain must be able to raise the verdict even when the image falls in the low-concern band; 2 of 12 High-risk images (excluding IDs 900+) land in that band.
 - **Macro F1 is not the triage objective.** The infection operating point is chosen by a recall target on Elevated risk, with the false-alarm cost shown at each target (Phase 4).
 
 ## Limitations (so far)
@@ -58,7 +59,19 @@ The recall target used to set the flag threshold on each fold's inner-validation
 - **Social-media photos,** not photos taken in a home-monitoring app; selection bias toward cases people chose to post.
 - **One image source dominates the severe cases** (IDs 900+) and is identifiable from the photos themselves.
 - **Overlays the mitigation does not remove:** small corner platform logos (an estimated 39% of images), phone screenshot UI (status bars, buttons, thumbnail strips), and the colored banners behind captions (the caption text is inpainted, the banner can remain as a faint band).
+- **2 of 12 High-risk images fall in the low-concern band** (excluding IDs 900+), so the image alone misses some severe cases; patient-reported symptoms are needed as a second signal.
+- **Possible VLM contamination:** the images were public on social media and the dataset is public, so the VLM used as a baseline (Phase 5) may have seen some of them, or posts about them, during training. Its scores could be optimistic for that reason.
+- **Labels are not independent of MLLM judgments:** SurgWound assigned annotation difficulty from the predictions of three MLLMs (GPT-4o, Claude 3.5, Gemini 2). Images all three called Low risk got a single surgeon annotator; the rest got two, with a third on disagreement. Label quality therefore varies with what earlier MLLMs predicted, which matters most when comparing against an MLLM.
 - **Not clinically validated and not a medical device.**
+
+## Data handling for the VLM baseline (Phase 5)
+
+The VLM baseline (Claude Opus 5.5 via the Anthropic Message Batches API) receives only inpainted images (detected text, account numbers and redaction boxes removed), re-encoded as JPEG from raw pixels so no EXIF or other metadata is sent, with the long side at most 1024 px, and a generic prompt. No file names, IDs or labels are sent; each request carries a random opaque ID whose mapping stays local. Images are sent inline (base64), not through the Files API, so nothing is stored beyond standard request retention, and the batches are deleted after results are downloaded.
+
+Anthropic terms checked before the run (October 2026):
+- Retention: inputs and outputs are deleted from Anthropic's backend within 30 days by default, unless otherwise agreed (for example a zero data retention agreement), retained under the user's control (Files API), or needed for usage-policy enforcement or legal compliance. https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data
+- Training: inputs and outputs from commercial products, including the API, are not used for model training by default; exceptions are explicitly submitted feedback and opt-in. https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training
+- Vision API (formats, size limits, token cost, image handling): https://platform.claude.com/docs/en/build-with-claude/vision
 
 ## Reproduce
 

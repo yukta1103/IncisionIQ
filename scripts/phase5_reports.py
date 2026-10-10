@@ -21,11 +21,12 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.data.labels import HEAD_NAMES, HEADS, encode_labels, label_matrix  # noqa: E402
-from src.eval.calibration import group_bootstrap  # noqa: E402
 from src.eval.predictions import build_predictions  # noqa: E402
 from src.report.claims import extract_claims  # noqa: E402
-from src.report.faithfulness import expert_reference, score_claims, summarize  # noqa: E402
-from src.report.template import render, source_reference  # noqa: E402
+from src.report.evaluate import score_reports  # noqa: E402
+from src.report.faithfulness import expert_reference, summarize  # noqa: E402
+from src.eval.calibration import group_bootstrap  # noqa: E402
+from src.report.template import render  # noqa: E402
 from src.utils import ROOT, load_config, save_json, set_seed  # noqa: E402
 
 OUT = ROOT / "results" / "phase5"
@@ -88,20 +89,6 @@ def attribute_json(cfg, df, lab, Y, G, names, fold):
         a["infection"] = {"band": band, "observed_rate": band_rate[band]}
         out.append(a)
     return out
-
-
-def score_reports(texts, sources, df, mode_rows=True):
-    """Claim-level rows for each report vs its source JSON and vs the expert labels."""
-    rows = []
-    for i, (t, src) in enumerate(zip(texts, sources)):
-        claims = extract_claims(t)
-        exp = expert_reference(df.iloc[i])
-        if src is not None:
-            for r in score_claims(claims, source_reference(src), mode="source", ignore=("infection_level",)):
-                rows.append({"i": i, "against": "source", **r})
-        for r in score_claims(claims, exp, mode="expert"):
-            rows.append({"i": i, "against": "expert", **r})
-    return pd.DataFrame(rows)
 
 
 def boot_summary(S: pd.DataFrame, against, img_idx, G, n_boot, seed):
