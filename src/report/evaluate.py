@@ -38,12 +38,16 @@ def claim_counts(S: pd.DataFrame, n_images: int, against: str = "expert") -> np.
     return out
 
 
-def _rates(C: np.ndarray) -> dict:
+def rates(C: np.ndarray, missing: np.ndarray | None = None) -> dict:
+    """Claim rates from per-image counts. `missing` (per image) adds incorrect claims
+    for images without a usable report, e.g. refusals counted as incorrect; it only
+    affects correctness."""
     sup, con, unv = C.sum(0)
+    miss = float(missing.sum()) if missing is not None else 0.0
     total = sup + con + unv
     n = len(C)
     return {"claims_per_report": total / n if n else np.nan,
-            "correctness": sup / (sup + con) if sup + con else np.nan,          # among verifiable claims
+            "correctness": sup / (sup + con + miss) if sup + con + miss else np.nan,  # among verifiable claims
             "hallucination_rate": con / total if total else np.nan,           # contradicted share of all claims
             "unverifiable_share": unv / total if total else np.nan,
             "reports_with_contradiction": float((C[:, 1] > 0).mean()) if n else np.nan}
@@ -52,12 +56,12 @@ def _rates(C: np.ndarray) -> dict:
 def boot_rates(S: pd.DataFrame, against: str, img_idx, G, n_boot: int, seed: int):
     idx = np.asarray(img_idx)
     C = claim_counts(S, len(G), against)[idx]
-    return group_bootstrap(lambda ix: _rates(C[ix]), len(idx), G[idx], n_boot, seed)
+    return group_bootstrap(lambda ix: rates(C[ix]), len(idx), G[idx], n_boot, seed)
 
 
 def paired_rate_diff(S_a: pd.DataFrame, S_b: pd.DataFrame, img_idx, G, n_boot: int, seed: int, metric: str):
     """a minus b on the same group resamples."""
     idx = np.asarray(img_idx)
     Ca, Cb = claim_counts(S_a, len(G))[idx], claim_counts(S_b, len(G))[idx]
-    return group_bootstrap(lambda ix: {"diff": _rates(Ca[ix])[metric] - _rates(Cb[ix])[metric]},
+    return group_bootstrap(lambda ix: {"diff": rates(Ca[ix])[metric] - rates(Cb[ix])[metric]},
                            len(idx), G[idx], n_boot, seed)["diff"]
