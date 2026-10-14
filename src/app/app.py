@@ -26,6 +26,8 @@ from src.triage.verdict import ON_TRACK, REVIEW, WATCH, PatientAnswers, photo_qu
 EXAMPLE_DIR = Path(__file__).parent / "examples"
 DEPLOY = json.loads((ROOT / "results" / "phase6" / "deployment.json").read_text(encoding="utf-8"))
 LEVEL_STYLE = {REVIEW: ("#b42318", "#fef3f2"), WATCH: ("#b54708", "#fffaeb"), ON_TRACK: ("#067647", "#ecfdf3")}
+STANDING_ADVICE = ("Whatever the result: contact your care team if you develop fever, spreading redness, new or increased "
+                   "drainage, or worsening pain.")
 EXAMPLE_LABELS = {"714.jpg": "Example 1", "315.jpg": "Example 2", "111.jpg": "Example 3 (has a caption)",
                   "282.jpg": "Example 4"}
 
@@ -77,6 +79,9 @@ if source == "Example image":
     name = choice
 elif source == "Upload a photo":
     up = st.file_uploader("Photo of the wound", type=["jpg", "jpeg", "png", "webp"])
+    st.caption("Uploading images from the SurgWound dataset is not a valid test: the upload model (a 5-model "
+               "ensemble) was trained on them. Use the examples above for dataset images; they are scored by a model "
+               "that never saw them.")
     if up is not None:
         image, name = Image.open(up), "upload"
 else:
@@ -111,6 +116,7 @@ if st.button("Check the wound", type="primary", use_container_width=True, disabl
     st.markdown(f"<div class='verdict' style='border-color:{color}; background:{bg}'>"
                 f"<h3 style='color:{color}'>{v['level']}</h3><div style='color:#1d2939'>{v['action']}</div></div>", unsafe_allow_html=True)
     st.markdown("**Why:**\n" + "\n".join(f"- {r}" for r in v["reasons"]))
+    st.warning(STANDING_ADVICE)
 
     # ---- image findings
     st.subheader("Photo findings")

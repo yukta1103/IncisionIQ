@@ -15,10 +15,10 @@ Tables: `tables.md` (template, checker validation on expert reports), `vlm/compa
 
 ## Headline
 
-- **Grounded generation beats free generation from the same model.** VLM condition A (free-text report) and condition B (the same model's structured answer, rendered by our template) see the same image with the same model; only the generation step differs. On erythema, edema and infection risk, excluding ID 900+ (n = 613), B's claims agree with the surgeon labels 0.69 [0.66, 0.72] of the time and A's 0.62 [0.60, 0.64]. **This A vs B gap is the generation effect and is the primary evidence for grounded reports.**
+- **Free-text VLM reports over-call mild inflammation relative to surgeon grading, more than the same model's structured answers; grounded template reports stay consistent with the annotators' conventions.** Condition A (free-text report) and condition B (the same model's structured answer, rendered by our template) see the same image with the same model; only the generation step differs. On erythema, edema and infection risk, excluding ID 900+ (n = 613), B's claims agree with the surgeon labels 0.69 [0.66, 0.72] of the time and A's 0.62 [0.60, 0.64]. Of condition A's 741 contradicted claims on these attributes, 594 are mild redness or swelling called present where the surgeons said absent. This is a difference in grading convention, not evidence of fewer hallucinations: none were found (next bullet).
 - **Our template beats VLM B (0.76 [0.73, 0.79] vs 0.69, paired difference -0.07 [-0.10, -0.04]), but that gap is largely supervised vs zero-shot:** model A was trained on these annotators' labels and learned their grading thresholds, while the VLM never saw them.
 - **Claims contradicting surgeon labels** (share of all claims), same attributes: template 0.22 [0.19, 0.25], VLM B 0.29 [0.26, 0.31], VLM A 0.35 [0.33, 0.37].
-- **These contradictions are mostly not hallucinations.** In a manual review of 38 condition A contradictions against the images, 25 were threshold disagreements (mild, visible findings called present that the surgeons graded absent), 7 risk-level judgment calls, 2 missed findings, 4 checker errors, and **0 hallucinations** (a finding asserted that is clearly absent from the photo).
+- **These contradictions are mostly not hallucinations.** In a review of 38 condition A contradictions against the images (done by Claude Code from the photos, not by a clinician), 25 were threshold disagreements (mild, visible findings called present that the surgeons graded absent), 7 risk-level judgment calls, 2 missed findings, 4 checker errors, and **0 hallucinations** (a finding asserted that is clearly absent from the photo).
 - **Perception is competitive.** Zero-shot VLM B ties our model on infection risk at a similar alert rate, catches 11 of 12 High-risk wounds against our 8, and is better on exudate (see the section below).
 - **No refusals** (0 of 1,372 requests), so the primary scoring (refusals counted as incorrect) equals the secondary (refusals excluded).
 
@@ -84,12 +84,12 @@ Paired differences against the template (excl. 900+): VLM A correctness -0.14 [-
 
 ### What the gaps mean
 
-- **A vs B: the generation effect (primary evidence for grounded reports).** Same model, same image, same moment. Asked to write freely, the model's statements disagree with the surgeons more often (0.62 vs 0.69 correct, 0.35 vs 0.29 contradicting); asked for the attributes and passed through our grounded template, they agree more. Free text also states more (5.9 vs 4.7 claims per report on all scored attributes, plus location, closure and urgency, which are not scored), and 73% of free-text reports contain at least one contradiction on the headline attributes, against 54% for the templated version. This is the cleanest evidence in the project that constraining generation to explicit attributes reduces wrong statements.
+- **A vs B: the generation effect.** Same model, same image, same moment. Writing freely, the model calls mild redness and swelling present more often than when it answers our attribute options, so its free-text statements disagree with the surgeons' grading more often (0.62 vs 0.69 correct, 0.35 vs 0.29 contradicting). Free text also states more (5.9 vs 4.7 claims per report on all scored attributes, plus location, closure and urgency, which are not scored), and 73% of free-text reports contain at least one contradiction on the headline attributes, against 54% for the templated version. The finding is that free-text reports over-call mild inflammation relative to surgeon grading, more than the same model's structured answers, while grounded template reports stay consistent with the annotators' conventions. It is not evidence that grounding reduces hallucination: no clear hallucinations were found in either condition's reviewed contradictions.
 - **Template vs B: mostly supervised vs zero-shot.** Model A was trained on these annotators' labels, so it learned where they draw the line (for example, that faint pinkness along a healing incision counts as no erythema). The VLM applies its own threshold, and most of its contradictions are exactly that kind of disagreement (next section). The template's advantage over B is therefore not evidence that our model perceives wounds better.
 
 ### Contradictions: threshold disagreements vs hallucinations
 
-The 8 published examples plus 30 further contradictions drawn at random (condition A, headline attributes) were reviewed against the images the VLM received (`contradiction_review.csv`). A **hallucination** here means the report asserts a finding that is clearly absent from the photo. Judgments are from photographs by a non-clinician, so borderline cases were counted as threshold disagreements, not hallucinations.
+The 8 published examples plus 30 further contradictions drawn at random (condition A, headline attributes) were reviewed against the images the VLM received (`contradiction_review.csv`). A **hallucination** here means the report asserts a finding that is clearly absent from the photo. The review was done by Claude Code (the AI assistant that built this project) from the photographs, not by a clinician, so borderline cases were counted as threshold disagreements, not hallucinations.
 
 | category | published 8 | random 30 | total 38 |
 |---|---|---|---|
@@ -157,7 +157,7 @@ At a similar alert rate the two tie on Elevated recall, and the VLM catches more
 - **Possible contamination** of the VLM by the public images and dataset.
 - **Labels are not independent of MLLM judgments:** SurgWound's annotation difficulty (one or two surgeons) was assigned from MLLM risk predictions.
 - **The checker is rule-based and was redesigned after inspecting the VLM's outputs.** It is validated at 0.96 to 0.97 on the headline attributes for condition A, but not perfect, and it does not score location, closure or urgency.
-- **Manual reviews are by a non-clinician**, from photos; "clearly absent" was applied conservatively.
+- **Reviews were done by Claude Code from the photos, not by a clinician** (the 38-contradiction review and the 30-report checker labels); "clearly absent" was applied conservatively.
 
 ## Notes for Phase 6 and next steps
 
