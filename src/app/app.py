@@ -42,12 +42,14 @@ st.markdown("""<style>
 </style>""", unsafe_allow_html=True)
 
 
-@st.cache_resource(show_spinner="Loading models (first run only)...")
+@st.cache_resource(show_spinner="Loading models. The first start downloads about 230 MB and can take a minute...")
 def load_predictor():
+    from src.app.weights import ocr_models_dir, weights_path
     from src.inference.pipeline import OverlayRemover, WoundPredictor
 
-    return WoundPredictor.from_config(DEPLOY["config"], folds=[FOLD],
-                                      remover=OverlayRemover(max_side=DEPLOY["ocr_max_side"]))
+    remover = OverlayRemover(max_side=DEPLOY["ocr_max_side"], model_dir=ocr_models_dir())
+    return WoundPredictor.from_config(DEPLOY["config"], folds=[FOLD], checkpoints={FOLD: weights_path()},
+                                      remover=remover)
 
 
 def describe(attr: str, a: dict) -> str:

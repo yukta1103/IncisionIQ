@@ -1,0 +1,26 @@
+{
+  "filename": "incisioniq_fold0_v1.pt",
+  "url": "https://github.com/yukta1103/IncisionIQ/releases/download/weights-v1/incisioniq_fold0_v1.pt",
+  "sha256": "3ff025e1ec9944d2c84deee96b3d486b3629160988c072836e856cbe2dd932f5",
+  "size_bytes": 111384442,
+  "license": "CC BY-SA 4.0",
+  "release_tag": "weights-v1",
+  "cv_fold": 0,
+  "ocr_models": [
+    {
+      "filename": "craft_mlt_25k.pth",
+      "url": "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip",
+      "sha256": "4a5efbfb48b4081100544e75e1e2b57f8de3d84f213004b14b85fd4b3748db17"
+    },
+    {
+      "filename": "zh_sim_g2.pth",
+      "url": "https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/zh_sim_g2.zip",
+      "sha256": "cb678fdef09d651e7763ca551ad790dc89f0b2e3d2a640484330e338fb574c7a"
+    },
+    {
+      "filename": "cyrillic_g2.pth",
+      "url": "https://github.com/JaidedAI/EasyOCR/releases/download/v1.6.1/cyrillic_g2.zip",
+      "sha256": "48d0f3b58f28aa64651ab1032cc2d498c4de25135829668e87c14e7a07529f29"
+    }
+  ]
+}

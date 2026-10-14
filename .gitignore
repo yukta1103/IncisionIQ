@@ -12,3 +12,5 @@ results/**/run.log
 results/**/*.log
 .env
 .claude/
+# exported model weights are published as a GitHub release asset, not committed
+dist/

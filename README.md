@@ -77,4 +77,4 @@ SurgWound: Xu et al., *SurgWound-Bench: a benchmark for surgical wound diagnosis
 
 ## License
 
-Code: [MIT](LICENSE). Dataset-derived content (the Grad-CAM figures, the demo examples, per-image outputs in `results/`, and any model weights if published) is CC BY-SA 4.0, with attribution to Xu et al. 2026.
+Code: [MIT](LICENSE). Dataset-derived content (the Grad-CAM figures, the demo examples, per-image outputs in `results/`, and any model weights if published) is CC BY-SA 4.0, with attribution to Xu et al. 2026. The demo's model weights are published as the GitHub release `weights-v1` under CC BY-SA 4.0; the app downloads them and the EasyOCR models at start-up and verifies each by SHA-256. Deployment (Streamlit Community Cloud) and the post-deploy checklist: [Phase 7](results/phase7/DEPLOYMENT.md).

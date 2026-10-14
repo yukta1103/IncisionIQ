@@ -37,12 +37,14 @@ class OverlayRemover:
     downscaled to `max_side` (training used 1280; the demo uses a lower cap to save memory,
     see scripts/phase7_ocr_cap_check.py); boxes are mapped back to full resolution."""
 
-    def __init__(self, gpu: bool | None = None, max_side: int = MAX_SIDE):
+    def __init__(self, gpu: bool | None = None, max_side: int = MAX_SIDE, model_dir: str | Path | None = None):
         import easyocr
 
         gpu = torch.cuda.is_available() if gpu is None else gpu
         self.max_side = max_side
-        self.readers = [easyocr.Reader(list(langs), gpu=gpu, verbose=False) for langs in OCR_LANG_PASSES]
+        # model_dir: verified models fetched by src/app/weights.py; EasyOCR's own downloader stays off
+        kw = {"model_storage_directory": str(model_dir), "download_enabled": False} if model_dir else {}
+        self.readers = [easyocr.Reader(list(langs), gpu=gpu, verbose=False, **kw) for langs in OCR_LANG_PASSES]
 
     def __call__(self, im: Image.Image) -> tuple[Image.Image, dict]:
         t0 = time.perf_counter()
@@ -81,7 +83,7 @@ class WoundPredictor:
     Photos are processed in memory only; nothing is written to disk."""
 
     def __init__(self, cfg: dict, device: str | None = None, remover: OverlayRemover | None = None,
-                 folds: list[int] | None = None):
+                 folds: list[int] | None = None, checkpoints: dict[int, str | Path] | None = None):
         if cfg.get("image_variant", "original") != "inpainted":
             raise ValueError("the deployed pipeline expects a model trained on inpainted images")
         self.cfg = cfg
@@ -90,8 +92,11 @@ class WoundPredictor:
         self.tf = build_transforms(cfg, train=False)
         self.models = {}
         for k in (range(cfg["cv"]["n_splits"]) if folds is None else folds):
-            ck = torch.load(ROOT / cfg["checkpoint_dir"] / cfg["name"] / f"cv{k}.pt", weights_only=False,
-                            map_location=self.device)
+            if checkpoints and k in checkpoints:  # exported weights file (state_dict + metadata only)
+                ck = torch.load(checkpoints[k], weights_only=True, map_location=self.device)
+            else:  # training checkpoint
+                ck = torch.load(ROOT / cfg["checkpoint_dir"] / cfg["name"] / f"cv{k}.pt", weights_only=False,
+                                map_location=self.device)
             m = MultiTaskNet(cfg["backbone"], {h: len(HEADS[h]["classes"]) for h in HEAD_NAMES}, pretrained=False)
             m.load_state_dict(ck["state_dict"])
             self.models[k] = m.to(self.device).eval()

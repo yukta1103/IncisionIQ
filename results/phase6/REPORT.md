@@ -56,7 +56,7 @@ With no symptoms the levels are the Phase 4 bands, so Watch plus Review route 0.
 ## Demo (`src/app/app.py`)
 
 Streamlit, centered layout capped at 720 px, tested at 375 px phone width (no horizontal scroll; images stack vertically). The flow:
-1. **Photo:** one of four examples (official test split, held out by fold 0, chosen by the fixed rule in `select_examples`: the lowest-ID image that is surgeon Low and predicted low concern, surgeon Elevated and predicted high concern, predicted referral band, and surgeon Low but predicted high concern; each is labeled with its surgeon rating; `src/app/examples/`, CC BY-SA attribution included), an upload, or the phone camera. A visible notice says the demo is for demonstration only and asks people not to upload real patient photos.
+1. **Photo:** one of four examples (official test split, held out by fold 0, chosen by the fixed rule in `select_examples`: the lowest-ID image that is surgeon Low and predicted low concern, surgeon Elevated and predicted high concern, predicted referral band, and surgeon Low but predicted high concern, excluding images of children after a by-eye check; each is labeled with its surgeon rating; `src/app/examples/`, CC BY-SA attribution included), an upload, or the phone camera. A visible notice says the demo is for demonstration only and asks people not to upload real patient photos.
 2. **Questions:** pain 0 to 10, pain getting worse, fever, drainage.
 3. **Result:**
    - the verdict card with its reasons,
@@ -69,7 +69,7 @@ Streamlit, centered layout capped at 720 px, tested at 375 px phone width (no ho
 - **OCR + inpainting runs on every photo before the model sees it**, as in training; when text is removed the user is told so. (The examples were chosen to have no detected text, so this notice shows only for uploads.)
 - **Photos stay in memory.** They are processed by the server running the app (the user's own computer when run locally) and are never written to disk, logged or sent to another service; `tests/test_app.py` traps file writes during the full prediction path.
 
-Verified (Phase 7, Streamlit AppTest) with no symptoms: example 1 (79.jpg, surgeon Low) gives **On track**, example 2 (66.jpg, surgeon Medium) **Review recommended**, example 3 (268.jpg, surgeon Low) **Watch**, and example 4 (30.jpg, surgeon Low) **Review recommended**, a false alarm. Each shows the standing advice. Phase 6 also checked phone width (375 px) and the fever override in the browser.
+Verified (Phase 7, Streamlit AppTest) with no symptoms: example 1 (79.jpg, surgeon Low) gives **On track**, example 2 (66.jpg, surgeon Medium) **Review recommended**, example 3 (411.jpg, surgeon Low) **Watch**, and example 4 (30.jpg, surgeon Low) **Review recommended**, a false alarm. Each shows the standing advice. Phase 6 also checked phone width (375 px) and the fever override in the browser.
 
 No server errors.
 
