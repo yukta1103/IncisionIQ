@@ -1,0 +1,102 @@
+{
+  "per_attribute": [
+    {
+      "extractor": "markdown",
+      "attribute": "edema",
+      "n": 26,
+      "agreement": 0.962,
+      "wrong": 0.0,
+      "missed": 0.038
+    },
+    {
+      "extractor": "markdown",
+      "attribute": "erythema",
+      "n": 29,
+      "agreement": 0.966,
+      "wrong": 0.0,
+      "missed": 0.034
+    },
+    {
+      "extractor": "markdown",
+      "attribute": "exudate",
+      "n": 30,
+      "agreement": 0.733,
+      "wrong": 0.167,
+      "missed": 0.1
+    },
+    {
+      "extractor": "markdown",
+      "attribute": "healing",
+      "n": 25,
+      "agreement": 0.76,
+      "wrong": 0.16,
+      "missed": 0.08
+    },
+    {
+      "extractor": "markdown",
+      "attribute": "infection",
+      "n": 30,
+      "agreement": 0.967,
+      "wrong": 0.0,
+      "missed": 0.033
+    },
+    {
+      "extractor": "prose",
+      "attribute": "edema",
+      "n": 26,
+      "agreement": 0.077,
+      "wrong": 0.923,
+      "missed": 0.0
+    },
+    {
+      "extractor": "prose",
+      "attribute": "erythema",
+      "n": 29,
+      "agreement": 0.207,
+      "wrong": 0.793,
+      "missed": 0.0
+    },
+    {
+      "extractor": "prose",
+      "attribute": "exudate",
+      "n": 30,
+      "agreement": 0.167,
+      "wrong": 0.833,
+      "missed": 0.0
+    },
+    {
+      "extractor": "prose",
+      "attribute": "healing",
+      "n": 25,
+      "agreement": 0.48,
+      "wrong": 0.2,
+      "missed": 0.32
+    },
+    {
+      "extractor": "prose",
+      "attribute": "infection",
+      "n": 30,
+      "agreement": 0.433,
+      "wrong": 0.5,
+      "missed": 0.067
+    }
+  ],
+  "overall": [
+    {
+      "extractor": "markdown",
+      "n": 140,
+      "agreement": 0.879,
+      "wrong": 0.064,
+      "missed": 0.057
+    },
+    {
+      "extractor": "prose",
+      "n": 140,
+      "agreement": 0.271,
+      "wrong": 0.657,
+      "missed": 0.071
+    }
+  ],
+  "n_reports": 30,
+  "n_unclear_labels": 10
+}

@@ -19,7 +19,7 @@ retention. Batches are deleted after results are downloaded.
 Usage:
   python scripts/phase5_vlm.py prepare      # build images and request files, no API calls
   python scripts/phase5_vlm.py pilot        # 2 synchronous requests to measure real token use
-  python scripts/phase5_vlm.py submit       # create the batches
+  python scripts/phase5_vlm.py submit [--runs run1]   # create the batches (optionally a subset of runs)
   python scripts/phase5_vlm.py collect      # poll, download, map back, delete batches
 """
 import base64
@@ -39,7 +39,7 @@ from src.data.inpaint import inpaint_image, overlay_boxes  # noqa: E402
 from src.utils import ROOT, save_json  # noqa: E402
 
 MODEL = "claude-opus-5-5"
-EFFORT = "medium"  # the model's default, set explicitly
+EFFORT = "low"  # both conditions, identical settings; chosen for budget (the model's default is medium)
 MAX_SIDE = 1024
 JPEG_QUALITY = 90
 SEED = 42
@@ -146,8 +146,10 @@ def prepare():
     return report
 
 
-def load_requests():
+def load_requests(runs=None):
     idmap = pd.read_csv(WORK / "id_map.csv")
+    if runs:
+        idmap = idmap[idmap.run.isin(runs)]
     for r in idmap.itertuples():
         b64 = base64.standard_b64encode((WORK / "images" / r.image_name).read_bytes()).decode()
         yield r, {"custom_id": r.custom_id, "params": request_params(r.condition, b64)}
@@ -164,21 +166,25 @@ def pilot():
         out.append({"condition": r.condition, "stop_reason": msg.stop_reason, "input_tokens": u.input_tokens,
                     "output_tokens": u.output_tokens})
         print(out[-1])
-    n = pd.read_csv(WORK / "id_map.csv").groupby("condition").size().to_dict()
-    est = 0.0
+    idmap = pd.read_csv(WORK / "id_map.csv")
+    per_req = {}
     for c in ("A", "B"):
         rows = [o for o in out if o["condition"] == c]
-        if rows:
-            inp, outp = np.mean([o["input_tokens"] for o in rows]), np.mean([o["output_tokens"] for o in rows])
-            est += n[c] * (inp * 2.0 + outp * 10.0) / 1e6  # Batch API: half of $4 / $20 per MTok
-    print(f"estimated batch cost for all {sum(n.values())} requests: ${est:.2f}")
-    save_json({"pilot": out, "estimated_batch_cost_usd": est}, WORK / "pilot.json")
+        inp, outp = np.mean([o["input_tokens"] for o in rows]), np.mean([o["output_tokens"] for o in rows])
+        per_req[c] = (inp * 2.0 + outp * 10.0) / 1e6  # Batch API: half of $4 / $20 per MTok
+    est = {}
+    for label, runs in (("full plan", None), ("run1 only", ["run1"])):
+        sub = idmap if runs is None else idmap[idmap.run.isin(runs)]
+        n = sub.groupby("condition").size().to_dict()
+        est[label] = {"n_requests": len(sub), "usd": sum(n[c] * per_req[c] for c in n)}
+        print(f"projected batch cost, {label} ({len(sub)} requests): ${est[label]['usd']:.2f}")
+    save_json({"effort": EFFORT, "pilot": out, "projection": est}, WORK / "pilot.json")
 
 
-def submit():
+def submit(runs=None):
     client = _client()
     batches, cur, cur_bytes = [], [], 0
-    for _, req in load_requests():
+    for _, req in load_requests(runs):
         size = len(json.dumps(req))
         if cur and cur_bytes + size > MAX_BATCH_BYTES:
             batches.append(cur)
@@ -227,4 +233,8 @@ def collect():
 
 
 if __name__ == "__main__":
-    {"prepare": prepare, "pilot": pilot, "submit": submit, "collect": collect}[sys.argv[1]]()
+    cmd = sys.argv[1]
+    if cmd == "submit":
+        submit(sys.argv[3].split(",") if len(sys.argv) > 3 and sys.argv[2] == "--runs" else None)
+    else:
+        {"prepare": prepare, "pilot": pilot, "collect": collect}[cmd]()

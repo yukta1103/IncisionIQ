@@ -2,7 +2,7 @@
 
 Portfolio project: a multi-task image classifier for post-operative surgical wounds, built with the habits a regulated clinical product needs (patient-level splits, confidence intervals on every number, shortcut audits). **Not a medical device and not clinically validated.**
 
-Status: Phases 1 to 4 done (data audit, classifier, explainability and shortcut audit, calibration and operating point). Report generation, the triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
+Status: Phases 1 to 5 done (data audit, classifier, explainability and shortcut audit, calibration and operating point, grounded reports with a VLM comparison). The triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
 
 ## Data
 
@@ -46,6 +46,18 @@ Infection risk is reported as one of three bands, each shown with its observed r
 With "uncertain" and "high concern" both going to a clinician, **0.86 [0.78, 0.93] of Elevated images are flagged or referred, at a clinician workload of about 55 per 100 images (54.8 [50.3, 58.9])**, against an Elevated prevalence of 84 of 613 (14%). 2 of the 12 High-risk images fall in the low-concern band.
 
 The recall target used to set the flag threshold on each fold's inner-validation slice (0.8) was not met out-of-fold (0.64 [0.54, 0.75] for the flag alone). Each slice holds only 8 to 18 Elevated images, and the same slice was already used for model selection, so it gives optimistic estimates; the referral band is what brings the system to 0.86. Details: `results/phase4/REPORT.md`.
+
+## Grounded reports vs a zero-shot VLM (Phase 5)
+
+Reports are generated only from the predicted attributes (a template; uncertain attributes are stated as uncertain), then every claim is checked against the SurgWound expert labels. Baseline: Claude Opus 5.5 zero-shot, (A) writing a free-text report from the SurgWound instruction and (B) answering our attribute options as JSON, which our template renders. On erythema, edema and infection risk, excluding IDs 900+ (n = 613):
+
+| report set | claims agreeing with the expert label | claims contradicting it | reports with a contradiction |
+|---|---|---|---|
+| template (our model) | 0.76 [0.73, 0.79] | 0.22 [0.19, 0.25] | 0.40 |
+| VLM B, structured | 0.69 [0.66, 0.72] | 0.29 [0.26, 0.31] | 0.54 |
+| VLM A, free text | 0.62 [0.60, 0.64] | 0.35 [0.33, 0.37] | 0.73 |
+
+As a classifier the VLM ties our model on infection risk at its single, untunable decision (Elevated recall 0.65 vs 0.64 at a similar alert rate) and is better on exudate (purulent recall 0.69 vs 0.10). Both VLM conditions ran at effort "low", with identical settings, because of budget (one run, $15.58); higher effort might strengthen the VLM baseline, and run-to-run variation was not measured. The free-text reports needed a section-aware claim checker, validated against hand labels on 30 reports (agreement 0.96 to 0.97 on the three headline attributes, 0.73 to 0.76 on exudate and healing). Details: `results/phase5/REPORT.md`.
 
 ## Design choices backed by the numbers
 

@@ -33,7 +33,50 @@ CASES = [
     ("Some non-purulent drainage may be visible.", {"exudate": {"non_purulent"}}),
     ("Infection risk appears elevated.", {"infection": {"elevated"}}),
     ("Swelling along the suture line is absent.", {"edema": {"absent"}}),
+    # found by running the checker on the expert reports through the full VLM scoring path
+    ("The wound is currently devoid of exudate, erythema, and edema.",
+     {"exudate": {"none"}, "erythema": {"absent"}, "edema": {"absent"}}),
+    ("The wound shows absence of exudate and erythema, and presence of edema.",
+     {"exudate": {"none"}, "erythema": {"absent"}, "edema": {"present"}}),
+    ("There is sanguineous exudate with no evident erythema or edema present.",
+     {"exudate": {"non_purulent"}, "erythema": {"absent"}, "edema": {"absent"}}),
+    ("The wound is not healed, displaying purulent exudate.", {"healing": {"not_healed"}, "exudate": {"purulent"}}),
+    ("There is an absence of significant signs of infection.", {"infection": {"low"}}),
+    ("The wound is deemed low risk for infection.", {"infection": {"low"}, "infection_level": {"low"}}),
+    ("The edges are well approximated, with no visible gaping or dehiscence.", {}),
 ]
+
+MARKDOWN = """# Surgical Wound Assessment Report
+### 2. Wound Status
+- The incision appears closed, with no visible gaping or dehiscence.
+- The line is pink, suggesting early healing (proliferative phase).
+### 4. Exudate Characteristics
+- **Amount:** None visible
+- **Type:** No serous, sanguineous, or purulent drainage
+### 5. Erythema
+- **Minimal, confined to the incision line.**
+### 6. Edema
+- **No significant edema is apparent.**
+### 7. Urgency Level
+- **Escalate** if any of the following occur:
+  - Purulent or foul-smelling discharge.
+  - Spreading redness or swelling.
+### 8. Infection Risk Assessment
+**Risk level: Moderate.**
+| Factor | Observation |
+|---|---|
+| Spreading erythema/cellulitis | Absent |
+### Recommendations
+- Watch for purulent discharge or fever.
+"""
+
+
+def test_markdown_claims():
+    from src.report.markdown_claims import extract_markdown_claims
+
+    got = claims_by_attribute(extract_markdown_claims(MARKDOWN))
+    assert got == {"healing": {"not_healed"}, "exudate": {"none"}, "erythema": {"present"}, "edema": {"absent"},
+                   "infection": {"elevated"}, "infection_level": {"medium"}}, got
 
 
 @pytest.mark.parametrize("text,expected", CASES)

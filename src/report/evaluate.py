@@ -12,14 +12,15 @@ from src.report.faithfulness import expert_reference, score_claims
 from src.report.template import source_reference
 
 
-def score_reports(texts, sources, df) -> pd.DataFrame:
+def score_reports(texts, sources, df, extractor=extract_claims) -> pd.DataFrame:
     """One row per claim: vs the source JSON (if given) and vs the expert labels.
-    `texts[i]` is the report for df.iloc[i]; None means no report (failed request)."""
+    `texts[i]` is the report for df.iloc[i]; None means no report (failed request).
+    `extractor` is extract_claims for prose, extract_markdown_claims for structured reports."""
     rows = []
     for i, (t, src) in enumerate(zip(texts, sources)):
         if t is None:
             continue
-        claims = extract_claims(t)
+        claims = extractor(t)
         if src is not None:
             for r in score_claims(claims, source_reference(src), mode="source", ignore=("infection_level",)):
                 rows.append({"i": i, "against": "source", **r})
@@ -28,9 +29,12 @@ def score_reports(texts, sources, df) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["i", "against", "attribute", "value", "reference", "status"])
 
 
-def claim_counts(S: pd.DataFrame, n_images: int, against: str = "expert") -> np.ndarray:
-    """(n_images, 3) array: supported, contradicted (incl. unsupported attribute), unverifiable."""
+def claim_counts(S: pd.DataFrame, n_images: int, against: str = "expert", attributes=None) -> np.ndarray:
+    """(n_images, 3) array: supported, contradicted (incl. unsupported attribute), unverifiable.
+    `attributes` restricts the count to those claim attributes."""
     s = S[S.against == against]
+    if attributes is not None:
+        s = s[s.attribute.isin(attributes)]
     out = np.zeros((n_images, 3))
     for col, statuses in enumerate((["supported"], ["contradicted", "unsupported_attribute"], ["unverifiable"])):
         c = s[s.status.isin(statuses)].groupby("i").size()

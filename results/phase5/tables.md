@@ -6,21 +6,21 @@ Agreement of claims extracted from each expert report with that image's expert l
 
 | attribute   | split   |   n |   claim_made |   agrees_with_label |   conflicting_value |
 |:------------|:--------|----:|-------------:|--------------------:|--------------------:|
-| edema       | test    | 115 |        0.983 |            0.947826 |          0.0347826  |
-| edema       | train   | 378 |        0.987 |            0.970899 |          0.015873   |
-| edema       | val     |  61 |        0.984 |            0.967213 |          0.0327869  |
+| edema       | test    | 115 |        0.983 |            0.956522 |          0.026087   |
+| edema       | train   | 378 |        0.987 |            0.960317 |          0.026455   |
+| edema       | val     |  61 |        0.984 |            0.885246 |          0.0983607  |
 | erythema    | test    | 131 |        0.985 |            0.954198 |          0.0305344  |
-| erythema    | train   | 463 |        0.985 |            0.963283 |          0.0215983  |
-| erythema    | val     |  66 |        0.985 |            0.954545 |          0.030303   |
+| erythema    | train   | 463 |        0.985 |            0.952484 |          0.0323974  |
+| erythema    | val     |  66 |        0.985 |            0.878788 |          0.106061   |
 | exudate     | test    | 125 |        0.96  |            0.96     |          0          |
-| exudate     | train   | 437 |        0.963 |            0.95881  |          0.00457666 |
-| exudate     | val     |  64 |        0.984 |            0.984375 |          0          |
+| exudate     | train   | 437 |        0.947 |            0.94508  |          0.00228833 |
+| exudate     | val     |  64 |        0.922 |            0.921875 |          0          |
 | healing     | test    | 137 |        0.927 |            0.927007 |          0          |
 | healing     | train   | 480 |        0.956 |            0.95625  |          0          |
 | healing     | val     |  69 |        0.87  |            0.869565 |          0          |
-| infection   | test    | 137 |        0.993 |            0.970803 |          0.0291971  |
-| infection   | train   | 480 |        0.969 |            0.96875  |          0.00208333 |
-| infection   | val     |  69 |        0.957 |            0.956522 |          0          |
+| infection   | test    | 137 |        0.993 |            0.978102 |          0.0145985  |
+| infection   | train   | 480 |        0.983 |            0.983333 |          0.00208333 |
+| infection   | val     |  69 |        0.986 |            0.985507 |          0          |
 
 Expert reports also state a value for attributes whose label is Uncertain (the question row is missing). Those claims are scored as unverifiable:
 
@@ -44,9 +44,9 @@ Reference point: the SurgWound expert reports themselves, scored by the same che
 
 | subset | claims per report | correctness vs expert labels |
 |---|---|---|
-| all | 5.6 [5.5, 5.6] | 0.99 [0.99, 0.99] |
-| excl_900plus | 5.6 [5.5, 5.7] | 0.99 [0.99, 0.99] |
-| official_test | 5.6 [5.5, 5.8] | 0.98 [0.97, 0.99] |
+| all | 5.6 [5.5, 5.7] | 0.99 [0.98, 0.99] |
+| excl_900plus | 5.6 [5.6, 5.7] | 0.99 [0.98, 0.99] |
+| official_test | 5.6 [5.5, 5.7] | 0.99 [0.98, 1.00] |
 
 Template correctness by attribute (all images; claims on labeled attributes):
 
