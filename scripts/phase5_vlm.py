@@ -84,7 +84,8 @@ def _client():
 
     env = ROOT / ".env"
     if not os.environ.get("ANTHROPIC_API_KEY") and env.exists():
-        for line in env.read_text(encoding="utf-8").splitlines():
+        for line in env.read_text(encoding="utf-8-sig").splitlines():
+            line = line.strip().strip('"').strip("'")  # tolerate a fully quoted line
             k, _, v = line.partition("=")
             if k.strip() == "ANTHROPIC_API_KEY" and v.strip():
                 os.environ["ANTHROPIC_API_KEY"] = v.strip().strip('"').strip("'")
