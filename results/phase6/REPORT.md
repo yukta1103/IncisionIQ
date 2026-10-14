@@ -4,7 +4,7 @@ Reproduce:
 ```
 python scripts/phase6_build_deployment.py   # decision parameters + check that they reproduce the evaluated system
 python scripts/phase6_verdict_eval.py       # verdict levels on out-of-fold predictions
-python -m pytest tests -q                   # 41 tests, including every verdict rule
+python -m pytest tests -q                   # 45 tests: every verdict rule, plus the demo checks in tests/test_app.py
 streamlit run src/app/app.py                # the demo (models load on first use)
 ```
 
@@ -50,13 +50,13 @@ With no symptoms the levels are the Phase 4 bands, so Watch plus Review route 0.
 ## Consistency checks
 
 - **Decision parameters reproduce the evaluated system:** feeding the stored out-of-fold logits through `src/triage/decide.py` with each image's fold parameters gives the Phase 5 attributes for 686 of 686 images.
-- **The full upload path reproduces it for the demo examples:** original file → OCR + inpainting → the fold model that never trained on the image gives the evaluated band for all four examples.
-- **Demo examples use out-of-fold scoring.** The 5-model ensemble used for uploads has seen each dataset image in 4 of its 5 models. For example 315.jpg it gives "high concern" where the honest out-of-fold result is "uncertain", so dataset images must not be scored by the ensemble.
+- **The full upload path reproduces it for the demo examples:** original file, then OCR + inpainting, then the fold 0 model gives the evaluated band for all four examples (`tests/test_app.py`).
+- **One model everywhere (Phase 7 change).** The demo first scored uploads with the 5-model ensemble and fold-averaged thresholds, a setting the cross-validation never evaluated; the ensemble had also seen each dataset image in 4 of its 5 models. It now scores every photo with the **fold 0 model** (chosen by fixed rule, the first fold, not by performance) and the parameters the cross-validation tested for fold 0.
 
 ## Demo (`src/app/app.py`)
 
 Streamlit, centered layout capped at 720 px, tested at 375 px phone width (no horizontal scroll; images stack vertically). The flow:
-1. **Photo:** one of four examples from the official test split (`src/app/examples/`, CC BY-SA attribution included), an upload, or the phone camera.
+1. **Photo:** one of four examples (official test split, held out by fold 0, one per band, chosen by the fixed rule in `select_examples`; `src/app/examples/`, CC BY-SA attribution included), an upload, or the phone camera. A visible notice says the demo is for demonstration only and asks people not to upload real patient photos.
 2. **Questions:** pain 0 to 10, pain getting worse, fever, drainage.
 3. **Result:**
    - the verdict card with its reasons,
@@ -65,21 +65,17 @@ Streamlit, centered layout capped at 720 px, tested at 375 px phone width (no ho
    - a notice when text or stickers were removed,
    - the processed image next to the Grad-CAM for elevated infection risk,
    - the grounded report,
-   - technical details (which model and thresholds were used).
-- **OCR + inpainting runs on every photo before the model sees it**, as in training. Example 3 (111.jpg) carries a caption: 3 regions (9.8% of the image) are removed and the user is told so.
-- **Everything runs locally.** The photo is not sent anywhere.
-- **Uploads** are scored by the 5-model ensemble with fold-averaged thresholds, which the cross-validation does not evaluate directly. The technical-details panel says so. **Examples** are scored by their out-of-fold model.
+   - technical details (which model and thresholds were used, and why).
+- **OCR + inpainting runs on every photo before the model sees it**, as in training; when text is removed the user is told so. (The examples were chosen to have no detected text, so this notice shows only for uploads.)
+- **Photos stay in memory.** They are processed by the server running the app (the user's own computer when run locally) and are never written to disk, logged or sent to another service; `tests/test_app.py` traps file writes during the full prediction path.
 
-Verified in the browser at phone width:
-- Example 1 with no symptoms gives **On track**.
-- Example 1 with fever gives **Review recommended** (override).
-- Example 3 gives **Review recommended** (high-concern band), with the inpainting notice and Grad-CAM shown.
+Verified (Phase 7, Streamlit AppTest) with no symptoms: example 1 (79.jpg) gives **On track**, example 2 (411.jpg) **Watch**, examples 3 and 4 (237.jpg, 521.jpg) **Review recommended**, each with the standing advice. All four examples are surgeon-rated Low risk, so examples 3 and 4 show high-concern false alarms. Phase 6 also checked phone width (375 px) and the fever override in the browser.
 
 No server errors.
 
 ## Limitations
 
 - The symptom rules and thresholds are not validated against outcomes; SurgWound has no patient-reported data or follow-up.
-- The ensemble and fold-averaged thresholds used for uploads are provisional (per-fold flag thresholds range from 0.08 to 0.48).
+- The demo model is fold 0 alone, trained on 80% of the data. Per-fold flag thresholds range from 0.08 to 0.48, so another fold would draw the bands differently; the displayed band rates are pooled over all five folds.
 - Photos taken by patients at home differ from the social-media images the model was trained on. There is no photo-quality model beyond the size and overlay checks.
 - Not a medical device and not clinically validated.

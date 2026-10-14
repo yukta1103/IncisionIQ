@@ -2,12 +2,13 @@
 check that they reproduce the evaluated system.
 
 results/phase6/deployment.json holds, for model A (inpainted inputs):
-  folds      per CV fold: decision-rule alpha, inner-train class prior and
-             abstention cut-off tau per head; infection t_review and t_flag
-  ensemble   fold means (uploaded photos are scored by the 5-model ensemble;
-             this setting is not itself evaluated by the cross-validation)
-  band_rates observed Elevated rate per infection band, excluding ID 900+
-  examples   demo images from the official test split, with their CV fold
+  folds         per CV fold: decision-rule alpha, inner-train class prior and
+                abstention cut-off tau per head; infection t_review and t_flag
+  deployed_fold the single model the demo uses for every photo: fold 0, by fixed
+                rule (the first fold), not by performance, with the parameters
+                the cross-validation tested for that fold
+  band_rates    observed Elevated rate per infection band, excluding ID 900+
+  examples      demo images, chosen by the fixed rule in `select_examples`
 
 Check: feeding the stored out-of-fold logits through src/triage/decide.py with
 each image's fold parameters must reproduce the Phase 5 template attributes.
@@ -30,7 +31,27 @@ from src.utils import ROOT, load_config, save_json  # noqa: E402
 
 CFG = "configs/phase3_convnext_tiny_inpainted.yaml"
 OUT = ROOT / "results" / "phase6"
-EXAMPLES = ["714.jpg", "315.jpg", "111.jpg", "282.jpg"]  # official test split; see src/app/examples/ATTRIBUTION.md
+DEPLOYED_FOLD = 0
+# Phase 6 examples, one per slot. Phase 7 replaced each by the rule in select_examples, because the
+# demo now loads only fold 0 and an example must be one that model never trained on.
+ANCHORS = ["714.jpg", "315.jpg", "111.jpg", "282.jpg"]
+
+
+def select_examples(d: pd.DataFrame, ocr: dict, orange: dict) -> list[str]:
+    """Fixed rule, not model performance: for each anchor, the next image by numeric ID (wrapping
+    around) that is in the official test split, held out by the deployed fold, in the anchor's
+    out-of-fold infection band, and has no OCR detection at all and no orange box. The chosen
+    images were then checked by eye for visible captions (none found)."""
+    d = d.assign(id=d.image_name.str.removesuffix(".jpg").astype(int)).sort_values("id")
+    ok = d[(d.split == "test") & (d.cv_fold == DEPLOYED_FOLD)
+           & d.image_name.map(lambda n: not ocr.get(n) and not orange.get(n))]
+    out = []
+    for a in ANCHORS:
+        row = d[d.image_name == a].iloc[0]
+        same = ok[(ok.band == row.band) & ~ok.image_name.isin(out)]
+        after = same[same.id > row.id]
+        out.append((after if len(after) else same).image_name.iloc[0])
+    return out
 
 
 def main():
@@ -58,11 +79,6 @@ def main():
                         "prior": class_prior(Y[tr, kh], len(HEADS[h]["classes"])).tolist(),
                         "tau": p4["abstention"][h]["0.8"]["tau_per_fold"][str(k)]}
         folds[k] = {"heads": heads, "t_review": op["per_fold"]["t_review"][str(k)], "t_flag": op["per_fold"]["t_flag"][str(k)]}
-    ens = {"heads": {h: {"alpha": float(np.mean([folds[k]["heads"][h]["alpha"] for k in range(K)])),
-                         "prior": np.mean([folds[k]["heads"][h]["prior"] for k in range(K)], axis=0).tolist(),
-                         "tau": float(np.mean([folds[k]["heads"][h]["tau"] for k in range(K)]))}
-                     for h in ("erythema", "edema", "exudate")},
-           "t_review": op["t_review"], "t_flag": op["t_flag"]}
     band_rates = {b: {"rate": v["excl_900plus"]["observed_rate"]["value"], "ci95": v["excl_900plus"]["observed_rate"]["ci95"],
                       "n": v["excl_900plus"]["n"]} for b, v in op["bands"].items()}
 
@@ -81,13 +97,20 @@ def main():
     print(f"reproduction check: {len(names) - mismatches}/{len(names)} images identical to the Phase 5 template attributes")
     assert mismatches == 0
 
+    band = {n: json.loads(tpl.loc[n, "attributes"])["infection"]["band"] for n in names}
+    proc = ROOT / cfg["processed_dir"]
+    chosen = select_examples(pd.DataFrame({"image_name": names, "split": df.split.to_numpy(), "cv_fold": fold,
+                                           "band": [band[n] for n in names]}),
+                             json.loads((proc / "ocr.json").read_text(encoding="utf-8")),
+                             json.loads((proc / "orange_boxes.json").read_text(encoding="utf-8")))
     examples = [{"image_name": n, "cv_fold": int(fold[idx_of[n]]), "official_split": df.split[idx_of[n]],
-                 "infection_risk": df.infection_risk[idx_of[n]], "band_out_of_fold": json.loads(tpl.loc[n, "attributes"])["infection"]["band"]}
-                for n in EXAMPLES]
-    save_json({"model": cfg["name"], "config": CFG, "folds": folds, "ensemble": ens, "band_rates": band_rates,
-               "band_rates_subset": "excluding ID 900+ (grouped CV, out-of-fold)", "examples": examples,
-               "notes": "Uploaded photos use the 5-model ensemble with fold-mean parameters, which the CV does not "
-                        "evaluate directly. Example images use the fold model that did not train on them."},
+                 "infection_risk": df.infection_risk[idx_of[n]], "band_out_of_fold": band[n]} for n in chosen]
+    assert all(e["cv_fold"] == DEPLOYED_FOLD for e in examples)
+    save_json({"model": cfg["name"], "config": CFG, "deployed_fold": DEPLOYED_FOLD, "folds": folds,
+               "band_rates": band_rates, "band_rates_subset": "excluding ID 900+ (grouped CV, out-of-fold, all folds pooled)",
+               "examples": examples,
+               "notes": "Every photo is scored by the fold 0 model with the parameters the cross-validation tested for "
+                        "fold 0. The examples are fold 0 held-out images, so their results are out-of-fold."},
               OUT / "deployment.json")
     print(json.dumps(examples, indent=1))
 

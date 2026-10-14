@@ -71,24 +71,27 @@ def _area_frac(regions, w, h) -> float:
 
 
 class WoundPredictor:
-    """Ensemble of the five grouped-CV fold models of one experiment. Returns raw
-    (uncalibrated) per-head probabilities; calibration and decision rules are
-    applied on top (Phase 4 and 6)."""
+    """Grouped-CV fold models of one experiment: all five, or only `folds`. The demo
+    loads fold 0 alone. Returns raw (uncalibrated) per-head probabilities; the
+    decision rules are applied on top (Phase 4 and 6).
 
-    def __init__(self, cfg: dict, device: str | None = None, remover: OverlayRemover | None = None):
+    Photos are processed in memory only; nothing is written to disk."""
+
+    def __init__(self, cfg: dict, device: str | None = None, remover: OverlayRemover | None = None,
+                 folds: list[int] | None = None):
         if cfg.get("image_variant", "original") != "inpainted":
             raise ValueError("the deployed pipeline expects a model trained on inpainted images")
         self.cfg = cfg
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.remover = remover or OverlayRemover()
         self.tf = build_transforms(cfg, train=False)
-        self.models = []
-        for k in range(cfg["cv"]["n_splits"]):
+        self.models = {}
+        for k in (range(cfg["cv"]["n_splits"]) if folds is None else folds):
             ck = torch.load(ROOT / cfg["checkpoint_dir"] / cfg["name"] / f"cv{k}.pt", weights_only=False,
                             map_location=self.device)
             m = MultiTaskNet(cfg["backbone"], {h: len(HEADS[h]["classes"]) for h in HEAD_NAMES}, pretrained=False)
             m.load_state_dict(ck["state_dict"])
-            self.models.append(m.to(self.device).eval())
+            self.models[k] = m.to(self.device).eval()
 
     @classmethod
     def from_config(cls, path: str | Path, **kw):
@@ -99,12 +102,11 @@ class WoundPredictor:
         return self.tf(u8).unsqueeze(0).to(self.device)
 
     def _models(self, fold: int | None):
-        return self.models if fold is None else [self.models[fold]]
+        return list(self.models.values()) if fold is None else [self.models[fold]]
 
     @torch.no_grad()
     def predict(self, im: Image.Image, photo_id: str | None = None, fold: int | None = None) -> dict:
-        """fold=None: 5-model ensemble (uploaded photos). fold=k: only fold k's model, for
-        images that model never trained on (out-of-fold demo examples)."""
+        """fold=None: average over the loaded models. fold=k: only fold k's model."""
         photo_id = photo_id or _photo_hash(im)
         clean, report = self.remover(im)
         log.info("photo=%s inpainted=%s regions=%d area=%.4f ocr_s=%.2f", photo_id, report["inpainted"],
@@ -120,7 +122,7 @@ class WoundPredictor:
             "probs": {h: dict(zip(HEADS[h]["classes"], map(float, probs[h]))) for h in HEAD_NAMES},
             "probs_array": {h: probs[h].tolist() for h in HEAD_NAMES},
             "fold_spread": {h: float(np.std([pm[h] for pm in per_model], axis=0).max()) for h in HEAD_NAMES},
-            "model": self.cfg["name"] + (f" (fold {fold})" if fold is not None else " (5-model ensemble)"),
+            "model": self.cfg["name"] + " (fold " + ", ".join(map(str, [fold] if fold is not None else self.models)) + ")",
             "clean_image": clean,
             "size": im.size,
         }
