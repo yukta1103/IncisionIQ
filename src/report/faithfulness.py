@@ -5,7 +5,7 @@ The reference is either the attribute JSON a report was generated from
 SurgWound expert labels (correctness: is what it says true?). Every claim is
 one of:
   supported     value equals the reference
-  contradicted  value differs from the reference (a hallucinated or wrong finding)
+  contradicted  value differs from the reference (a finding that conflicts with the reference)
   unverifiable  the reference has no value for that attribute (e.g. expert label Uncertain)
 """
 import pandas as pd

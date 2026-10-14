@@ -1,0 +1,48 @@
+{
+  "report_set": "condition A (free text)",
+  "per_attribute": [
+    {
+      "attribute": "edema",
+      "correct": 23,
+      "false_contradiction": 0,
+      "missed_contradiction": 1,
+      "other": 0
+    },
+    {
+      "attribute": "erythema",
+      "correct": 28,
+      "false_contradiction": 0,
+      "missed_contradiction": 1,
+      "other": 0
+    },
+    {
+      "attribute": "exudate",
+      "correct": 20,
+      "false_contradiction": 4,
+      "missed_contradiction": 2,
+      "other": 1
+    },
+    {
+      "attribute": "healing",
+      "correct": 19,
+      "false_contradiction": 3,
+      "missed_contradiction": 2,
+      "other": 1
+    },
+    {
+      "attribute": "infection",
+      "correct": 29,
+      "false_contradiction": 0,
+      "missed_contradiction": 1,
+      "other": 0
+    },
+    {
+      "attribute": "all",
+      "correct": 119,
+      "false_contradiction": 7,
+      "missed_contradiction": 7,
+      "other": 2
+    }
+  ],
+  "template_and_condition_B": "rendered by our template; checker faithfulness to source JSON 1.000, no extraction errors"
+}

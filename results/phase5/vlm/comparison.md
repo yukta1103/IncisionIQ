@@ -3,7 +3,7 @@
 All report sets are scored by the same claim checker against the SurgWound expert labels.
 
 - **Correctness** = supported / (supported + contradicted). **Primary: refusals and failed requests counted as incorrect** (every expert-labeled attribute of that image counts as an incorrect claim). Secondary: excluded.
-- **Hallucination rate** = contradicted claims / all extracted claims, on produced reports only.
+- **Claims contradicting surgeon labels** = contradicted claims / all extracted claims, on produced reports only. Most contradictions are threshold disagreements, not invented findings (see REPORT.md).
 - **Unverifiable** = claims on attributes whose expert label is Uncertain.
 - Condition A (markdown reports) is read with the section-aware extractor (`src/report/markdown_claims.py`); template and condition B with the prose extractor. Condition A's checker was validated against hand labels on 30 random reports; headline comparisons use only the attributes where it agrees at 0.96 or above (erythema, edema, infection).
 
@@ -56,7 +56,7 @@ Refusals by expert infection risk and exudate class (all 686 images, run 1):
 
 ## Headline: claims on erythema, edema and infection only (checker validated on all three sets)
 
-| subset | report set | n images | claims per report | correctness (primary: refusals incorrect) | hallucination rate | reports with a contradiction |
+| subset | report set | n images | claims per report | correctness (primary: refusals incorrect) | claims contradicting surgeon labels | reports with a contradiction |
 |---|---|---|---|---|---|---|
 | excl_900plus | template | 613 | 2.4 [2.3, 2.4] | 0.76 [0.73, 0.79] | 0.22 [0.19, 0.25] | 0.40 [0.36, 0.44] |
 | excl_900plus | vlm_A | 613 | 3.0 [2.9, 3.0] | 0.62 [0.60, 0.64] | 0.35 [0.33, 0.37] | 0.73 [0.70, 0.77] |
@@ -70,7 +70,7 @@ Refusals by expert infection risk and exudate class (all 686 images, run 1):
 
 Paired differences vs template, validated attributes (same group resamples):
 
-| subset | comparison | correctness diff (primary) | hallucination rate diff |
+| subset | comparison | correctness diff (primary) | contradicting-claims diff |
 |---|---|---|---|
 | excl_900plus | vlm_A minus template | -0.14 [-0.18, -0.11] | +0.13 [+0.10, +0.17] |
 | excl_900plus | vlm_B minus template | -0.07 [-0.10, -0.04] | +0.07 [+0.04, +0.10] |
@@ -81,7 +81,7 @@ Paired differences vs template, validated attributes (same group resamples):
 
 ## All attributes (exudate and healing included; condition A checker agreement there is 0.73 and 0.76)
 
-| subset | report set | n images | reports produced | claims per report | correctness (primary: refusals incorrect) | correctness (refusals excluded) | hallucination rate | reports with a contradiction | unverifiable share |
+| subset | report set | n images | reports produced | claims per report | correctness (primary: refusals incorrect) | correctness (refusals excluded) | claims contradicting surgeon labels | reports with a contradiction | unverifiable share |
 |---|---|---|---|---|---|---|---|---|---|
 | excl_900plus | template | 613 | 613 | 3.6 [3.5, 3.7] | 0.82 [0.80, 0.85] | 0.82 [0.80, 0.85] | 0.16 [0.14, 0.19] | 0.42 [0.38, 0.46] | 0.07 [0.05, 0.08] |
 | excl_900plus | vlm_A | 613 | 613 | 5.9 [5.8, 5.9] | 0.62 [0.60, 0.64] | 0.62 [0.60, 0.64] | 0.36 [0.34, 0.38] | 0.90 [0.87, 0.92] | 0.05 [0.04, 0.06] |
@@ -93,9 +93,9 @@ Paired differences vs template, validated attributes (same group resamples):
 | official_test | vlm_A | 137 | 137 | 6.0 [5.9, 6.0] | 0.58 [0.54, 0.61] | 0.58 [0.54, 0.61] | 0.40 [0.37, 0.44] | 0.93 [0.88, 0.97] | 0.05 [0.03, 0.07] |
 | official_test | vlm_B | 137 | 137 | 4.6 [4.5, 4.7] | 0.70 [0.64, 0.75] | 0.70 [0.64, 0.75] | 0.29 [0.24, 0.34] | 0.67 [0.59, 0.75] | 0.06 [0.04, 0.09] |
 
-Paired differences vs template on the same group resamples (correctness primary; hallucination rate on images where the VLM produced a report):
+Paired differences vs template on the same group resamples (correctness primary; contradicting claims on images where the VLM produced a report):
 
-| subset | comparison | correctness diff (primary) | hallucination rate diff |
+| subset | comparison | correctness diff (primary) | contradicting-claims diff |
 |---|---|---|---|
 | excl_900plus | vlm_A minus template | -0.20 [-0.23, -0.17] | +0.19 [+0.17, +0.22] |
 | excl_900plus | vlm_B minus template | -0.07 [-0.09, -0.04] | +0.06 [+0.04, +0.09] |
