@@ -2,19 +2,11 @@
 
 Last run on 2026-10-14 over every commit of local `main`, and separately over `origin/main` as last fetched.
 
-## Status of the remote: action needed
+## Status of the remote
 
-**GitHub `main` is at dc75d13** (the first Phase 7 commit). It was pushed on 2026-10-14 at about 15:41, before the Phase 7 decisions to redact and to remove 111.jpg. The commits after e905730, which those decisions treated as unpushed, are therefore public, and they contain:
-- `src/app/examples/111.jpg`, with its burned-in caption (a diagnosis and procedure, no personal identifier);
-- the un-redacted VLM caption transcriptions for 8 images, in `results/phase5/vlm/vlm_outputs.parquet`, `vlm/reports.parquet` and `markdown_validation_export.md`;
-- the first version of this file, which described both.
+The original GitHub repo was deleted and recreated empty under the same name, so the commits that held the un-redacted material (pushed on 2026-10-14 before the redaction decisions) are no longer served from it. Local `main` was rewritten from 0863bd6 onward and is pushed to the new repo as is; no other remote is force-pushed. Copies made before the deletion (clones, forks, caches) cannot be recalled.
 
-**Local `main` has been rewritten** from 0863bd6 onward (bfb2b83 and everything before it are unchanged), so it has diverged from GitHub. Nothing has been pushed. Getting the clean history onto GitHub needs a force-push (`git push --force-with-lease origin main`), which needs your approval. Even then:
-- GitHub can keep serving the old commits by SHA until it garbage-collects them;
-- any existing clones or forks keep them;
-- GitHub Support can be asked to purge cached views.
-
-## Results on local `main` (18 commits)
+## Results on local `main`
 
 | check | result |
 |---|---|
@@ -28,7 +20,7 @@ Last run on 2026-10-14 over every commit of local `main`, and separately over `o
 | EXIF / metadata in demo examples | none |
 | `.claude/launch.json` | in 2 commits (a local Streamlit launch command, no secrets); untracked and gitignored since Phase 7 |
 
-Images in history: plots without patient pixels, the 4 pixelated Grad-CAM figures, the Phase 6 examples 714, 315 and 282 (no detected text; removed from the tree in Phase 7 but kept in history, as only 111 was to be purged), and the Phase 7 examples 79, 411, 237 and 521.
+Images in history: plots without patient pixels, the 4 pixelated Grad-CAM figures, the Phase 6 examples 714, 315 and 282 (no detected text; removed from the tree in Phase 7 but kept in history, as only 111 was to be purged), the first Phase 7 examples 411, 237 and 521 (same checks; replaced but kept in history), and the final examples 79, 66, 268 and 30.
 
 ## What was done
 

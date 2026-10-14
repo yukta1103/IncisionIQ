@@ -22,7 +22,7 @@ from PIL import Image, ImageOps
 from src.data.dataset import build_transforms, letterbox
 from src.data.inpaint import inpaint_image, keep_text_box
 from src.data.labels import HEAD_NAMES, HEADS
-from src.data.ocr import ocr_image, orange_boxes_in_image
+from src.data.ocr import MAX_SIDE, ocr_image, orange_boxes_in_image
 from src.eval.metrics import softmax
 from src.models.multitask import MultiTaskNet
 from src.utils import ROOT, load_config
@@ -33,12 +33,15 @@ OCR_LANG_PASSES = (("ch_sim", "en"), ("ru", "en"))  # same passes as the Phase 1
 
 
 class OverlayRemover:
-    """OCR + orange-box detection + inpainting, identical to the training-time rule."""
+    """OCR + orange-box detection + inpainting, the training-time rule. OCR runs on a copy
+    downscaled to `max_side` (training used 1280; the demo uses a lower cap to save memory,
+    see scripts/phase7_ocr_cap_check.py); boxes are mapped back to full resolution."""
 
-    def __init__(self, gpu: bool | None = None):
+    def __init__(self, gpu: bool | None = None, max_side: int = MAX_SIDE):
         import easyocr
 
         gpu = torch.cuda.is_available() if gpu is None else gpu
+        self.max_side = max_side
         self.readers = [easyocr.Reader(list(langs), gpu=gpu, verbose=False) for langs in OCR_LANG_PASSES]
 
     def __call__(self, im: Image.Image) -> tuple[Image.Image, dict]:
@@ -46,7 +49,7 @@ class OverlayRemover:
         im = ImageOps.exif_transpose(im).convert("RGB")
         regions = []
         for reader in self.readers:
-            for d in ocr_image(reader, im):
+            for d in ocr_image(reader, im, self.max_side):
                 if keep_text_box(d, 0.5, 2, 0.25, 3):
                     regions.append({"bbox": d["bbox"], "source": "ocr", "conf": round(d["conf"], 3)})
         for b in orange_boxes_in_image(im):

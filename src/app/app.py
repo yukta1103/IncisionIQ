@@ -30,7 +30,8 @@ STANDING_ADVICE = ("Whatever the result: contact your care team if you develop f
                    "drainage, or worsening pain.")
 FOLD = DEPLOY["deployed_fold"]
 PARAMS = DEPLOY["folds"][str(FOLD)]
-EXAMPLE_LABELS = {e["image_name"]: f"Example {i + 1}" for i, e in enumerate(DEPLOY["examples"])}
+EXAMPLE_LABELS = {e["image_name"]: f"Example {i + 1}: surgeon-rated {e['infection_risk']} infection risk"
+                  for i, e in enumerate(DEPLOY["examples"])}
 
 st.set_page_config(page_title="IncisionIQ demo", page_icon="🩹", layout="centered")
 st.markdown("""<style>
@@ -43,9 +44,10 @@ st.markdown("""<style>
 
 @st.cache_resource(show_spinner="Loading models (first run only)...")
 def load_predictor():
-    from src.inference.pipeline import WoundPredictor
+    from src.inference.pipeline import OverlayRemover, WoundPredictor
 
-    return WoundPredictor.from_config(DEPLOY["config"], folds=[FOLD])
+    return WoundPredictor.from_config(DEPLOY["config"], folds=[FOLD],
+                                      remover=OverlayRemover(max_side=DEPLOY["ocr_max_side"]))
 
 
 def describe(attr: str, a: dict) -> str:
@@ -81,6 +83,9 @@ if source == "Example image":
                           format_func=lambda n: EXAMPLE_LABELS.get(n, n))
     image = Image.open(EXAMPLE_DIR / choice)
     name = choice
+    rating = next(e["infection_risk"] for e in DEPLOY["examples"] if e["image_name"] == choice)
+    st.caption(f"Surgeon rating for this photo: **{rating}** infection risk (from SurgWound; the model does not "
+               "see it). The examples mix agreements, a referral and a false alarm.")
 elif source == "Upload a photo":
     up = st.file_uploader("Photo of the wound", type=["jpg", "jpeg", "png", "webp"])
     st.caption("Uploading images from the SurgWound dataset is not a valid test: the model trained on 80% of "

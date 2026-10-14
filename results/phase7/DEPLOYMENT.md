@@ -12,22 +12,35 @@ Nothing has been deployed. Platform limits were last checked on **2026-10-14** f
   - Only inpainting statistics are logged, and uploads are labeled "upload", never with the file name or an image hash.
   - `.streamlit/config.toml` turns off Streamlit usage statistics and caps uploads at 10 MB.
 
-## What the demo needs (measured on this machine, CPU only, 2 threads)
+## OCR resolution cap for the demo: 1024 px
+
+OCR, not the model, sets peak memory. It runs on a downscaled copy of the photo, and the boxes are mapped back to full resolution for inpainting. Training and evaluation used a 1280 px long side (`MAX_SIDE` in `src/data/ocr.py`, unchanged). The demo uses **1024 px** (`ocr_max_side` in `deployment.json`).
+
+**Effect on the 686 dataset images** (`scripts/phase7_ocr_cap_check.py --cap 1024`, results in `ocr_cap_1024.json`). OCR was re-run at 1024 px and, as a run-to-run control, at 1280 px, on every image larger than 1024 px (smaller images are unaffected by construction). Images whose mask changed were re-scored by their out-of-fold model with that fold's parameters.
+
+| | images |
+|---|---|
+| larger than 1024 px | 206 of 686 |
+| inpainting mask differs at all | 32 (mostly small box-edge shifts; median mask IoU 0.95) |
+| number of inpainted regions differs | 12 (113 regions in total at 1280 px, 115 at 1024 px) |
+| a region lost entirely | 796.jpg (1 region to 0, so its text stays in the photo) |
+| **infection band changes** | **1**: 788.jpg, low concern to uncertain (towards review, not away from it) |
+| redness, swelling or drainage changes | 0 |
+
+## What the demo needs (measured on this machine, CPU only, 2 threads, fold 0 model, OCR cap 1024 px)
 
 | item | measurement |
 |---|---|
 | fold 0 checkpoint (fp32) | 107 MB |
 | EasyOCR models (detector 83 MB, Chinese 22 MB, Cyrillic 15 MB) | 115 MB, downloaded on first use |
-| memory: Python, Streamlit, torch and app imports | 641 MB |
-| + EasyOCR readers | 915 MB |
-| + fold 0 model | 1,109 MB |
-| steady state after the first prediction | about 1,600 MB |
-| **peak during OCR, 640 px photos** | **1.4 to 1.8 GB** |
-| **peak during OCR, 1080 x 1440 photo** (OCR runs at up to 1280 px) | **2.58 GB** |
-| latency, 640 px photo: OCR + inpainting + prediction / Grad-CAM | 3.1 to 4.2 s / 0.6 s |
-| latency, 1080 x 1440 photo | 9.8 s / 2.4 s |
+| memory with imports, EasyOCR and fold 0 loaded | about 0.85 to 1.1 GB |
+| steady state after predictions | about 1.3 GB (1.6 GB at the 1280 px cap) |
+| peak, 480 to 1138 px photos | 1.35 to 1.45 GB |
+| peak, 1080 x 1440 photo | 1.92 GB (2.58 GB at the 1280 px cap) |
+| **peak, largest photos tested (1440 x 1440; 1152 x 2048)** | **2.08 GB**; 1.48 GB |
+| latency: OCR + inpainting + prediction, then Grad-CAM | 2.6 to 12 s, then 0.6 to 2.4 s |
 
-These numbers come from the CUDA build of torch 2.5.1 running on the CPU, on Windows. A Linux host with the CPU-only wheel will differ, probably downward, but this could not be measured here (no package-index access). **OCR, not the model, sets peak memory**: the five-model ensemble added only about 525 MB, while one OCR pass on a large photo adds about 950 MB.
+These numbers come from the CUDA build of torch 2.5.1 running on the CPU, on Windows. A Linux host with the CPU-only wheel will differ but could not be measured here (no package-index access). OCR-only peaks for one large photo were 1.57 to 1.60 GB at 1280 px, 1.22 to 1.37 GB at 1024 px and 1.08 to 1.23 GB at 800 px.
 
 ## The two platforms (checked 2026-10-14)
 
@@ -35,22 +48,17 @@ These numbers come from the CUDA build of torch 2.5.1 running on the CPU, on Win
 |---|---|---|
 | free hardware | CPU Basic: 2 vCPU, 16 GB RAM, 50 GB non-persistent disk | 0.078 to 2 cores, **690 MB minimum to 2.7 GB maximum memory**, up to 50 GB storage. The docs still date these limits to February 2024. |
 | can a free account run this app? | **No, not as written.** The docs list Gradio, Docker and static SDKs (Streamlit runs through Docker) and say that Gradio and Docker Spaces need a paid plan (PRO, $9/month). Free accounts can host up to 2 Gradio Spaces on ZeroGPU, which would mean rewriting the UI in Gradio. | **Yes.** It deploys `src/app/app.py` from a public GitHub repo. |
-| fits in memory? | easily | **Not guaranteed.** Steady state (about 1.6 GB) is above the 690 MB guaranteed minimum, and a large photo (2.58 GB) comes within 0.1 GB of the maximum. The docs say an app over its limits "may slow down from throttling or become nonfunctional". |
+| fits in memory? | easily | **Not guaranteed.** With the 1024 px cap the peak is 2.08 GB, about 0.6 GB under the 2.7 GB maximum, but the steady state (about 1.3 GB) is still above the 690 MB guaranteed minimum. The docs say an app over its limits "may slow down from throttling or become nonfunctional". |
 | model weights | Space repo or a Hub model repo | from outside git (checkpoints are gitignored and over GitHub's 100 MB file limit): a GitHub Release asset or a Hub model repo, downloaded on first start |
 | sleep | free hardware sleeps when unused | after 12 hours without traffic; any visitor can wake it |
 
 ## Recommendation
 
-**Streamlit Community Cloud is still the only free option that runs the app as written, but OCR memory is a blocker to fix before deploying.** Two ways forward, which need your decision:
-
-1. **Cap the photo size before OCR** (for example a 1024 px long side for uploads), then confirm offline that the inpainted regions and infection bands on the 686 dataset images are unchanged, or report what changes. This changes the preprocessing pipeline, so it needs that check, and peak memory needs re-measuring afterwards. It is the cheapest fix.
-2. **Pay for Hugging Face PRO** ($9/month) and use CPU Basic (16 GB) with a Docker Space. Memory stops being a concern, but the demo is no longer free.
-
-The alternative of porting to Gradio on free ZeroGPU is not recommended: it means a UI rewrite, and the free tier is GPU-quota-based, not a CPU host.
+**Streamlit Community Cloud, with the fold 0 model and the 1024 px OCR cap.** It is the only free option that runs the app as written. The cap brings the worst measured peak from 2.58 GB to 2.08 GB at the cost of one band change in 686 images. The remaining risk is the shared-resource floor: Streamlit guarantees only 690 MB, so under load the app could be throttled or restarted. If that happens in practice, Hugging Face PRO ($9/month, CPU Basic with 16 GB) removes the problem. Porting to Gradio on free ZeroGPU is not recommended: it means a UI rewrite, and that free tier is GPU-quota-based, not a CPU host.
 
 ## Still needed before any public deployment (not done)
 
-1. **Fix the memory risk** (above) and re-measure on the target platform.
+1. **Re-measure memory on the target platform** (Linux, CPU wheel) and watch for resource-limit restarts.
 2. **CPU wheels:** a deployment requirements file with `torch==2.5.1+cpu` and `torchvision==0.20.1+cpu` from the PyTorch CPU index, `opencv-python-headless`, and without the training-only packages (`anthropic`, `datasets`, `statsmodels`).
 3. **Weights hosting:** publishing the fold 0 checkpoint distributes a model trained on CC BY-SA 4.0 data, so publish it under CC BY-SA 4.0 with the SurgWound attribution. Publishing is outward-facing and needs your approval.
 4. **A cold-start message** while EasyOCR and the checkpoint download after the app wakes from sleep.

@@ -2,6 +2,7 @@
   "model": "convnext_tiny_384_inpainted",
   "config": "configs/phase3_convnext_tiny_inpainted.yaml",
   "deployed_fold": 0,
+  "ocr_max_side": 1024,
   "folds": {
     "0": {
       "heads": {
@@ -192,28 +193,32 @@
       "cv_fold": 0,
       "official_split": "test",
       "infection_risk": "Low",
-      "band_out_of_fold": "low concern"
+      "band_out_of_fold": "low concern",
+      "slot": "surgeon Low, predicted low concern"
     },
     {
-      "image_name": "411.jpg",
+      "image_name": "66.jpg",
+      "cv_fold": 0,
+      "official_split": "test",
+      "infection_risk": "Medium",
+      "band_out_of_fold": "high concern",
+      "slot": "surgeon Elevated, predicted high concern"
+    },
+    {
+      "image_name": "268.jpg",
       "cv_fold": 0,
       "official_split": "test",
       "infection_risk": "Low",
-      "band_out_of_fold": "uncertain"
+      "band_out_of_fold": "uncertain",
+      "slot": "any surgeon rating, predicted referral band"
     },
     {
-      "image_name": "237.jpg",
+      "image_name": "30.jpg",
       "cv_fold": 0,
       "official_split": "test",
       "infection_risk": "Low",
-      "band_out_of_fold": "high concern"
-    },
-    {
-      "image_name": "521.jpg",
-      "cv_fold": 0,
-      "official_split": "test",
-      "infection_risk": "Low",
-      "band_out_of_fold": "high concern"
+      "band_out_of_fold": "high concern",
+      "slot": "surgeon Low, predicted high concern (a false alarm)"
     }
   ],
   "notes": "Every photo is scored by the fold 0 model with the parameters the cross-validation tested for fold 0. The examples are fold 0 held-out images, so their results are out-of-fold."

@@ -11,10 +11,11 @@ from PIL import Image, ImageOps
 MAX_SIDE = 1280  # downscale very large images for speed, boxes are rescaled back
 
 
-def ocr_image(reader, im: Image.Image) -> list[dict]:
+def ocr_image(reader, im: Image.Image, max_side: int = MAX_SIDE) -> list[dict]:
     """Detections for one RGB image (already EXIF-transposed), boxes in its pixels.
-    Shared by the offline audit and the inference pipeline."""
-    scale = min(1.0, MAX_SIDE / max(im.size))
+    Shared by the offline audit and the inference pipeline. OCR runs on a copy whose
+    long side is at most `max_side`; boxes are mapped back to full resolution."""
+    scale = min(1.0, max_side / max(im.size))
     if scale < 1.0:
         im = im.resize((round(im.width * scale), round(im.height * scale)), Image.BILINEAR)
     dets = []
