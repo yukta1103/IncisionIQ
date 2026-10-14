@@ -42,13 +42,15 @@ _PP = r"(?:\s+(?:around|at|near|along|on|in|of|over|surrounding)\s+(?:the\s+|thi
 _VERB = _PP + r"\s*(?:(?:is|are|was|were|remains?|appears?|seems?)\s+)?"
 _FILLER = r"(?:(?:all|both|normal|and|completely|entirely)\s+)*"
 _NEG_WORD = r"(?:absent|non-existent|nonexistent|not (?:present|observed|seen|evident|noted|visible)|none)\b"
-NEG_BEFORE = r"\b(?:no|not|without|absence of|absent|free of|negative for|non-existent|nonexistent|lack of|lacks|denies|none)\b"
+NEG_BEFORE = (r"\b(?:no|not|without|absence of|absent|free of|devoid of|negative for|non-existent|nonexistent|lack of|"
+              r"lacks|denies|none)\b")
 NEG_AFTER = r"^" + _LIST + r"\s*(?:status\s+|characteristics\s+)?" + _VERB + _FILLER + _NEG_WORD
 _UNC = r"(?:uncertain|unclear|undetermined|indeterminate|unknown)"
 UNC_BEFORE = _UNC + r"\s+(?:\w+\s+)?$"
 UNC_AFTER = r"^" + _LIST + r"\s*(?:status\s+|characteristics\s+)?" + _VERB + r"(?:" + _UNC + r"|cannot be (?:determined|assessed))\b"
-POSITIVE_BREAK = (r"\b(?:with|existing|existent|present|exhibit\w*|shows?|showing|has|have|displays?|notable|evident|"
-                  r"mild|moderate|severe|significant)\b")
+# "evident" and "significant" are not breaks: "no evident erythema", "absence of significant signs" stay negated
+POSITIVE_BREAK = (r"\b(?:with|existing|existent|present|presence of|exhibit\w*|shows?|showing|has|have|display\w*|"
+                  r"reveal\w*|notable|mild|moderate|severe)\b")
 ADVICE = (r"\b(?:monitor\w*|watch\w*|prevent\w*|avoid\w*|recommend\w*|should|advis\w*|ensure|if|to reduce|"
           r"to minimi[sz]e|for (?:any |potential |possible )?(?:signs|changes|symptoms)|look out|in case|"
           r"risk of developing|educat\w*|instruct\w*|follow[- ]up|seek|encourag\w*|reduce|potential|such as|keep\w*|"
@@ -60,7 +62,7 @@ RISK_PATTERNS = [
     r"infection risk(?: assessment| level)?(?: is| was| remains| of| appears| seems| looks)?(?: to be)?(?: deemed| assessed as| considered| rated|"
     r" categorized as| classified as)?\s+" + _RISK_LEVEL + r"\b",
     r"risk of infection(?: is| was| remains)?(?: deemed| assessed as| considered| rated)?\s+" + _RISK_LEVEL + r"\b",
-    r"\b" + _RISK_LEVEL + r"(?:[- ]risk)?(?: of infection| infection risk| risk of infection)\b",
+    r"\b" + _RISK_LEVEL + r"(?:[- ]risk)?(?: of infection| for infection| infection risk| risk of infection| risk for infection)\b",
 ]
 LEVEL_MAP = {"low": "low", "lower": "low", "minimal": "low", "medium": "medium", "moderate": "medium",
              "intermediate": "medium", "high": "high", "elevated": "elevated", "significant": "elevated"}
@@ -148,7 +150,8 @@ def extract_claims(text: str) -> list[Claim]:
                 elif pol == "present" and re.search(SIGNS, low):
                     claims.append(Claim("infection", "elevated", cl))
         for v, key in (("not_healed", "healing_not"), ("healed", "healing_healed")):
-            if _matches(key, cl):
+            # a negated term is not a claim ("no visible dehiscence" does not mean not healed)
+            if any(p == "present" for _, p in _matches(key, cl)):
                 claims.append(Claim("healing", v, cl))
                 break
     seen, out = set(), []

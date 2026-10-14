@@ -1,0 +1,31 @@
+image_name,healing,exudate,erythema,edema,infection,note
+20.jpg,not_healed,none,present,unclear,low,edema "mild or no visible swelling"
+61.jpg,not_healed,non_purulent,present,present,low,infection "low to low-moderate"
+76.jpg,not_healed,none,present,present,low,erythema "no spreading erythema; mild pinkness along suture line"
+91.jpg,healed,none,present,absent,low,
+126.jpg,healed,none,present,absent,low,erythema confined to scar
+133.jpg,not_healed,non_purulent,present,unclear,low,edema "present: minimal or none apparent"
+134.jpg,not_healed,purulent,present,present,elevated,exudate "possible purulent or seropurulent"
+241.jpg,unclear,none,present,present,low,non-surgical lesion
+260.jpg,not_healed,non_purulent,absent,present,low,edema "may be present"; infection "low to moderate"
+310.jpg,healed,none,absent,absent,low,
+315.jpg,not_healed,none,present,unclear,low,edema "mild or minimal; may be slight swelling"
+322.jpg,not_healed,non_purulent,present,absent,low,
+433.jpg,unclear,none,absent,absent,low,healing "closed; early-to-intermediate healing phase"
+498.jpg,not_healed,non_purulent,present,present,elevated,
+584.jpg,unclear,none,present,present,low,healing "closed; late inflammatory to early proliferative or remodeling"
+597.jpg,not_healed,none,present,absent,low,exudate "no active drainage; scabs from earlier drainage"
+606.jpg,healed,none,present,absent,low,erythema minimal limited to scar
+615.jpg,not_healed,purulent,present,present,elevated,report uses bold-text headings instead of markdown headings
+625.jpg,not_healed,non_purulent,present,present,elevated,
+671.jpg,not_healed,none,absent,unclear,low,edema "mild or minimal localized swelling may be present"
+688.jpg,healed,none,present,absent,low,erythema localized to scar tissue
+705.jpg,unclear,none,unclear,absent,low,erythema "minimal or no significant erythema"
+740.jpg,not_healed,purulent,present,present,low,exudate "serosanguineous to seropurulent"; infection "low to moderate"
+764.jpg,healed,none,absent,absent,low,
+803.jpg,not_healed,none,absent,absent,low,
+808.jpg,unclear,none,present,absent,low,healing "largely closed and in the healing phase"
+843.jpg,not_healed,purulent,present,present,elevated,edema "mild localized swelling is possible"
+893.jpg,healed,none,absent,absent,low,
+924.jpg,not_healed,none,present,absent,low,
+966.jpg,not_healed,non_purulent,absent,present,elevated,skin graft
