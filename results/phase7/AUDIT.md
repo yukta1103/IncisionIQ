@@ -1,10 +1,13 @@
 # Phase 7c: Pre-push audit
 
-Last run on 2026-10-14 over every commit of local `main`, and separately over `origin/main` as last fetched.
+Last run on 2026-10-14 over every commit of local `main` before the first push to the recreated repo.
 
 ## Status of the remote
 
-The original GitHub repo was deleted and recreated empty under the same name, so the commits that held the un-redacted material (pushed on 2026-10-14 before the redaction decisions) are no longer served from it. Local `main` was rewritten from 0863bd6 onward and is pushed to the new repo as is; no other remote is force-pushed. Copies made before the deletion (clones, forks, caches) cannot be recalled.
+- **Old repo:** the commits that held the un-redacted material (pushed on 2026-10-14, before the redaction decisions) were removed from GitHub by deleting the repo. It was recreated empty under the same name; `git ls-remote origin` returned nothing before the push.
+- **Clean history pushed:** local `main` (rewritten from 0863bd6 onward) was pushed with a normal `git push -u origin main`, with no force. The first pushed commit was adcf027, and `origin/main` matched local `main` afterwards. Later fixes are normal new commits on top.
+- **Stray merges aborted:** before the push, two merges of the old remote-tracking branch into local `main` were started outside this work (most likely `git pull` or GitHub Desktop). Neither was committed; both were aborted with `git merge --abort`. The stale `origin/main` tracking ref was then deleted and the old objects purged from the local object store, so they could not be pushed.
+- **Not recallable:** copies of the old commits made before the deletion (clones, forks, caches).
 
 ## Results on local `main`
 
@@ -20,7 +23,7 @@ The original GitHub repo was deleted and recreated empty under the same name, so
 | EXIF / metadata in demo examples | none |
 | `.claude/launch.json` | in 2 commits (a local Streamlit launch command, no secrets); untracked and gitignored since Phase 7 |
 
-Images in history: plots without patient pixels, the 4 pixelated Grad-CAM figures, the Phase 6 examples 714, 315 and 282 (no detected text; removed from the tree in Phase 7 but kept in history, as only 111 was to be purged), the first Phase 7 examples 411, 237 and 521 (same checks; replaced but kept in history), and the final examples 79, 66, 268 and 30.
+Images in history: plots without patient pixels, the 4 pixelated Grad-CAM figures, the Phase 6 examples 714, 315 and 282 (no detected text; removed from the tree in Phase 7 but kept in history, as only 111 was to be purged), the first Phase 7 examples 237 and 521 (same checks; replaced but kept in history), 268.jpg (a child's neck and the back of the head, no face or text; an example in the pushed commit adcf027, replaced afterwards by a normal commit, so it stays in history), and the final examples 79, 66, 411 and 30.
 
 ## What was done
 

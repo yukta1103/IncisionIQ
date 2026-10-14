@@ -76,3 +76,11 @@ def test_prediction_writes_nothing_and_reproduces_example_bands(predictor, monke
         predictor.gradcam(res["clean_image"], "infection", 1, fold=fold)
         attrs = attributes_from_probs(res["probs_array"], DEPLOY["folds"][str(fold)], DEPLOY["band_rates"])
         assert attrs["infection"]["band"] == e["band_out_of_fold"], e["image_name"]
+
+
+def test_synthetic_caption_is_detected_and_removed(predictor):
+    """tests/fixtures/synthetic_caption.jpg (drawn, no patient pixels) is the live-demo check
+    for the "text or sticker region(s) were removed" notice."""
+    res = predictor.predict(Image.open(ROOT / "tests" / "fixtures" / "synthetic_caption.jpg"), photo_id="upload",
+                            fold=DEPLOY["deployed_fold"])
+    assert res["preprocess"]["inpainted"] and res["preprocess"]["n_regions"] >= 1

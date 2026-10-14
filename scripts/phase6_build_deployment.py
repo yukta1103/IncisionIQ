@@ -42,14 +42,19 @@ SLOTS = [("surgeon Low, predicted low concern", ("Low",), "low concern"),
          ("surgeon Low, predicted high concern (a false alarm)", ("Low",), "high concern")]
 
 
+# Excluded after the by-eye check, before any model output was considered.
+EXCLUDED_BY_EYE = {"268.jpg": "shows a child"}
+
+
 def select_examples(d: pd.DataFrame, ocr: dict, orange: dict) -> list[tuple[str, str]]:
     """Fixed rule: for each slot, the lowest-ID image that is in the official test split, held out by
     the deployed fold, has no OCR detection at all and no orange box, and meets the slot's surgeon
-    rating and out-of-fold band. The chosen images were then checked by eye for captions and faces
-    (none found)."""
+    rating and out-of-fold band, excluding EXCLUDED_BY_EYE. The chosen images were checked by eye
+    for captions, faces and children."""
     d = d.assign(id=d.image_name.str.removesuffix(".jpg").astype(int)).sort_values("id")
     ok = d[(d.split == "test") & (d.cv_fold == DEPLOYED_FOLD)
-           & d.image_name.map(lambda n: not ocr.get(n) and not orange.get(n))]
+           & d.image_name.map(lambda n: not ocr.get(n) and not orange.get(n))
+           & ~d.image_name.isin(list(EXCLUDED_BY_EYE))]
     out = []
     for desc, ratings, band in SLOTS:
         m = ok[(ok.band == band) & (ok.infection_risk.isin(ratings) if ratings else True)]

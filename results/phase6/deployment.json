@@ -205,7 +205,7 @@
       "slot": "surgeon Elevated, predicted high concern"
     },
     {
-      "image_name": "268.jpg",
+      "image_name": "411.jpg",
       "cv_fold": 0,
       "official_split": "test",
       "infection_risk": "Low",
