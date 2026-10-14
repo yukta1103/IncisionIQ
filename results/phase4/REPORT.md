@@ -76,7 +76,7 @@ Abstention raises accuracy on answered cases but does not improve recall of the 
 
 - **Inner-val is reused** for checkpoint selection, the decision rule, temperatures, recall thresholds and abstention cut-offs. The under-delivered recall targets are the visible cost. A product needs a separate calibration set; here none exists without shrinking training further.
 - **Small positive counts:** 84 Elevated and 12 High-risk images excluding 900+. High-risk intervals span 0.3 to 0.4.
-- **Deployment uses a 5-model ensemble**, which these per-fold numbers do not evaluate directly. Phase 6 will use per-fold thresholds averaged across folds and must state that this setting is unvalidated.
+- **Deployment uses a 5-model ensemble**, which these per-fold numbers do not evaluate directly. Phase 6 will use per-fold thresholds averaged across folds and must state that this setting is unvalidated. (Superseded in Phase 7: the demo uses the fold 0 model alone, with the thresholds evaluated for fold 0.)
 
 ## Decisions recorded
 

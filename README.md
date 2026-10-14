@@ -8,7 +8,7 @@ A photo of a surgical incision plus four questions in, a three-level triage verd
 - **Model:** ConvNeXt-Tiny with four heads (redness, swelling, drainage type, infection risk Low vs Elevated). It is trained on photos whose captions and stickers are removed by OCR and inpainting, the same step that runs on every incoming photo. [Phase 2](results/phase2/REPORT.md), [Phase 3](results/phase3/REPORT.md)
 - **Decision:** infection risk is shown as a band with its observed rate, never as a probability. Bands come from a recall-targeted flag plus a referral band for uncertain cases. [Phase 4](results/phase4/REPORT.md)
 - **Report:** a template filled from the predicted attributes only. Every claim is checked against the surgeon labels, and compared with Claude Opus 5.5 zero-shot. [Phase 5](results/phase5/REPORT.md)
-- **Verdict:** explicit rules over the infection band and the patient's answers (pain 0 to 10, pain getting worse, fever, drainage). The demo runs locally: `streamlit run src/app/app.py`. [Phase 6](results/phase6/REPORT.md)
+- **Verdict:** explicit rules over the infection band and the patient's answers (pain 0 to 10, pain getting worse, fever, drainage). Demo: `streamlit run src/app/app.py`. **Every photo is scored by one model, CV fold 0**, chosen by a fixed rule (the first fold), not by performance, with the thresholds the cross-validation tested for that fold. A single model keeps the demo light enough for free CPU hosting, and its thresholds are ones that were actually evaluated. The four examples are fold 0 held-out images. [Phase 6](results/phase6/REPORT.md)
 
 ## Results (grouped CV, out-of-fold, excluding IDs 900+)
 
@@ -49,7 +49,7 @@ A photo of a surgical incision plus four questions in, a three-level triage verd
 - **Social-media photos, not home-app photos.** Selection bias toward cases people chose to post, and one source dominates the severe cases.
 - **No serial photos of the same wound over time, so no trend tracking.** Real monitoring compares day 3 with day 5; this model judges single photos.
 - **Labels depend on earlier MLLM judgments:** SurgWound gave a single annotator to images that three MLLMs all called Low risk.
-- **The demo's upload model is unevaluated:** a 5-model ensemble with fold-averaged thresholds. The examples are scored honestly by the fold model that never saw them.
+- **The demo model saw 80% of the data:** fold 0 alone, not a model trained on all 686 images. Its band rates are pooled over all five folds.
 - **Not clinically validated and not a medical device.** No outcome data, and the verdict thresholds are product choices.
 
 ## Next steps
@@ -61,7 +61,7 @@ A photo of a surgical incision plus four questions in, a three-level triage verd
 
 ## Data handling
 
-Patient photos stay local. The only exception was the agreed VLM baseline: inpainted, metadata-free JPEGs with opaque IDs, sent through the Anthropic Batches API, with the batches deleted afterwards. Caption text the OCR missed still reached the VLM in 8 of 686 images (post-operative day counts and similar, nothing identifying). Figures pixelate detected text. Details: [Phase 5](results/phase5/REPORT.md), [pre-push audit](results/phase7/AUDIT.md). Deployment options: [Phase 7](results/phase7/DEPLOYMENT.md).
+Patient photos stay local. The only exception was the agreed VLM baseline: inpainted, metadata-free JPEGs with opaque IDs, sent through the Anthropic Batches API, with the batches deleted afterwards. Caption text the OCR missed still reached the VLM in 8 of 686 images (post-operative day counts and similar, nothing identifying). Figures pixelate detected text. The VLM's transcriptions of that text are redacted in the stored outputs. Details: [Phase 5](results/phase5/REPORT.md), [pre-push audit](results/phase7/AUDIT.md). Deployment options: [Phase 7](results/phase7/DEPLOYMENT.md).
 
 ## Reproduce
 
@@ -74,3 +74,7 @@ Each phase report lists its scripts. Seeds are fixed, and every result comes fro
 ## Data and citation
 
 SurgWound: Xu et al., *SurgWound-Bench: a benchmark for surgical wound diagnosis*, npj Digital Medicine 2026, [doi:10.1038/s41746-026-02791-3](https://doi.org/10.1038/s41746-026-02791-3). Hugging Face `xuxuxuxuxu/SurgWound`, CC BY-SA 4.0. The demo examples and Grad-CAM figures are adapted from it under the same license.
+
+## License
+
+Code: [MIT](LICENSE). Dataset-derived content (the Grad-CAM figures, the demo examples, per-image outputs in `results/`, and any model weights if published) is CC BY-SA 4.0, with attribution to Xu et al. 2026.

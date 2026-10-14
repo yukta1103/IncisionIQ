@@ -1,13 +1,13 @@
 """IncisionIQ demo: photo + three questions -> attributes, Grad-CAM, grounded report, verdict.
 
 Run from the repo root:  streamlit run src/app/app.py
-Everything runs on this machine; the photo is not sent anywhere.
 
 - Every photo goes through OCR + inpainting before the model sees it (src/inference/pipeline.py).
-- Example images (official test split) are scored by the CV fold model that never trained on
-  them, with that fold's thresholds, so their results are honest out-of-fold predictions.
-- Uploaded photos are scored by the 5-model ensemble with fold-averaged thresholds, a setting
-  the cross-validation does not evaluate directly.
+- Every photo, example or upload, is scored by one model: CV fold 0 (chosen by fixed rule, not
+  performance), with the decision parameters the cross-validation tested for that fold.
+- The examples are fold 0 held-out images, so their results are honest out-of-fold predictions.
+- Photos are processed in memory on the server running the app; they are never written to disk,
+  and only the inpainting statistics are logged, never the photo or its content.
 """
 import json
 import sys
@@ -28,8 +28,9 @@ DEPLOY = json.loads((ROOT / "results" / "phase6" / "deployment.json").read_text(
 LEVEL_STYLE = {REVIEW: ("#b42318", "#fef3f2"), WATCH: ("#b54708", "#fffaeb"), ON_TRACK: ("#067647", "#ecfdf3")}
 STANDING_ADVICE = ("Whatever the result: contact your care team if you develop fever, spreading redness, new or increased "
                    "drainage, or worsening pain.")
-EXAMPLE_LABELS = {"714.jpg": "Example 1", "315.jpg": "Example 2", "111.jpg": "Example 3 (has a caption)",
-                  "282.jpg": "Example 4"}
+FOLD = DEPLOY["deployed_fold"]
+PARAMS = DEPLOY["folds"][str(FOLD)]
+EXAMPLE_LABELS = {e["image_name"]: f"Example {i + 1}" for i, e in enumerate(DEPLOY["examples"])}
 
 st.set_page_config(page_title="IncisionIQ demo", page_icon="🩹", layout="centered")
 st.markdown("""<style>
@@ -44,7 +45,7 @@ st.markdown("""<style>
 def load_predictor():
     from src.inference.pipeline import WoundPredictor
 
-    return WoundPredictor.from_config(DEPLOY["config"])
+    return WoundPredictor.from_config(DEPLOY["config"], folds=[FOLD])
 
 
 def describe(attr: str, a: dict) -> str:
@@ -64,24 +65,26 @@ def cam_overlay(cam: np.ndarray, disp: np.ndarray) -> np.ndarray:
 
 st.title("IncisionIQ")
 st.caption("Explainable surgical wound photo check. Portfolio demo, **not a medical device** and not clinically "
-           "validated. Runs on this computer; the photo is not sent anywhere.")
+           "validated.")
+st.error("**Demo only. Do not upload real patient photos.**")
+st.caption("Your photo is processed in memory by the server running this app (your own computer if you run it "
+           "locally, Streamlit Community Cloud on the public demo). It is not saved to disk, not logged, and not "
+           "sent to any other service.")
 
 # ---- 1. photo
 st.subheader("1. Photo")
 source = st.radio("Photo source", ["Example image", "Upload a photo", "Take a photo"], horizontal=True,
                   label_visibility="collapsed")
-image, fold, name = None, None, None
+image, name = None, None
 if source == "Example image":
     choice = st.selectbox("Example (official test split)", [e["image_name"] for e in DEPLOY["examples"]],
                           format_func=lambda n: EXAMPLE_LABELS.get(n, n))
     image = Image.open(EXAMPLE_DIR / choice)
-    fold = next(e["cv_fold"] for e in DEPLOY["examples"] if e["image_name"] == choice)
     name = choice
 elif source == "Upload a photo":
     up = st.file_uploader("Photo of the wound", type=["jpg", "jpeg", "png", "webp"])
-    st.caption("Uploading images from the SurgWound dataset is not a valid test: the upload model (a 5-model "
-               "ensemble) was trained on them. Use the examples above for dataset images; they are scored by a model "
-               "that never saw them.")
+    st.caption("Uploading images from the SurgWound dataset is not a valid test: the model trained on 80% of "
+               "them. Use the examples instead; they come from the 20% it never saw.")
     if up is not None:
         image, name = Image.open(up), "upload"
 else:
@@ -103,13 +106,12 @@ st.caption("The pain-trend question is an addition to the original three so that
 if st.button("Check the wound", type="primary", use_container_width=True, disabled=image is None):
     predictor = load_predictor()
     with st.spinner("Removing text from the photo and running the model..."):
-        result = predictor.predict(image, photo_id=name, fold=fold)
-        params = DEPLOY["folds"][str(fold)] if fold is not None else DEPLOY["ensemble"]
-        attrs = attributes_from_probs(result["probs_array"], params, DEPLOY["band_rates"])
+        result = predictor.predict(image, photo_id=name, fold=FOLD)
+        attrs = attributes_from_probs(result["probs_array"], PARAMS, DEPLOY["band_rates"])
         prep = result["preprocess"]
         quality = photo_quality(*result["size"], prep["inpainted_area_frac"])
         v = verdict(attrs, PatientAnswers(pain=pain, pain_worsening=worse, fever=fever, drainage=drainage), quality)
-        cam, disp = predictor.gradcam(result["clean_image"], "infection", 1, fold=fold)
+        cam, disp = predictor.gradcam(result["clean_image"], "infection", 1, fold=FOLD)
 
     # ---- verdict
     color, bg = LEVEL_STYLE[v["level"]]
@@ -145,11 +147,11 @@ if st.button("Check the wound", type="primary", use_container_width=True, disabl
     st.caption("Generated only from the attributes above; nothing else is added.")
 
     with st.expander("Technical details"):
-        st.markdown(f"- Model: `{result['model']}`\n"
-                    + ("- Example image: scored by the cross-validation fold model that never trained on it, with that "
-                       "fold's thresholds (an honest out-of-fold prediction).\n" if fold is not None else
-                       "- Uploaded photo: scored by the 5-model ensemble with fold-averaged thresholds. This setting is "
-                       "not itself evaluated by the cross-validation.\n")
+        st.markdown(f"- Model: `{result['model']}`. Every photo is scored by this one model, fold 0 of the 5-fold "
+                    "cross-validation, chosen by a fixed rule (the first fold), not by performance. It uses the "
+                    "decision thresholds the cross-validation tested for fold 0. It trained on 80% of SurgWound; the "
+                    "examples come from the 20% it never saw, so their results are honest out-of-fold predictions.\n"
+                    "- Risk-group rates are pooled over all five folds' held-out images (excluding IDs 900+).\n"
                     + f"- Photo preparation: {prep['n_regions']} region(s) inpainted, OCR {prep['seconds']:.1f} s.\n"
                     "- Confidence is shown as a risk group with its observed rate, not as a probability, because the "
                     "model's raw probabilities over-predict at the high end.")

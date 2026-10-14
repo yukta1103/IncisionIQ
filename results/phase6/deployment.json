@@ -1,6 +1,7 @@
 {
   "model": "convnext_tiny_384_inpainted",
   "config": "configs/phase3_convnext_tiny_inpainted.yaml",
+  "deployed_fold": 0,
   "folds": {
     "0": {
       "heads": {
@@ -158,37 +159,6 @@
       "t_flag": 0.47921425104141235
     }
   },
-  "ensemble": {
-    "heads": {
-      "erythema": {
-        "alpha": 0.37,
-        "prior": [
-          0.7103536715943316,
-          0.2896463284056684
-        ],
-        "tau": 0.6297136545181274
-      },
-      "edema": {
-        "alpha": 0.2,
-        "prior": [
-          0.851214166482445,
-          0.1487858335175551
-        ],
-        "tau": 0.6338141202926636
-      },
-      "exudate": {
-        "alpha": 0.07,
-        "prior": [
-          0.8451034181142821,
-          0.10546496537000176,
-          0.04943161651571615
-        ],
-        "tau": 0.6489437580108642
-      }
-    },
-    "t_review": 0.10263265371322632,
-    "t_flag": 0.25182983130216596
-  },
   "band_rates": {
     "low concern": {
       "rate": 0.04332129963898917,
@@ -215,36 +185,36 @@
       "n": 186
     }
   },
-  "band_rates_subset": "excluding ID 900+ (grouped CV, out-of-fold)",
+  "band_rates_subset": "excluding ID 900+ (grouped CV, out-of-fold, all folds pooled)",
   "examples": [
     {
-      "image_name": "714.jpg",
-      "cv_fold": 2,
+      "image_name": "79.jpg",
+      "cv_fold": 0,
       "official_split": "test",
       "infection_risk": "Low",
       "band_out_of_fold": "low concern"
     },
     {
-      "image_name": "315.jpg",
-      "cv_fold": 4,
+      "image_name": "411.jpg",
+      "cv_fold": 0,
       "official_split": "test",
       "infection_risk": "Low",
       "band_out_of_fold": "uncertain"
     },
     {
-      "image_name": "111.jpg",
-      "cv_fold": 1,
+      "image_name": "237.jpg",
+      "cv_fold": 0,
       "official_split": "test",
-      "infection_risk": "High",
+      "infection_risk": "Low",
       "band_out_of_fold": "high concern"
     },
     {
-      "image_name": "282.jpg",
-      "cv_fold": 2,
+      "image_name": "521.jpg",
+      "cv_fold": 0,
       "official_split": "test",
-      "infection_risk": "Medium",
+      "infection_risk": "Low",
       "band_out_of_fold": "high concern"
     }
   ],
-  "notes": "Uploaded photos use the 5-model ensemble with fold-mean parameters, which the CV does not evaluate directly. Example images use the fold model that did not train on them."
+  "notes": "Every photo is scored by the fold 0 model with the parameters the cross-validation tested for fold 0. The examples are fold 0 held-out images, so their results are out-of-fold."
 }
