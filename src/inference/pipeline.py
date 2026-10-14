@@ -94,24 +94,48 @@ class WoundPredictor:
     def from_config(cls, path: str | Path, **kw):
         return cls(load_config(ROOT / path), **kw)
 
+    def _input(self, clean: Image.Image) -> torch.Tensor:
+        u8 = torch.from_numpy(np.array(letterbox(clean, self.cfg["cache_size"]))).permute(2, 0, 1)
+        return self.tf(u8).unsqueeze(0).to(self.device)
+
+    def _models(self, fold: int | None):
+        return self.models if fold is None else [self.models[fold]]
+
     @torch.no_grad()
-    def predict(self, im: Image.Image, photo_id: str | None = None) -> dict:
+    def predict(self, im: Image.Image, photo_id: str | None = None, fold: int | None = None) -> dict:
+        """fold=None: 5-model ensemble (uploaded photos). fold=k: only fold k's model, for
+        images that model never trained on (out-of-fold demo examples)."""
         photo_id = photo_id or _photo_hash(im)
         clean, report = self.remover(im)
         log.info("photo=%s inpainted=%s regions=%d area=%.4f ocr_s=%.2f", photo_id, report["inpainted"],
                  report["n_regions"], report["inpainted_area_frac"], report["seconds"])
-        x = self.tf(torch.from_numpy(np.array(letterbox(clean, self.cfg["cache_size"]))).permute(2, 0, 1))
-        x = x.unsqueeze(0).to(self.device)
-        per_model = [{h: softmax(o[h].float().cpu().numpy())[0] for h in HEAD_NAMES}
-                     for o in (m(x) for m in self.models)]
+        x = self._input(clean)
+        with torch.autocast("cuda", dtype=torch.float16, enabled=self.device == "cuda"):  # as in evaluation
+            outs = [m(x) for m in self._models(fold)]
+        per_model = [{h: softmax(o[h].float().cpu().numpy())[0] for h in HEAD_NAMES} for o in outs]
         probs = {h: np.mean([pm[h] for pm in per_model], axis=0) for h in HEAD_NAMES}
         return {
             "photo_id": photo_id,
             "preprocess": report,
             "probs": {h: dict(zip(HEADS[h]["classes"], map(float, probs[h]))) for h in HEAD_NAMES},
+            "probs_array": {h: probs[h].tolist() for h in HEAD_NAMES},
             "fold_spread": {h: float(np.std([pm[h] for pm in per_model], axis=0).max()) for h in HEAD_NAMES},
-            "model": self.cfg["name"],
+            "model": self.cfg["name"] + (f" (fold {fold})" if fold is not None else " (5-model ensemble)"),
+            "clean_image": clean,
+            "size": im.size,
         }
+
+    def gradcam(self, clean: Image.Image, head: str, target_class: int, fold: int | None = None):
+        """Grad-CAM (fp32) for one head's class, averaged over the models used, plus the
+        letterboxed display image it aligns with."""
+        from src.explain.gradcam import gradcam_maps
+
+        x = self._input(clean)
+        cams = [gradcam_maps(m, x, head, target_class, batch_size=1)[0] for m in self._models(fold)]
+        cam = np.mean(cams, axis=0)
+        cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+        disp = np.array(letterbox(clean, self.cfg["input_size"]))
+        return cam, disp
 
 
 def _photo_hash(im: Image.Image) -> str:
