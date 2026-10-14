@@ -11,3 +11,4 @@ results/**/ocr_*_sample.png
 results/**/run.log
 results/**/*.log
 .env
+.claude/
