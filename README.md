@@ -49,15 +49,20 @@ The recall target used to set the flag threshold on each fold's inner-validation
 
 ## Grounded reports vs a zero-shot VLM (Phase 5)
 
-Reports are generated only from the predicted attributes (a template; uncertain attributes are stated as uncertain), then every claim is checked against the SurgWound expert labels. Baseline: Claude Opus 5.5 zero-shot, (A) writing a free-text report from the SurgWound instruction and (B) answering our attribute options as JSON, which our template renders. On erythema, edema and infection risk, excluding IDs 900+ (n = 613):
+Reports are generated only from the predicted attributes (a template; uncertain attributes are stated as uncertain), and every claim is checked against the SurgWound surgeon labels. Baseline: Claude Opus 5.5 zero-shot, (A) writing a free-text report from the SurgWound instruction and (B) answering our attribute options as JSON, which our template renders. On erythema, edema and infection risk, excluding IDs 900+ (n = 613):
 
-| report set | claims agreeing with the expert label | claims contradicting it | reports with a contradiction |
+| report set | claims agreeing with surgeon labels | claims contradicting surgeon labels | reports with a contradiction |
 |---|---|---|---|
 | template (our model) | 0.76 [0.73, 0.79] | 0.22 [0.19, 0.25] | 0.40 |
-| VLM B, structured | 0.69 [0.66, 0.72] | 0.29 [0.26, 0.31] | 0.54 |
+| VLM B, structured, templated | 0.69 [0.66, 0.72] | 0.29 [0.26, 0.31] | 0.54 |
 | VLM A, free text | 0.62 [0.60, 0.64] | 0.35 [0.33, 0.37] | 0.73 |
 
-As a classifier the VLM ties our model on infection risk at its single, untunable decision (Elevated recall 0.65 vs 0.64 at a similar alert rate) and is better on exudate (purulent recall 0.69 vs 0.10). Both VLM conditions ran at effort "low", with identical settings, because of budget (one run, $15.58); higher effort might strengthen the VLM baseline, and run-to-run variation was not measured. The free-text reports needed a section-aware claim checker, validated against hand labels on 30 reports (agreement 0.96 to 0.97 on the three headline attributes, 0.73 to 0.76 on exudate and healing). Details: `results/phase5/REPORT.md`.
+- **A vs B is the generation effect** (same model and image, only the generation step differs) and is the primary evidence for grounded reports.
+- **Template vs B is largely supervised vs zero-shot:** our model learned these annotators' grading thresholds.
+- **Most contradictions are threshold disagreements, not hallucinations.** In 38 reviewed against the images: 25 threshold disagreements, 7 risk-level judgment calls, 2 missed findings, 4 checker errors, 0 hallucinations.
+- **Perception is competitive.** Zero-shot VLM B ties our model on infection risk at a similar alert rate (Elevated recall 0.65 vs 0.64), catches 11 of 12 High-risk wounds against our 8, and is better on exudate (purulent recall 0.69 vs 0.10); possible contamination applies. Our pipeline's value is grounding, calibration, a tunable operating point, referral of low-confidence cases, and on-device processing with no patient photos sent to a third party.
+- Both VLM conditions ran at effort "low", with identical settings, because of budget (one run, $15.58); higher effort might strengthen the VLM baseline, and run-to-run variation was not measured.
+- The claim checker for the free-text reports was redesigned after inspecting the VLM outputs, because of documented checker errors, and validated on 30 hand-labeled reports (agreement 0.96 to 0.97 on the three headline attributes). Details: `results/phase5/REPORT.md`.
 
 ## Design choices backed by the numbers
 
@@ -72,6 +77,7 @@ As a classifier the VLM ties our model on infection risk at its single, untunabl
 - **One image source dominates the severe cases** (IDs 900+) and is identifiable from the photos themselves.
 - **Overlays the mitigation does not remove:** small corner platform logos (an estimated 39% of images), phone screenshot UI (status bars, buttons, thumbnail strips), and the colored banners behind captions (the caption text is inpainted, the banner can remain as a faint band).
 - **2 of 12 High-risk images fall in the low-concern band** (excluding IDs 900+), so the image alone misses some severe cases; patient-reported symptoms are needed as a second signal.
+- **Next step (not built): hybrid reports,** with VLM-extracted exudate fed into the grounded template.
 - **Possible VLM contamination:** the images were public on social media and the dataset is public, so the VLM used as a baseline (Phase 5) may have seen some of them, or posts about them, during training. Its scores could be optimistic for that reason.
 - **Labels are not independent of MLLM judgments:** SurgWound assigned annotation difficulty from the predictions of three MLLMs (GPT-4o, Claude 3.5, Gemini 2). Images all three called Low risk got a single surgeon annotator; the rest got two, with a third on disagreement. Label quality therefore varies with what earlier MLLMs predicted, which matters most when comparing against an MLLM.
 - **Not clinically validated and not a medical device.**

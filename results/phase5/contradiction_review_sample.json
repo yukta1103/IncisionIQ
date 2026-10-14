@@ -1,0 +1,306 @@
+[
+ [
+  "ex",
+  "274.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present, localized. A pink-to-red halo surrounds the central purple lesion, extending a few millimeters to about 1 cm."
+ ],
+ [
+  "ex",
+  "449.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present, mild, and localized to the upper portion of the incision."
+ ],
+ [
+  "ex",
+  "707.jpg",
+  "infection",
+  "elevated",
+  "low",
+  "Overall risk: moderate."
+ ],
+ [
+  "ex",
+  "119.jpg",
+  "erythema",
+  "absent",
+  "present",
+  "Assessment: No significant spreading redness is evident."
+ ],
+ [
+  "ex",
+  "146.jpg",
+  "infection",
+  "low",
+  "elevated",
+  "Overall risk: LOW."
+ ],
+ [
+  "ex",
+  "186.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Present: Mild to moderate, likely."
+ ],
+ [
+  "ex",
+  "654.jpg",
+  "infection",
+  "elevated",
+  "low",
+  "Risk level: Moderate to high. This may be a superficial surgical site infection (CDC criteria: superficial incisional SSI)."
+ ],
+ [
+  "ex",
+  "984.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Mild to moderate swelling appears present in the lower leg, ankle, and foot."
+ ],
+ [
+  "rand",
+  "602.jpg",
+  "edema",
+  "present",
+  "absent",
+  "The skin looks shiny and taut, with some flaky, peeling superficial skin, possibly from dried antiseptic or ointment."
+ ],
+ [
+  "rand",
+  "667.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Minimal to none visible. The tissue looks flat, with no marked swelling, tension, or puffiness at the wound edges."
+ ],
+ [
+  "rand",
+  "902.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Present: Yes, moderate."
+ ],
+ [
+  "rand",
+  "430.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Minimal to mild periwound discoloration, mainly:."
+ ],
+ [
+  "rand",
+  "590.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present: Minimal, confined to the scar line."
+ ],
+ [
+  "rand",
+  "517.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Mild at most. The left ala looks slightly full, but there is no obvious asymmetric swelling, distortion, or tense skin."
+ ],
+ [
+  "rand",
+  "904.jpg",
+  "infection",
+  "elevated",
+  "low",
+  "Current visible signs of surgical site infection (SSI): None identified."
+ ],
+ [
+  "rand",
+  "808.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Mild, localized pinkness is seen along the scar line and immediately around the upper-end lesion."
+ ],
+ [
+  "rand",
+  "778.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Mild localized swelling possible around the focal opening. The skin there appears slightly raised and taut."
+ ],
+ [
+  "rand",
+  "661.jpg",
+  "infection",
+  "low",
+  "elevated",
+  "Current estimated risk: Low to moderate."
+ ],
+ [
+  "rand",
+  "563.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Focal swelling is limited to the nodules."
+ ],
+ [
+  "rand",
+  "966.jpg",
+  "erythema",
+  "absent",
+  "present",
+  "Peri-wound skin: No significant spreading erythema is seen in the surrounding skin of the foot or ankle."
+ ],
+ [
+  "rand",
+  "415.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present but mild and localized. Pink-red discoloration is limited to the immediate incision lines and suture puncture points, extending only a few millimeters."
+ ],
+ [
+  "rand",
+  "285.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Present, localized and moderate."
+ ],
+ [
+  "rand",
+  "858.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Mild pink to purplish discoloration is confined to the scar line. This is consistent with normal scar vascularity during remodeling."
+ ],
+ [
+  "rand",
+  "325.jpg",
+  "infection",
+  "low",
+  "elevated",
+  "Overall risk: Low-to-Moderate."
+ ],
+ [
+  "rand",
+  "760.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present, mild and localized. Faint pink to light red coloration is confined to the immediate incision line, within a few millimeters."
+ ],
+ [
+  "rand",
+  "750.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Minimal. There is slight pink-red coloration limited to the incision line, which is typical of normal healing."
+ ],
+ [
+  "rand",
+  "402.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present, mild. A narrow pink-red rim is seen immediately along the incision edges (about 2\u20135 mm). This is consistent with the normal inflammatory response of healing."
+ ],
+ [
+  "rand",
+  "720.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Minimal, confined to the incision line. This is a thin pink margin consistent with normal inflammatory healing."
+ ],
+ [
+  "rand",
+  "515.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Mild periwound swelling or induration is possible. The wound margins appear slightly raised."
+ ],
+ [
+  "rand",
+  "237.jpg",
+  "infection",
+  "elevated",
+  "low",
+  "Overall risk: moderate."
+ ],
+ [
+  "rand",
+  "776.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Mild, diffuse soft-tissue swelling of the elbow may be present. Bony landmarks are somewhat softened, which is expected after joint irrigation during arthroscopy."
+ ],
+ [
+  "rand",
+  "700.jpg",
+  "infection",
+  "elevated",
+  "low",
+  "Moderate risk. The picture may represent a possible early superficial surgical site infection or a localized delayed-healing wound."
+ ],
+ [
+  "rand",
+  "143.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present, mild, and localized to the incision line and the puncture sites."
+ ],
+ [
+  "rand",
+  "921.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Mild localized swelling at the distal nodular lesion, which appears elevated."
+ ],
+ [
+  "rand",
+  "30.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Mild, localized peri-incisional pinkness confined to within a few millimeters of the incision line, consistent with normal healing."
+ ],
+ [
+  "rand",
+  "813.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Present, mild."
+ ],
+ [
+  "rand",
+  "993.jpg",
+  "erythema",
+  "present",
+  "absent",
+  "Mild pink-to-violaceous discoloration is confined to the scar itself, consistent with normal scar vascularity during maturation."
+ ],
+ [
+  "rand",
+  "648.jpg",
+  "edema",
+  "present",
+  "absent",
+  "Minimal to none. The scar may be slightly raised, but there is no significant surrounding swelling."
+ ]
+]

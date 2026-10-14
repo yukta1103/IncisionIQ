@@ -52,7 +52,7 @@ def rates(C: np.ndarray, missing: np.ndarray | None = None) -> dict:
     n = len(C)
     return {"claims_per_report": total / n if n else np.nan,
             "correctness": sup / (sup + con + miss) if sup + con + miss else np.nan,  # among verifiable claims
-            "hallucination_rate": con / total if total else np.nan,           # contradicted share of all claims
+            "contradiction_rate": con / total if total else np.nan,           # contradicted share of all claims
             "unverifiable_share": unv / total if total else np.nan,
             "reports_with_contradiction": float((C[:, 1] > 0).mean()) if n else np.nan}
 

@@ -1,0 +1,39 @@
+case,sample,image_name,attribute,vlm_claim,surgeon_label,category,note,clause
+1,published_example,274.jpg,erythema,present,absent,threshold,,"Present, localized. A pink-to-red halo surrounds the central purple lesion, extending a few millimeters to about 1 cm."
+2,published_example,449.jpg,erythema,present,absent,threshold,,"Present, mild, and localized to the upper portion of the incision."
+3,published_example,707.jpg,infection,elevated,low,risk_judgment,,Overall risk: moderate.
+4,published_example,119.jpg,erythema,absent,present,missed_finding,,Assessment: No significant spreading redness is evident.
+5,published_example,146.jpg,infection,low,elevated,risk_judgment,,Overall risk: LOW.
+6,published_example,186.jpg,edema,present,absent,threshold,,"Present: Mild to moderate, likely."
+7,published_example,654.jpg,infection,elevated,low,risk_judgment,,Risk level: Moderate to high. This may be a superficial surgical site infection (CDC criteria: superficial incisional SSI).
+8,published_example,984.jpg,edema,present,absent,threshold,,"Mild to moderate swelling appears present in the lower leg, ankle, and foot."
+9,random_30,602.jpg,edema,present,absent,threshold,,"The skin looks shiny and taut, with some flaky, peeling superficial skin, possibly from dried antiseptic or ointment."
+10,random_30,667.jpg,edema,present,absent,checker_error,"text says ""minimal to none visible, no marked swelling""","Minimal to none visible. The tissue looks flat, with no marked swelling, tension, or puffiness at the wound edges."
+11,random_30,902.jpg,edema,present,absent,threshold,,"Present: Yes, moderate."
+12,random_30,430.jpg,erythema,present,absent,threshold,,"Minimal to mild periwound discoloration, mainly:."
+13,random_30,590.jpg,erythema,present,absent,threshold,,"Present: Minimal, confined to the scar line."
+14,random_30,517.jpg,edema,present,absent,checker_error,"text says ""mild at most ... no obvious swelling""","Mild at most. The left ala looks slightly full, but there is no obvious asymmetric swelling, distortion, or tense skin."
+15,random_30,904.jpg,infection,elevated,low,checker_error,"report says ""Overall infection risk: LOW""; a risk-factor bullet was read as elevated",Current visible signs of surgical site infection (SSI): None identified.
+16,random_30,808.jpg,erythema,present,absent,threshold,,"Mild, localized pinkness is seen along the scar line and immediately around the upper-end lesion."
+17,random_30,778.jpg,edema,present,absent,threshold,,Mild localized swelling possible around the focal opening. The skin there appears slightly raised and taut.
+18,random_30,661.jpg,infection,low,elevated,risk_judgment,,Current estimated risk: Low to moderate.
+19,random_30,563.jpg,edema,present,absent,threshold,,Focal swelling is limited to the nodules.
+20,random_30,966.jpg,erythema,absent,present,missed_finding,,Peri-wound skin: No significant spreading erythema is seen in the surrounding skin of the foot or ankle.
+21,random_30,415.jpg,erythema,present,absent,threshold,,"Present but mild and localized. Pink-red discoloration is limited to the immediate incision lines and suture puncture points, extending only a few millimeters."
+22,random_30,285.jpg,edema,present,absent,threshold,,"Present, localized and moderate."
+23,random_30,858.jpg,erythema,present,absent,threshold,,Mild pink to purplish discoloration is confined to the scar line. This is consistent with normal scar vascularity during remodeling.
+24,random_30,325.jpg,infection,low,elevated,risk_judgment,,Overall risk: Low-to-Moderate.
+25,random_30,760.jpg,erythema,present,absent,threshold,,"Present, mild and localized. Faint pink to light red coloration is confined to the immediate incision line, within a few millimeters."
+26,random_30,750.jpg,erythema,present,absent,threshold,,"Minimal. There is slight pink-red coloration limited to the incision line, which is typical of normal healing."
+27,random_30,402.jpg,erythema,present,absent,threshold,,"Present, mild. A narrow pink-red rim is seen immediately along the incision edges (about 2–5 mm). This is consistent with the normal inflammatory response of healing."
+28,random_30,720.jpg,erythema,present,absent,threshold,,"Minimal, confined to the incision line. This is a thin pink margin consistent with normal inflammatory healing."
+29,random_30,515.jpg,edema,present,absent,threshold,,Mild periwound swelling or induration is possible. The wound margins appear slightly raised.
+30,random_30,237.jpg,infection,elevated,low,risk_judgment,,Overall risk: moderate.
+31,random_30,776.jpg,edema,present,absent,threshold,,"Mild, diffuse soft-tissue swelling of the elbow may be present. Bony landmarks are somewhat softened, which is expected after joint irrigation during arthroscopy."
+32,random_30,700.jpg,infection,elevated,low,risk_judgment,,Moderate risk. The picture may represent a possible early superficial surgical site infection or a localized delayed-healing wound.
+33,random_30,143.jpg,erythema,present,absent,threshold,,"Present, mild, and localized to the incision line and the puncture sites."
+34,random_30,921.jpg,edema,present,absent,threshold,,"Mild localized swelling at the distal nodular lesion, which appears elevated."
+35,random_30,30.jpg,erythema,present,absent,threshold,,"Mild, localized peri-incisional pinkness confined to within a few millimeters of the incision line, consistent with normal healing."
+36,random_30,813.jpg,erythema,present,absent,threshold,,"Present, mild."
+37,random_30,993.jpg,erythema,present,absent,threshold,,"Mild pink-to-violaceous discoloration is confined to the scar itself, consistent with normal scar vascularity during maturation."
+38,random_30,648.jpg,edema,present,absent,checker_error,"text says ""minimal to none ... no significant swelling""","Minimal to none. The scar may be slightly raised, but there is no significant surrounding swelling."

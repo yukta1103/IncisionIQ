@@ -10,8 +10,8 @@ Refusals and failed requests (no usable output) are scored two ways:
              counts as an incorrect claim in correctness; in the classifier view
              the image is a missed finding (for infection, a missed Elevated case)
   secondary  excluded
-The hallucination rate (contradicted claims / all extracted claims) is computed
-on produced reports only; a refusal is not a hallucination.
+The rate of claims contradicting surgeon labels (contradicted claims / all extracted
+claims) is computed on produced reports only; a refusal is not a contradiction.
 
 Primary subset: images excluding ID 900+ (n = 613); also all images and the
 official test split. Run-to-run variation: three runs on the official test split.
@@ -166,7 +166,7 @@ def main():
           "All report sets are scored by the same claim checker against the SurgWound expert labels.\n",
           "- **Correctness** = supported / (supported + contradicted). **Primary: refusals and failed requests counted as "
           "incorrect** (every expert-labeled attribute of that image counts as an incorrect claim). Secondary: excluded.",
-          "- **Hallucination rate** = contradicted claims / all extracted claims, on produced reports only.",
+          "- **Claims contradicting surgeon labels** = contradicted claims / all extracted claims, on produced reports only. Most contradictions are threshold disagreements, not invented findings (see REPORT.md).",
           "- **Unverifiable** = claims on attributes whose expert label is Uncertain.",
           "- Condition A (markdown reports) is read with the section-aware extractor (`src/report/markdown_claims.py`); "
           "template and condition B with the prose extractor. Condition A's checker was validated against hand labels on "
@@ -205,7 +205,7 @@ def main():
 
     # ---- headline: validated attributes only
     md.append("\n## Headline: claims on erythema, edema and infection only (checker validated on all three sets)\n")
-    md.append("| subset | report set | n images | claims per report | correctness (primary: refusals incorrect) | hallucination rate | reports with a contradiction |")
+    md.append("| subset | report set | n images | claims per report | correctness (primary: refusals incorrect) | claims contradicting surgeon labels | reports with a contradiction |")
     md.append("|---|---|---|---|---|---|---|")
     for s, idx in subsets.items():
         metrics.setdefault("rates_validated", {})[s] = {}
@@ -215,23 +215,23 @@ def main():
             sec = group_bootstrap(lambda ix, c=Cv[k][ok]: rates(c[ix]), len(ok), G[ok], n_boot, seed)
             metrics["rates_validated"][s][k] = {"n": len(idx), "primary": prim, "refusals_excluded": sec}
             md.append(f"| {s} | {k} | {len(idx)} | {fmt(sec['claims_per_report'], 1)} | {fmt(prim['correctness'])} | "
-                      f"{fmt(sec['hallucination_rate'])} | {fmt(sec['reports_with_contradiction'])} |")
+                      f"{fmt(sec['contradiction_rate'])} | {fmt(sec['reports_with_contradiction'])} |")
     md.append("\nPaired differences vs template, validated attributes (same group resamples):\n")
-    md.append("| subset | comparison | correctness diff (primary) | hallucination rate diff |")
+    md.append("| subset | comparison | correctness diff (primary) | contradicting-claims diff |")
     md.append("|---|---|---|---|")
     for s, idx in subsets.items():
         for k in ("vlm_A", "vlm_B"):
             ca, ma, ct = Cv[k][idx], Mv[k][idx], Cv["template"][idx]
             dc = group_bootstrap(lambda ix: {"d": rates(ca[ix], ma[ix])["correctness"] - rates(ct[ix])["correctness"]},
                                  len(idx), G[idx], n_boot, seed)["d"]
-            dh = group_bootstrap(lambda ix: {"d": rates(ca[ix])["hallucination_rate"] - rates(ct[ix])["hallucination_rate"]},
+            dh = group_bootstrap(lambda ix: {"d": rates(ca[ix])["contradiction_rate"] - rates(ct[ix])["contradiction_rate"]},
                                  len(idx), G[idx], n_boot, seed)["d"]
-            metrics.setdefault("paired_vs_template_validated", {}).setdefault(s, {})[k] = {"correctness": dc, "hallucination_rate": dh}
+            metrics.setdefault("paired_vs_template_validated", {}).setdefault(s, {})[k] = {"correctness": dc, "contradiction_rate": dh}
             md.append(f"| {s} | {k} minus template | {fmt_diff(dc)} | {fmt_diff(dh)} |")
 
     # ---- claim-level comparison
     md.append("\n## All attributes (exudate and healing included; condition A checker agreement there is 0.73 and 0.76)\n")
-    md.append("| subset | report set | n images | reports produced | claims per report | correctness (primary: refusals incorrect) | correctness (refusals excluded) | hallucination rate | reports with a contradiction | unverifiable share |")
+    md.append("| subset | report set | n images | reports produced | claims per report | correctness (primary: refusals incorrect) | correctness (refusals excluded) | claims contradicting surgeon labels | reports with a contradiction | unverifiable share |")
     md.append("|---|---|---|---|---|---|---|---|---|---|")
     for s, idx in subsets.items():
         metrics.setdefault("rates", {})[s] = {}
@@ -241,10 +241,10 @@ def main():
             sec = group_bootstrap(lambda ix, c=C[k][ok]: rates(c[ix]), len(ok), G[ok], n_boot, seed)
             metrics["rates"][s][k] = {"n": len(idx), "n_ok": len(ok), "primary": prim, "refusals_excluded": sec}
             md.append(f"| {s} | {k} | {len(idx)} | {len(ok)} | {fmt(sec['claims_per_report'], 1)} | {fmt(prim['correctness'])} | "
-                      f"{fmt(sec['correctness'])} | {fmt(sec['hallucination_rate'])} | {fmt(sec['reports_with_contradiction'])} | "
+                      f"{fmt(sec['correctness'])} | {fmt(sec['contradiction_rate'])} | {fmt(sec['reports_with_contradiction'])} | "
                       f"{fmt(sec['unverifiable_share'])} |")
-    md.append("\nPaired differences vs template on the same group resamples (correctness primary; hallucination rate on images where the VLM produced a report):\n")
-    md.append("| subset | comparison | correctness diff (primary) | hallucination rate diff |")
+    md.append("\nPaired differences vs template on the same group resamples (correctness primary; contradicting claims on images where the VLM produced a report):\n")
+    md.append("| subset | comparison | correctness diff (primary) | contradicting-claims diff |")
     md.append("|---|---|---|---|")
     for s, idx in subsets.items():
         for k in ("vlm_A", "vlm_B"):
@@ -253,9 +253,9 @@ def main():
                                  len(idx), G[idx], n_boot, seed)["d"]
             ok = idx[status[k][idx] == "ok"]
             cao, cto = C[k][ok], C["template"][ok]
-            dh = group_bootstrap(lambda ix: {"d": rates(cao[ix])["hallucination_rate"] - rates(cto[ix])["hallucination_rate"]},
+            dh = group_bootstrap(lambda ix: {"d": rates(cao[ix])["contradiction_rate"] - rates(cto[ix])["contradiction_rate"]},
                                  len(ok), G[ok], n_boot, seed)["d"]
-            metrics.setdefault("paired_vs_template", {}).setdefault(s, {})[k] = {"correctness": dc, "hallucination_rate": dh}
+            metrics.setdefault("paired_vs_template", {}).setdefault(s, {})[k] = {"correctness": dc, "contradiction_rate": dh}
             md.append(f"| {s} | {k} minus template | {fmt_diff(dc)} | {fmt_diff(dh)} |")
 
     md.append("\n### Correctness by attribute (excluding ID 900+, produced reports)\n")
@@ -337,7 +337,7 @@ def main():
         return finish(md, metrics, S, texts, status, df, lab, out_dir, seed)
     md.append("\n## Run-to-run variation (official test split, 3 runs)\n")
     test = subsets["official_test"]
-    md.append("| condition | run | refused | correctness (primary) | correctness (refusals excluded) | hallucination rate |")
+    md.append("| condition | run | refused | correctness (primary) | correctness (refusals excluded) | claims contradicting surgeon labels |")
     md.append("|---|---|---|---|---|---|")
     per_run = {}
     for cond in ("A", "B"):
@@ -351,7 +351,7 @@ def main():
             metrics.setdefault("runs", {}).setdefault(cond, {})[run] = {"refused": int((st[test] == "refused").sum()),
                                                                         "primary": prim, "refusals_excluded": sec}
             md.append(f"| {cond} | {run} | {(st[test] == 'refused').sum()} | {fmt(prim['correctness'])} | "
-                      f"{fmt(sec['correctness'])} | {fmt(sec['hallucination_rate'])} |")
+                      f"{fmt(sec['correctness'])} | {fmt(sec['contradiction_rate'])} |")
             per_run[(cond, run)] = {i: ({(c.attribute, c.value) for c in extract_claims(t[i])} if t[i] else None) for i in test}
             if cond == "B":
                 per_run[("Bjson", run)] = {i: p[i] for i in test}
