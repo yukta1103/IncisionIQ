@@ -17,6 +17,7 @@ def test_single_deployed_model_with_its_own_parameters():
     assert DEPLOY["deployed_fold"] == 0
     assert "ensemble" not in DEPLOY
     assert str(DEPLOY["deployed_fold"]) in DEPLOY["folds"]
+    assert DEPLOY["ocr_max_side"] == 1024
 
 
 def test_examples_are_held_out_by_the_deployed_fold():
@@ -37,6 +38,8 @@ def test_app_shows_demo_notice_and_privacy_text():
     assert not at.exception
     assert any("Do not upload real patient photos" in e.value for e in at.error)
     assert any("not saved to disk" in c.value for c in at.caption)
+    assert any("Surgeon rating for this photo" in c.value for c in at.caption)
+    assert all("surgeon-rated" in o for o in at.selectbox[0].options)
     at.radio[0].set_value("Upload a photo").run()
     assert any("not a valid test" in c.value for c in at.caption)
 
@@ -46,9 +49,9 @@ def predictor():
     cfg = load_config(ROOT / DEPLOY["config"])
     if not (ROOT / cfg["checkpoint_dir"] / cfg["name"] / "cv0.pt").exists():
         pytest.skip("checkpoints not available")
-    from src.inference.pipeline import WoundPredictor
+    from src.inference.pipeline import OverlayRemover, WoundPredictor
 
-    return WoundPredictor(cfg, folds=[DEPLOY["deployed_fold"]])
+    return WoundPredictor(cfg, folds=[DEPLOY["deployed_fold"]], remover=OverlayRemover(max_side=DEPLOY["ocr_max_side"]))
 
 
 def test_prediction_writes_nothing_and_reproduces_example_bands(predictor, monkeypatch):

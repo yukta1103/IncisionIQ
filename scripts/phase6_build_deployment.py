@@ -32,25 +32,28 @@ from src.utils import ROOT, load_config, save_json  # noqa: E402
 CFG = "configs/phase3_convnext_tiny_inpainted.yaml"
 OUT = ROOT / "results" / "phase6"
 DEPLOYED_FOLD = 0
-# Phase 6 examples, one per slot. Phase 7 replaced each by the rule in select_examples, because the
-# demo now loads only fold 0 and an example must be one that model never trained on.
-ANCHORS = ["714.jpg", "315.jpg", "111.jpg", "282.jpg"]
+OCR_MAX_SIDE = 1024  # demo OCR resolution cap (training used 1280); effect: results/phase7/ocr_cap_1024.json
+# Demo examples, one per slot: (description, required surgeon rating or None for any, required band).
+# Stratified by surgeon label so the demo shows a mix, including a false alarm; blind to performance
+# beyond the slot definitions themselves.
+SLOTS = [("surgeon Low, predicted low concern", ("Low",), "low concern"),
+         ("surgeon Elevated, predicted high concern", ("Medium", "High"), "high concern"),
+         ("any surgeon rating, predicted referral band", None, "uncertain"),
+         ("surgeon Low, predicted high concern (a false alarm)", ("Low",), "high concern")]
 
 
-def select_examples(d: pd.DataFrame, ocr: dict, orange: dict) -> list[str]:
-    """Fixed rule, not model performance: for each anchor, the next image by numeric ID (wrapping
-    around) that is in the official test split, held out by the deployed fold, in the anchor's
-    out-of-fold infection band, and has no OCR detection at all and no orange box. The chosen
-    images were then checked by eye for visible captions (none found)."""
+def select_examples(d: pd.DataFrame, ocr: dict, orange: dict) -> list[tuple[str, str]]:
+    """Fixed rule: for each slot, the lowest-ID image that is in the official test split, held out by
+    the deployed fold, has no OCR detection at all and no orange box, and meets the slot's surgeon
+    rating and out-of-fold band. The chosen images were then checked by eye for captions and faces
+    (none found)."""
     d = d.assign(id=d.image_name.str.removesuffix(".jpg").astype(int)).sort_values("id")
     ok = d[(d.split == "test") & (d.cv_fold == DEPLOYED_FOLD)
            & d.image_name.map(lambda n: not ocr.get(n) and not orange.get(n))]
     out = []
-    for a in ANCHORS:
-        row = d[d.image_name == a].iloc[0]
-        same = ok[(ok.band == row.band) & ~ok.image_name.isin(out)]
-        after = same[same.id > row.id]
-        out.append((after if len(after) else same).image_name.iloc[0])
+    for desc, ratings, band in SLOTS:
+        m = ok[(ok.band == band) & (ok.infection_risk.isin(ratings) if ratings else True)]
+        out.append((m.image_name.iloc[0], desc))
     return out
 
 
@@ -100,13 +103,16 @@ def main():
     band = {n: json.loads(tpl.loc[n, "attributes"])["infection"]["band"] for n in names}
     proc = ROOT / cfg["processed_dir"]
     chosen = select_examples(pd.DataFrame({"image_name": names, "split": df.split.to_numpy(), "cv_fold": fold,
+                                           "infection_risk": df.infection_risk.to_numpy(),
                                            "band": [band[n] for n in names]}),
                              json.loads((proc / "ocr.json").read_text(encoding="utf-8")),
                              json.loads((proc / "orange_boxes.json").read_text(encoding="utf-8")))
     examples = [{"image_name": n, "cv_fold": int(fold[idx_of[n]]), "official_split": df.split[idx_of[n]],
-                 "infection_risk": df.infection_risk[idx_of[n]], "band_out_of_fold": band[n]} for n in chosen]
+                 "infection_risk": df.infection_risk[idx_of[n]], "band_out_of_fold": band[n], "slot": slot}
+                for n, slot in chosen]
     assert all(e["cv_fold"] == DEPLOYED_FOLD for e in examples)
-    save_json({"model": cfg["name"], "config": CFG, "deployed_fold": DEPLOYED_FOLD, "folds": folds,
+    save_json({"model": cfg["name"], "config": CFG, "deployed_fold": DEPLOYED_FOLD, "ocr_max_side": OCR_MAX_SIDE,
+               "folds": folds,
                "band_rates": band_rates, "band_rates_subset": "excluding ID 900+ (grouped CV, out-of-fold, all folds pooled)",
                "examples": examples,
                "notes": "Every photo is scored by the fold 0 model with the parameters the cross-validation tested for "
