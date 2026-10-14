@@ -2,7 +2,7 @@
 
 Portfolio project: a multi-task image classifier for post-operative surgical wounds, built with the habits a regulated clinical product needs (patient-level splits, confidence intervals on every number, shortcut audits). **Not a medical device and not clinically validated.**
 
-Status: Phases 1 to 5 done (data audit, classifier, explainability and shortcut audit, calibration and operating point, grounded reports with a VLM comparison). The triage rules and the demo are still to come. This page is replaced by a full write-up in Phase 7.
+Status: Phases 1 to 6 done (data audit, classifier, explainability and shortcut audit, calibration and operating point, grounded reports with a VLM comparison, triage rules and demo). This page is replaced by a full write-up in Phase 7.
 
 ## Data
 
@@ -64,10 +64,21 @@ Reports are generated only from the predicted attributes (a template; uncertain 
 - Both VLM conditions ran at effort "low", with identical settings, because of budget (one run, $15.58); higher effort might strengthen the VLM baseline, and run-to-run variation was not measured.
 - The claim checker for the free-text reports was redesigned after inspecting the VLM outputs, because of documented checker errors, and validated on 30 hand-labeled reports (agreement 0.96 to 0.97 on the three headline attributes). Details: `results/phase5/REPORT.md`.
 
+## Triage verdict and demo (Phase 6)
+
+Three levels from explicit rules (`src/triage/verdict.py`), each with plain-English reasons:
+- **Review recommended:** fever, worsening pain, pain 7 or higher, a high-concern photo, or drainage with a photo that is not low concern.
+- **Watch:** an uncertain photo (the referral band), drainage, pain 4 to 6, or a photo that cannot be judged reliably.
+- **On track:** otherwise.
+
+The image enters only through the infection band, so low confidence can raise the verdict but never lower it to On track. Drainage comes from the patient. A fourth question ("is the pain getting worse?") was added so worsening pain can be checked. With no symptoms reported, On track covers 45% of images with a 4% [2, 7] surgeon-rated Elevated rate (excluding IDs 900+).
+
+Demo: `streamlit run src/app/app.py`. It is phone-width, with four example images from the test split (scored out-of-fold), upload, or camera. OCR and inpainting run on every photo, and everything runs locally. Details: `results/phase6/REPORT.md`.
+
 ## Design choices backed by the numbers
 
 - **Drainage comes from the patient, not the image.** The image model's purulent predictions are treated as unreliable: across grouped CV the Phase 2 model catches 1 of 30 purulent wounds (recall 0.03 [0.00, 0.11]) and the mitigated model used from Phase 4 on catches 3 of 30 (0.10 [0.00, 0.21]); the frozen baseline catches 9 of 30. The triage verdict therefore takes drainage from the patient's own answer, and the image model's exudate output is shown for information only.
-- **Patient-reported symptoms can override the image (planned for Phase 6).** Fever or worsening pain must be able to raise the verdict even when the image falls in the low-concern band; 2 of 12 High-risk images (excluding IDs 900+) land in that band.
+- **Patient-reported symptoms can override the image.** Fever or worsening pain raise the verdict to Review recommended even when the image falls in the low-concern band; 2 of 12 High-risk images (excluding IDs 900+) land in that band.
 - **Macro F1 is not the triage objective.** The infection operating point is chosen by a recall target on Elevated risk, with the false-alarm cost shown at each target (Phase 4).
 
 ## Limitations (so far)
