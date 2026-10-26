@@ -1,0 +1,20 @@
+{
+  "scale": 0.06075708866119385,
+  "percentile": 95,
+  "cv_fold": 0,
+  "n_images": 133,
+  "head": "infection",
+  "target_class": "elevated",
+  "per_image_max": {
+    "min": 0.012239051051437855,
+    "median": 0.031184881925582886,
+    "p95": 0.06075708866119385,
+    "max": 0.08569695055484772
+  },
+  "median_max_relative_to_scale": 0.5132714982359083,
+  "check_corr_with_pytorch_grad_cam": {
+    "n": 20,
+    "min": 0.9999999999999103,
+    "median": 0.9999999999999828
+  }
+}

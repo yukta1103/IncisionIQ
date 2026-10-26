@@ -1,4 +1,4 @@
-"""IncisionIQ demo: photo + three questions -> attributes, Grad-CAM, grounded report, verdict.
+"""IncisionIQ demo: photo + four questions -> attributes, Grad-CAM, grounded report, verdict.
 
 Run from the repo root:  streamlit run src/app/app.py
 
@@ -8,6 +8,10 @@ Run from the repo root:  streamlit run src/app/app.py
 - The examples are fold 0 held-out images, so their results are honest out-of-fold predictions.
 - Photos are processed in memory on the server running the app; they are never written to disk,
   and only the inpainting statistics are logged, never the photo or its content.
+- The verdict is written for the clinician. Only the block labeled "Advice shown to the patient"
+  is addressed to the patient.
+- The heat map uses one fixed scale for all photos (results/phase7/cam_scale.json), so a weak map
+  looks weak.
 """
 import json
 import sys
@@ -28,6 +32,7 @@ DEPLOY = json.loads((ROOT / "results" / "phase6" / "deployment.json").read_text(
 LEVEL_STYLE = {REVIEW: ("#b42318", "#fef3f2"), WATCH: ("#b54708", "#fffaeb"), ON_TRACK: ("#067647", "#ecfdf3")}
 STANDING_ADVICE = ("Whatever the result: contact your care team if you develop fever, spreading redness, new or increased "
                    "drainage, or worsening pain.")
+CAM_SCALE = json.loads((ROOT / "results" / "phase7" / "cam_scale.json").read_text(encoding="utf-8"))
 FOLD = DEPLOY["deployed_fold"]
 PARAMS = DEPLOY["folds"][str(FOLD)]
 EXAMPLE_LABELS = {e["image_name"]: f"Example {i + 1}: surgeon-rated {e['infection_risk']} infection risk"
@@ -103,7 +108,7 @@ if image is not None:
     st.image(image, width=260)
 
 # ---- 2. questions
-st.subheader("2. A few questions")
+st.subheader("2. Questions for the patient")
 pain = st.slider("How bad is the pain at the wound right now? (0 = none, 10 = worst)", 0, 10, 2)
 worse = st.radio("Is the pain getting worse?", ["No", "Yes"], horizontal=True) == "Yes"
 fever = st.radio("Have you had a fever (38 °C / 100.4 °F or higher)?", ["No", "Yes"], horizontal=True) == "Yes"
@@ -118,13 +123,19 @@ if st.button("Check the wound", type="primary", use_container_width=True, disabl
         prep = result["preprocess"]
         quality = photo_quality(*result["size"], prep["inpainted_area_frac"])
         v = verdict(attrs, PatientAnswers(pain=pain, pain_worsening=worse, fever=fever, drainage=drainage), quality)
-        cam, disp = predictor.gradcam(result["clean_image"], "infection", 1, fold=FOLD)
+        cam, disp, cam_max = predictor.gradcam_fixed_scale(result["clean_image"], "infection", 1, CAM_SCALE["scale"],
+                                                            fold=FOLD)
 
-    # ---- verdict
+    # ---- verdict (for the clinician)
+    st.subheader("Verdict for the clinician")
     color, bg = LEVEL_STYLE[v["level"]]
     st.markdown(f"<div class='verdict' style='border-color:{color}; background:{bg}'>"
                 f"<h3 style='color:{color}'>{v['level']}</h3><div style='color:#1d2939'>{v['action']}</div></div>", unsafe_allow_html=True)
     st.markdown("**Why:**\n" + "\n".join(f"- {r}" for r in v["reasons"]))
+    st.caption("In the verdict, the photo counts only through its infection risk group. Redness, swelling and "
+               "drainage seen on the photo are shown below for information; drainage in the verdict comes from the "
+               "patient's answer.")
+    st.markdown("**Advice shown to the patient**")
     st.warning(STANDING_ADVICE)
 
     # ---- image findings
@@ -137,21 +148,26 @@ if st.button("Check the wound", type="primary", use_container_width=True, disabl
     st.markdown("\n".join([f"- Redness: {describe('erythema', attrs['erythema'])}",
                            f"- Swelling: {describe('edema', attrs['edema'])}",
                            f"- Drainage on the photo: {describe('exudate', attrs['exudate'])}. "
-                           "The verdict uses your answer about drainage instead."]))
+                           "The verdict uses the patient's answer about drainage instead."]))
     if prep["inpainted"]:
         st.info(f"{prep['n_regions']} text or sticker region(s) were removed from the photo before analysis "
-                f"({100 * prep['inpainted_area_frac']:.1f}% of the image), so the detected text cannot influence the result (small logos may remain).")
+                f"({100 * prep['inpainted_area_frac']:.1f}% of the image), so the detected text cannot influence the "
+                "result. Text removal misses some text (small corner logos, screenshot bars, caption banners, and some "
+                "captions), and the model can still use the background.")
 
     c1, c2 = st.columns(2)
     c1.image(disp, caption="What the model saw (text removed, padded to a square)", use_column_width=True)
     c2.image(cam_overlay(cam, disp), caption="Grad-CAM for elevated infection risk", use_column_width=True)
-    st.caption("The heat map highlights the wound region the model relies on. At 12x12 resolution it does not "
-               "identify specific features, and it is not a clinical finding.")
+    st.caption("Regions that pushed the model toward elevated infection risk (coarse 12x12 grid). These can include "
+               "background such as bedding, so treat this as a sanity check, not an explanation of clinical findings. "
+               "All photos share one fixed color scale, so a faint map means weak evidence.")
 
     # ---- grounded report
     st.subheader("Report")
     st.write(render(attrs))
-    st.caption("Generated only from the attributes above; nothing else is added.")
+    st.caption("Generated only from the model's predictions above, and faithful to them; nothing else is added. "
+               "In validation, about 0.76 of its claims on redness, swelling and infection risk agreed with the "
+               "surgeons' labels.")
 
     with st.expander("Technical details"):
         st.markdown(f"- Model: `{result['model']}`. Every photo is scored by this one model, fold 0 of the 5-fold "
@@ -161,7 +177,12 @@ if st.button("Check the wound", type="primary", use_container_width=True, disabl
                     "- Risk-group rates are pooled over all five folds' held-out images (excluding IDs 900+).\n"
                     + f"- Photo preparation: {prep['n_regions']} region(s) inpainted, OCR {prep['seconds']:.1f} s.\n"
                     "- Confidence is shown as a risk group with its observed rate, not as a probability, because the "
-                    "model's raw probabilities over-predict at the high end.")
+                    "model's raw probabilities over-predict at the high end.\n"
+                    f"- Heat map: raw Grad-CAM for elevated infection risk on the last ConvNeXt stage, divided by one "
+                    f"fixed constant ({CAM_SCALE['scale']:.4f}, the {CAM_SCALE['percentile']}th percentile of the "
+                    f"per-photo maximum over {CAM_SCALE['n_images']} fold 0 held-out photos) and clipped at 1. It is "
+                    f"not stretched per photo. This photo's maximum is {cam_max / CAM_SCALE['scale']:.2f} of the "
+                    "scale.")
 else:
     if image is None:
         st.caption("Choose an example or add a photo to start.")

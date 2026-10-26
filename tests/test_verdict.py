@@ -48,3 +48,15 @@ def test_large_overlay_removed_is_flagged():
 def test_reasons_cite_band_rate():
     v = verdict(attrs("high concern"), PatientAnswers(**CALM))
     assert any("29 in 100" in r for r in v["reasons"])
+
+
+def test_verdict_text_is_clinician_facing():
+    import re
+
+    for answers in (PatientAnswers(**CALM), PatientAnswers(pain=8, pain_worsening=True, fever=True, drainage=True),
+                    PatientAnswers(pain=5, pain_worsening=False, fever=False, drainage=True)):
+        for band in ("low concern", "uncertain", "high concern"):
+            for quality in (None, photo_quality(200, 200, 0.2)):
+                v = verdict(attrs(band), answers, quality)
+                text = " ".join(v["reasons"] + [v["action"]])
+                assert not re.search(r"\b(you|your)\b", text, re.I), text

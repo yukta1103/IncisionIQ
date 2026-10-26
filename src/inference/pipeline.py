@@ -148,6 +148,18 @@ class WoundPredictor:
         return cam, disp
 
 
+    def gradcam_fixed_scale(self, clean: Image.Image, head: str, target_class: int, scale: float,
+                            fold: int | None = None):
+        """Grad-CAM on one fixed scale for display: raw map / `scale`, clipped to [0, 1]. Unlike
+        `gradcam`, a weak map stays weak instead of being stretched to full brightness."""
+        from src.explain.gradcam import gradcam_raw
+
+        x = self._input(clean)
+        raw = np.mean([gradcam_raw(m, x, head, target_class) for m in self._models(fold)], axis=0)
+        disp = np.array(letterbox(clean, self.cfg["input_size"]))
+        return np.clip(raw / scale, 0.0, 1.0), disp, float(raw.max())
+
+
 def _photo_hash(im: Image.Image) -> str:
     buf = io.BytesIO()
     im.convert("RGB").save(buf, format="PNG")

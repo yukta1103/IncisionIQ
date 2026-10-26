@@ -3,6 +3,7 @@ import builtins
 import json
 import os
 
+import numpy as np
 import pandas as pd
 import pytest
 from PIL import Image
@@ -84,3 +85,19 @@ def test_synthetic_caption_is_detected_and_removed(predictor):
     res = predictor.predict(Image.open(ROOT / "tests" / "fixtures" / "synthetic_caption.jpg"), photo_id="upload",
                             fold=DEPLOY["deployed_fold"])
     assert res["preprocess"]["inpainted"] and res["preprocess"]["n_regions"] >= 1
+
+
+def test_heatmap_fixed_scale_matches_library_shape(predictor):
+    """The display map is the library's Grad-CAM without the per-photo stretch: same shape once
+    normalized, and on one fixed scale (a weak map stays weak)."""
+    from src.explain.gradcam import gradcam_maps, gradcam_raw
+
+    scale = json.loads((ROOT / "results" / "phase7" / "cam_scale.json").read_text(encoding="utf-8"))["scale"]
+    fold = DEPLOY["deployed_fold"]
+    res = predictor.predict(Image.open(EXAMPLES / DEPLOY["examples"][0]["image_name"]), photo_id="x", fold=fold)
+    x = predictor._input(res["clean_image"])
+    raw = gradcam_raw(predictor.models[fold], x, "infection", 1)
+    lib = gradcam_maps(predictor.models[fold], x, "infection", 1, batch_size=1)[0]
+    assert np.corrcoef((raw / raw.max()).ravel(), lib.ravel())[0, 1] > 0.999
+    cam, _, cam_max = predictor.gradcam_fixed_scale(res["clean_image"], "infection", 1, scale, fold=fold)
+    assert cam.min() >= 0 and cam.max() <= 1 and np.isclose(cam.max(), min(1.0, cam_max / scale), atol=1e-4)

@@ -15,19 +15,26 @@ A photo of a surgical incision plus four questions in, a three-level triage verd
 | | result |
 |---|---|
 | infection risk AUROC (Elevated) | 0.77 [0.71, 0.82] |
-| redness / swelling / purulent drainage AUROC | 0.68 [0.63, 0.73] / 0.75 [0.68, 0.81] / 0.76 [0.67, 0.84] |
 | Elevated images flagged or referred | **0.86 [0.78, 0.93]**, at 54.8 [50.3, 58.9] clinician reviews per 100 images (prevalence 14%) |
 | observed Elevated rate in each band: low concern / uncertain / high concern | 4% [2, 7] / 12% [7, 17] / 29% [22, 36] (45% / 24% / 30% of images) |
 | High-risk images in the low-concern band | 2 of 12 |
-| purulent drainage recall | 0.10 [0.00, 0.21], so drainage comes from the patient's answer, not the photo |
+
+**What the photo drives.** In the verdict, the photo contributes only through the infection risk group. Redness, swelling and drainage predictions are shown for information, and drainage in the verdict comes from the patient's answer. Per check:
+
+| check (excluding IDs 900+) | performance | role in the verdict |
+|---|---|---|
+| infection risk (Elevated) | AUROC 0.77 [0.71, 0.82] | the only photo input, through the risk group |
+| swelling | AUROC 0.75 [0.68, 0.81] | shown for information |
+| redness | AUROC 0.68 [0.63, 0.73] | shown for information |
+| purulent drainage | recall 0.10 [0.00, 0.21] (AUROC 0.76 [0.67, 0.84]) | shown for information; the verdict uses the patient's answer |
 
 <img src="results/phase4/reliability_excl_900plus.png" width="520" alt="Reliability of P(critical class) per head">
 
 **Calibration:** top-label ECE is 0.03 to 0.05, but high probabilities over-predict: a predicted 0.75 to 0.85 for infection corresponds to an observed rate of about 0.3. Temperature scaling did not help, so the app shows bands with observed rates instead of percentages. The recall target set on each fold's small inner-validation slice (0.8) was met out-of-fold only with the referral band (flag alone: 0.64 [0.54, 0.75]).
 
-**Shortcut audit:** before mitigation, removing text overlays at test time lowered P(Elevated) by 0.043 [0.028, 0.061]. After retraining on inpainted photos, the effect is -0.006 [-0.014, +0.002], with no change in ranking. The image source stays identifiable from the photos themselves (probe AUROC 0.93), which is why the 900+ exclusion stays primary. Small corner logos and screenshot UI are not removed.
+**Shortcut audit:** before mitigation, removing text overlays at test time lowered P(Elevated) by 0.043 [0.028, 0.061]. After retraining on inpainted photos, the effect is -0.006 [-0.014, +0.002], with no change in ranking. The image source stays identifiable from the photos themselves (probe AUROC 0.93), which is why the 900+ exclusion stays primary. **Text removal misses some text:** small corner logos, phone screenshot bars, caption banners, and captions missed entirely in 8 of 686 images. **The model can still use backgrounds** such as bedding, and the demo's heat maps show it. The heat map (Grad-CAM for elevated risk, coarse 12x12 grid) uses one fixed scale for every photo, calibrated on fold 0 held-out photos, so a weak map looks weak; it is a sanity check, not an explanation of clinical findings.
 
-**Report faithfulness** (redness, swelling and infection risk claims vs surgeon labels):
+**Report faithfulness.** The generated summary is faithful to the model's predictions: it states only what the predicted attributes contain (checker agreement 1.000 with its own input). Against the surgeons, about 0.76 of its claims agree (redness, swelling and infection risk claims vs surgeon labels):
 
 | report | claims agreeing | claims contradicting |
 |---|---|---|
@@ -41,7 +48,7 @@ A photo of a surgical incision plus four questions in, a three-level triage verd
 - **The zero-shot VLM's perception is competitive.** It ties on infection risk (Elevated recall 0.65 vs 0.64 at a similar alert rate), catches 11 of 12 High-risk wounds against our 8, and is far better on purulent drainage (0.69 vs 0.10). It may have seen these public images in training.
 - Both VLM conditions ran at effort "low" for budget, one run, $15.58. The free-text claim checker was validated on 30 hand-labeled reports (0.96 to 0.97 agreement on these attributes).
 
-**Verdict** (no symptoms reported): On track covers 45% of images. **4% of On track images are surgeon-rated Elevated, and 2 of the 12 High-risk images are On track.** Fever, worsening pain, pain 7 or more and reported drainage raise the verdict, but **these symptom overrides cannot be tested on this dataset**, which has no patient answers. **The verdict is clinician-facing:** it decides which photos a care team reviews, and every verdict carries standing advice to contact the care team about fever, spreading redness, new drainage or worsening pain.
+**Verdict** (no symptoms reported): On track covers 45% of images. **4% of On track images are surgeon-rated Elevated, and 2 of the 12 High-risk images are On track.** Fever, worsening pain, pain 7 or more and reported drainage raise the verdict, but **these symptom overrides cannot be tested on this dataset**, which has no patient answers. **The verdict is clinician-facing:** the verdict, its reasons and the recommended action are written for the clinician about the patient (for example "Patient reported fever"; "Recommend contacting the patient today"). The only patient-facing text is a separately labeled block, "Advice shown to the patient": contact the care team about fever, spreading redness, new or increased drainage, or worsening pain.
 
 ## Limitations
 

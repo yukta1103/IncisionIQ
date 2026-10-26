@@ -8,9 +8,11 @@ the image model catches 3 of 30 purulent wounds). Fever or worsening pain
 override a low-concern image band (Phase 4: 2 of 12 High-risk images fall in
 that band).
 
-Review recommended   contact the care team today
-Watch                the care team reviews the photo; recheck within 24 to 48 hours
-On track             routine care; keep following the discharge instructions
+Review recommended   contact the patient today
+Watch                review the photo; ask for a new photo and answers in 24 to 48 hours
+On track             routine follow-up per the discharge plan
+
+All verdict, reason and action text is written for the clinician, about the patient.
 """
 from dataclasses import dataclass, field
 
@@ -35,9 +37,9 @@ class PhotoQuality:
 def photo_quality(width: int, height: int, inpainted_area_frac: float) -> PhotoQuality:
     reasons = []
     if min(width, height) < 300:
-        reasons.append("The photo is small, so details of the wound may not be visible.")
+        reasons.append("The photo is small (short side under 300 px), so wound details may not be visible.")
     if inpainted_area_frac > 0.15:
-        reasons.append("A large part of the photo was covered by text or stickers and had to be removed before analysis.")
+        reasons.append("More than 15% of the photo was covered by text or stickers and was removed before analysis.")
     return PhotoQuality(ok=not reasons, reasons=reasons)
 
 
@@ -47,34 +49,34 @@ def verdict(attrs: dict, answers: PatientAnswers, quality: PhotoQuality | None =
     review, watch = [], []
 
     if answers.fever:
-        review.append("You reported a fever. Fever after surgery can be a sign of infection and should be checked today.")
+        review.append("Patient reported fever, a possible sign of surgical site infection.")
     if answers.pain_worsening:
-        review.append("You said your pain is getting worse. Pain that increases after surgery should be checked today.")
+        review.append("Patient reported that wound pain is getting worse.")
     if answers.pain >= PAIN_SEVERE:
-        review.append(f"You rated your pain {answers.pain} out of 10, which is severe.")
+        review.append(f"Patient rated wound pain {answers.pain} out of 10 (severe).")
     if band == "high concern":
-        review.append(f"The photo looks similar to wounds that surgeons rated as higher infection risk "
-                      f"(about {rate} in 100 photos like this were rated Medium or High).")
+        review.append(f"Photo is in the high-concern infection risk group (in validation, about {rate} in 100 photos "
+                      "in this group were rated Medium or High risk by surgeons).")
     if answers.drainage and band != "low concern":
-        review.append("You reported drainage, and the photo is not in the low-concern group.")
+        review.append("Patient reported drainage, and the photo is not in the low-concern group.")
 
     if band == "uncertain":
-        watch.append(f"The photo could not be placed confidently (about {rate} in 100 photos like this were rated "
-                     "Medium or High by surgeons), so the care team should look at it.")
+        watch.append(f"Photo is in the uncertain infection risk group (in validation, about {rate} in 100 photos in "
+                     "this group were rated Medium or High risk by surgeons); clinician review of the photo is needed.")
     if answers.drainage:
-        watch.append("You reported drainage from the wound. The care team should know about it.")
+        watch.append("Patient reported drainage from the wound.")
     if PAIN_MODERATE <= answers.pain < PAIN_SEVERE:
-        watch.append(f"You rated your pain {answers.pain} out of 10, which is moderate.")
+        watch.append(f"Patient rated wound pain {answers.pain} out of 10 (moderate).")
     if quality is not None and not quality.ok:
-        watch.extend(quality.reasons + ["Because of this, the photo assessment is less reliable."])
+        watch.extend(quality.reasons + ["The photo assessment is therefore less reliable."])
 
     if review:
-        return {"level": REVIEW, "reasons": review + watch, "action": "Contact your care team today."}
+        return {"level": REVIEW, "reasons": review + watch, "action": "Recommend contacting the patient today."}
     if watch:
         return {"level": WATCH, "reasons": watch,
-                "action": "Your care team will review the photo. Take a new photo and answer again in 24 to 48 hours."}
+                "action": "Review the photo. Recommend asking the patient for a new photo and answers in 24 to 48 hours."}
     return {"level": ON_TRACK,
-            "reasons": [f"The photo is in the low-concern group (about {rate} in 100 photos like this were rated Medium "
-                        "or High by surgeons), and you reported no fever, no drainage, and mild pain that is not "
-                        "getting worse."],
-            "action": "Keep following your discharge instructions. Contact your care team if anything changes."}
+            "reasons": [f"Photo is in the low-concern infection risk group (in validation, about {rate} in 100 photos in "
+                        "this group were rated Medium or High risk by surgeons). Patient reported no fever, no "
+                        "drainage, and mild pain (0 to 3 out of 10) that is not getting worse."],
+            "action": "No action beyond routine follow-up per the discharge plan."}

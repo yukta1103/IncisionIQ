@@ -34,6 +34,29 @@ def gradcam_maps(model, x: torch.Tensor, head: str, target_class: int, batch_siz
     return np.concatenate(out)
 
 
+def gradcam_raw(model, x: torch.Tensor, head: str, target_class: int) -> np.ndarray:
+    """Unnormalized Grad-CAM (H, W) at input resolution for one image (x of shape (1, C, H, W)).
+
+    Same formula as pytorch-grad-cam's GradCAM on the last ConvNeXt stage (weights = spatial mean
+    of the gradients; ReLU of the weighted activation sum), but without its per-image min-max
+    stretch, so maps from different images share one scale. The demo divides by a fixed constant
+    (results/phase7/cam_scale.json) instead of stretching each map to full brightness.
+    """
+    model.eval()
+    store = {}
+    handle = model.backbone.stages[-1].register_forward_hook(lambda m, i, o: store.__setitem__("a", o))
+    try:
+        with torch.enable_grad():
+            score = model(x)[head][0, target_class]
+            grads = torch.autograd.grad(score, store["a"])[0]
+    finally:
+        handle.remove()
+    a = store["a"].detach()
+    cam = torch.relu((grads.mean(dim=(2, 3), keepdim=True) * a).sum(dim=1, keepdim=True))
+    cam = torch.nn.functional.interpolate(cam, size=x.shape[-2:], mode="bilinear", align_corners=False)
+    return cam[0, 0].float().cpu().numpy()
+
+
 def letterbox_geometry(width: int, height: int, size: int) -> tuple[float, float, float]:
     """(scale, x_offset, y_offset) mapping original pixels to letterboxed `size` pixels."""
     s = max(width, height)

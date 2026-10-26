@@ -8,8 +8,8 @@ Same rules as the evaluated system (Phases 2 to 5):
   (high concern >= t_flag > uncertain >= t_review > low concern), shown with
   the band's observed Elevated rate.
 
-`params` is either one fold's parameters (out-of-fold evaluation and demo
-examples) or the fold-averaged deployment parameters (uploaded photos).
+`params` is one fold's parameters: each image's own fold for the out-of-fold
+evaluation, and fold 0 for every photo in the demo (examples and uploads).
 """
 import numpy as np
 

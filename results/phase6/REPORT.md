@@ -4,22 +4,22 @@ Reproduce:
 ```
 python scripts/phase6_build_deployment.py   # decision parameters + check that they reproduce the evaluated system
 python scripts/phase6_verdict_eval.py       # verdict levels on out-of-fold predictions
-python -m pytest tests -q                   # 45 tests: every verdict rule, plus the demo checks in tests/test_app.py
+python -m pytest tests -q                   # 54 tests: every verdict rule, plus the demo and weights checks in tests/test_app.py and tests/test_weights.py
 streamlit run src/app/app.py                # the demo (models load on first use)
 ```
 
 ## Verdict rules (`src/triage/verdict.py`)
 
-Explicit rules, checked in order. Every triggered rule adds a plain-English reason.
+Explicit rules, checked in order. Every triggered rule adds a plain-English reason. Verdict, reason and action text is written for the clinician about the patient; the standing advice is shown separately, labeled "Advice shown to the patient".
 
-**Review recommended** (contact the care team today) if any of:
+**Review recommended** (recommend contacting the patient today) if any of:
 - fever reported,
 - pain getting worse,
 - pain 7 or higher,
 - the photo is in the **high-concern** infection band,
 - drainage reported and the photo is not in the low-concern band.
 
-**Watch** (the care team reviews the photo; recheck within 24 to 48 hours) if no Review rule applies and any of:
+**Watch** (review the photo; ask for a new photo and answers in 24 to 48 hours) if no Review rule applies and any of:
 - the photo is in the **uncertain** band (the Phase 4 referral band),
 - drainage reported,
 - pain 4 to 6,
